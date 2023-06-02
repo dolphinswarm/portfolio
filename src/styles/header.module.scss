@@ -1,0 +1,19 @@
+.header {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.navbar {
+	display: flex;
+	width: 400px;
+	justify-content: space-between;
+	align-items: center;
+}
+
+@media only screen and (max-width: 768px) {
+	.navbar {
+		display: none;
+	}
+}
