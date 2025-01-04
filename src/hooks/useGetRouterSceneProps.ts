@@ -43,5 +43,12 @@ export const useGetRouterSceneProps = () => {
         "/",
         ""
     ) as Page;
-    return routerPageProps[pageName];
+
+    return (
+        routerPageProps[pageName] ?? {
+            videoSrc: "",
+            shouldUseFreeCamera: false,
+            shouldRender: true,
+        }
+    );
 };

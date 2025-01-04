@@ -13,7 +13,7 @@ export const Base3DScene = ({
     shouldUseFreeCamera,
     shouldRender,
 }: SceneProps) => {
-    return (
+    return shouldRender ? (
         <div className={styles.canvasContainer}>
             <Canvas
                 gl={{ alpha: false }}
@@ -39,5 +39,5 @@ export const Base3DScene = ({
                 </Suspense>
             </Canvas>
         </div>
-    );
+    ) : null;
 };
