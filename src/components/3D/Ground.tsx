@@ -1,5 +1,6 @@
 import React from "react";
 import { MeshReflectorMaterial, useTexture } from "@react-three/drei";
+import * as THREE from "three";
 
 /** The reflective ground for the various pages. */
 export const Ground = () => {
@@ -8,21 +9,22 @@ export const Ground = () => {
         "threejs/SurfaceImperfections003_1K_Normal.jpg",
     ]);
     return (
-        <mesh position={[0, -1.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]}>
             <planeGeometry args={[50, 50]} />
             <MeshReflectorMaterial
-                blur={[512, 512]}
-                resolution={512}
-                args={[10, 10]}
+                blur={512}
+                resolution={2048}
+                mixBlur={1}
+                mixStrength={80}
+                roughness={1}
+                depthScale={1.2}
+                minDepthThreshold={0.4}
+                maxDepthThreshold={1.4}
+                color="#050505"
+                metalness={0.5}
                 mirror={0.5}
-                mixBlur={6}
-                mixStrength={1.5}
-                rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-                color="#a0a0a0"
-                metalness={0.4}
                 roughnessMap={floor}
                 normalMap={normal}
-                normalScale={[2, 2]}
             />
         </mesh>
     );

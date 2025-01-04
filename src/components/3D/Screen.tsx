@@ -3,15 +3,17 @@ import * as THREE from "three";
 
 /** The video screen for the various pages. */
 export const Screen = ({ videoSrc }: { videoSrc: string }) => {
-    const [video] = React.useState(() => {
+    const [video, setVideo] = React.useState<HTMLVideoElement | null>(null);
+
+    React.useEffect(() => {
         const vid = document.createElement("video");
         vid.src = videoSrc;
         vid.crossOrigin = "Anonymous";
         vid.loop = true;
         vid.muted = true;
         vid.play();
-        return vid;
-    });
+        setVideo(vid);
+    }, [videoSrc]);
 
     return (
         <>
@@ -21,13 +23,15 @@ export const Screen = ({ videoSrc }: { videoSrc: string }) => {
             </mesh>
             <mesh rotation={[0, 0, 0]} position={[0, 1.1, -0.5]}>
                 <planeGeometry args={[4, 2.25]} />
-                <meshBasicMaterial toneMapped={false}>
-                    <videoTexture
-                        attach="map"
-                        args={[video]}
-                        colorSpace={THREE.SRGBColorSpace}
-                    />
-                </meshBasicMaterial>
+                {video != null ? (
+                    <meshBasicMaterial toneMapped={false}>
+                        <videoTexture
+                            attach="map"
+                            args={[video]}
+                            colorSpace={THREE.SRGBColorSpace}
+                        />
+                    </meshBasicMaterial>
+                ) : null}
             </mesh>
         </>
     );

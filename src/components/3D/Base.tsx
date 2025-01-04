@@ -6,6 +6,7 @@ import { Ground } from "./Ground";
 import { Screen } from "./Screen";
 import { PointAtCamera } from "./PointAtCamera";
 import { SceneProps } from "@/utils/types";
+import { Environment } from "@react-three/drei";
 
 /** The Base 3D scene. */
 export const Base3DScene = ({
@@ -13,6 +14,9 @@ export const Base3DScene = ({
     shouldUseFreeCamera,
     shouldRender,
 }: SceneProps) => {
+    console.log("videoSrc", videoSrc);
+    console.log("shouldUseFreeCamera", shouldUseFreeCamera);
+    console.log("shouldRender", shouldRender);
     return shouldRender ? (
         <div className={styles.canvasContainer}>
             <Canvas
@@ -35,8 +39,9 @@ export const Base3DScene = ({
                             intensity={0.7}
                         />
                     </group>
-                    {shouldUseFreeCamera ? <PointAtCamera /> : null}
+                    <PointAtCamera isActive={shouldUseFreeCamera} />
                 </Suspense>
+                <Environment preset="city" />
             </Canvas>
         </div>
     ) : null;
