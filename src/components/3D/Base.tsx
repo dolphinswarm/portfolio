@@ -4,6 +4,8 @@ import styles from "@/styles/Three.module.scss";
 import { Brad } from "./Brad";
 import { Ground } from "./Ground";
 import { Screen } from "./Screen";
+import { Backdrop } from "./Backdrop";
+import { Pillars } from "./Pillars";
 import { PointAtCamera } from "./PointAtCamera";
 import { SceneProps } from "@/utils/types";
 import { Environment } from "@react-three/drei";
@@ -14,6 +16,8 @@ export const Base3DScene = ({
     shouldUseFreeCamera,
     shouldRender,
 }: SceneProps) => {
+    const [videoEl, setVideoEl] = React.useState<HTMLVideoElement | null>(null);
+
     console.log("videoSrc", videoSrc);
     console.log("shouldUseFreeCamera", shouldUseFreeCamera);
     console.log("shouldRender", shouldRender);
@@ -24,11 +28,13 @@ export const Base3DScene = ({
                 camera={{ position: [0, 3, 100], fov: 15 }}
             >
                 <color attach="background" args={["black"]} />
-                <fog attach="fog" args={["black", 15, 20]} />
+                <fog attach="fog" args={["black", 18, 40]} />
                 <Suspense fallback={null}>
                     <group position={[0, -1, 0]}>
                         <Brad />
-                        <Screen videoSrc={videoSrc} />
+                        <Screen videoSrc={videoSrc} onVideoReady={setVideoEl} />
+                        <Pillars sourceVideo={videoEl} />
+                        <Backdrop position={[0, -0.05, -15]} scale={3} />
                         <Ground />
                     </group>
                     <group>

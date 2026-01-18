@@ -2,7 +2,13 @@ import React from "react";
 import * as THREE from "three";
 
 /** The video screen for the various pages. */
-export const Screen = ({ videoSrc }: { videoSrc: string }) => {
+export const Screen = ({
+    videoSrc,
+    onVideoReady,
+}: {
+    videoSrc: string;
+    onVideoReady?: (video: HTMLVideoElement) => void;
+}) => {
     const [video, setVideo] = React.useState<HTMLVideoElement | null>(null);
 
     React.useEffect(() => {
@@ -13,7 +19,8 @@ export const Screen = ({ videoSrc }: { videoSrc: string }) => {
         vid.muted = true;
         vid.play();
         setVideo(vid);
-    }, [videoSrc]);
+        onVideoReady?.(vid);
+    }, [videoSrc, onVideoReady]);
 
     return (
         <>
