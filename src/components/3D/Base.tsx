@@ -85,11 +85,22 @@ export const Base3DScene = ({
 }: SceneProps) => {
     const [videoEl, setVideoEl] = React.useState<HTMLVideoElement | null>(null);
     const routeTransitionRef = React.useRef(isIndexRoute ? 1 : 0);
+    const [eventSource, setEventSource] = React.useState<HTMLElement | undefined>(
+        undefined,
+    );
+
+    React.useEffect(() => {
+        // Ensure pointer tracking keeps working even if the canvas is layered
+        // behind other DOM elements (e.g., after route transitions).
+        setEventSource(document.body);
+    }, []);
 
     return shouldRender ? (
         <div className={styles.canvasContainer}>
             <Canvas
                 gl={{ alpha: false }}
+                eventSource={eventSource}
+                eventPrefix="client"
                 camera={{ position: [0, 3, 100], fov: 15 }}
             >
                 <color attach="background" args={["black"]} />

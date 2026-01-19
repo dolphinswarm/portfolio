@@ -1,6 +1,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --mobile-nav-height: 72px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,6 +23,16 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  main {
+    padding-bottom: var(--mobile-nav-height);
+  }
 }
 
 * {
