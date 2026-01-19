@@ -3,4 +3,5 @@ export type SceneProps = {
     videoSrc: string;
     shouldUseFreeCamera: boolean;
     shouldRender: boolean;
+    isIndexRoute: boolean;
 };

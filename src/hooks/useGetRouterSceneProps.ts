@@ -3,7 +3,7 @@ import { SceneProps } from "@/utils/types";
 import { useRouter } from "next/router";
 
 /** The props for each page in the router. */
-const routerPageProps: Record<Page, SceneProps> = {
+const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
     home: {
         videoSrc: "/branding/videos/demo-reel.mp4",
         shouldUseFreeCamera: true,
@@ -39,16 +39,22 @@ const routerPageProps: Record<Page, SceneProps> = {
 /** Get the props for the current router scene. */
 export const useGetRouterSceneProps = () => {
     const { pathname } = useRouter();
+    const isIndexRoute = pathname === "/";
     const pageName = (pathname === "/" ? "/home" : pathname).replace(
         "/",
         ""
     ) as Page;
 
-    return (
-        routerPageProps[pageName] ?? {
+    const base =
+        routerPageProps[pageName] ??
+        {
             videoSrc: "",
             shouldUseFreeCamera: false,
             shouldRender: true,
-        }
-    );
+        };
+
+    return {
+        ...base,
+        isIndexRoute,
+    } satisfies SceneProps;
 };
