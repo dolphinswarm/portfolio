@@ -1,5 +1,6 @@
 import Layout from '@/components/Layout';
 import '@/styles/globals.scss';
+import { SceneVideoProvider } from '@/context/SceneVideoContext';
 
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -10,9 +11,11 @@ config.autoAddCss = false;
 
 const App = ({ Component, pageProps }: AppProps) => {
 	return (
-		<Layout>
-			<Component {...pageProps} />
-		</Layout>
+		<SceneVideoProvider>
+			<Layout>
+				<Component {...pageProps} />
+			</Layout>
+		</SceneVideoProvider>
 	);
 };
 

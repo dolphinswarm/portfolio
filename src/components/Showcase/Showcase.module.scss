@@ -1,0 +1,250 @@
+.wrap {
+  --carousel-height: 136px;
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px 40px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.header {
+  margin-top: 16px;
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: 34px;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin-top: 10px;
+  max-width: 72ch;
+  opacity: 0.82;
+  line-height: 1.5;
+}
+
+.detail {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  padding: 18px 18px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.detailTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.itemTitle {
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.itemSubtitle {
+  margin-top: 4px;
+  opacity: 0.82;
+  font-size: 14px;
+}
+
+.year {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+  font-size: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  font-size: 12px;
+  opacity: 0.9;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.links {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 120ms ease, background 120ms ease, opacity 120ms ease;
+  opacity: 0.92;
+}
+
+.link:hover {
+  background: rgba(255, 255, 255, 0.14);
+  opacity: 1;
+}
+
+.link:active {
+  transform: translateY(0.5px);
+}
+
+.body {
+  margin-top: 12px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.body p + p {
+  margin-top: 10px;
+}
+
+.carousel {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.carouselInner {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 10px 6px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
+}
+
+.carouselInner::-webkit-scrollbar {
+  display: none;
+}
+
+.thumb {
+  scroll-snap-align: center;
+  flex: 0 0 auto;
+  width: 180px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.thumb:hover {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.thumb:active {
+  transform: translateY(0.5px);
+}
+
+.thumb:focus-visible {
+  outline: 2px solid rgba(79, 209, 255, 0.75);
+  outline-offset: 2px;
+}
+
+.thumbSelected {
+  border-color: rgba(79, 209, 255, 0.65);
+}
+
+.thumbMedia {
+  height: 76px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.20), rgba(0, 0, 0, 0.60));
+}
+
+.thumbImg,
+.thumbVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 10px;
+}
+
+.thumbFallbackTitle {
+  font-size: 12px;
+  line-height: 1.2;
+  opacity: 0.9;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+}
+
+.thumbLabel {
+  padding: 10px 12px 12px;
+}
+
+.thumbTitle {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.thumbSub {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.78;
+  line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .wrap {
+    padding: 18px 14px calc(var(--mobile-nav-height) + var(--carousel-height) + 16px);
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .detail {
+    border-radius: 16px;
+  }
+
+  .carousel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: var(--mobile-nav-height);
+    z-index: 190;
+    margin-top: 0;
+    padding: 10px 10px calc(env(safe-area-inset-bottom) + 6px);
+
+    background: rgba(0, 0, 0, 0.68);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .thumb {
+    width: 150px;
+  }
+}
