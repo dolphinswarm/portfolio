@@ -24,18 +24,76 @@ const applyAspectCover = (
     texture.needsUpdate = true;
 };
 
+const useImageTexture = (src?: string, opts?: { flipY?: boolean }) => {
+    const [texture, setTexture] = React.useState<THREE.Texture | null>(null);
+
+    React.useEffect(() => {
+        if (!src) {
+            setTexture(null);
+            return;
+        }
+        let cancelled = false;
+
+        const loader = new THREE.TextureLoader();
+        loader.load(
+            src,
+            (tex) => {
+                if (cancelled) {
+                    tex.dispose();
+                    return;
+                }
+                tex.colorSpace = THREE.SRGBColorSpace;
+                tex.flipY = opts?.flipY ?? true;
+                tex.minFilter = THREE.LinearFilter;
+                tex.magFilter = THREE.LinearFilter;
+                tex.generateMipmaps = false;
+                tex.wrapS = THREE.ClampToEdgeWrapping;
+                tex.wrapT = THREE.ClampToEdgeWrapping;
+                setTexture(tex);
+            },
+            undefined,
+            () => {
+                if (cancelled) return;
+                setTexture(null);
+            },
+        );
+
+        return () => {
+            cancelled = true;
+            setTexture((prev) => {
+                prev?.dispose();
+                return null;
+            });
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [src]);
+
+    return texture;
+};
+
 /** The video screen for the various pages. */
 export const Screen = ({
-    videoSrc,
     video,
     onVideoReady,
+    media,
 }: {
-    videoSrc?: string;
     video?: HTMLVideoElement;
     onVideoReady?: (video: HTMLVideoElement) => void;
+    media: { sourceType: "video" | "image"; source: string };
 }) => {
     const [internalVideo, setInternalVideo] = React.useState<HTMLVideoElement | null>(null);
     const activeVideo = video ?? internalVideo;
+
+    const cleanupVideo = React.useCallback((vid: HTMLVideoElement | null) => {
+        if (!vid) return;
+        try {
+            vid.pause();
+            vid.removeAttribute("src");
+            vid.load();
+        } catch {
+            // no-op
+        }
+    }, []);
 
     const videoTexture = React.useMemo(() => {
         if (!activeVideo) return null;
@@ -51,6 +109,8 @@ export const Screen = ({
         return tex;
     }, [activeVideo]);
 
+    const imageTexture = useImageTexture(media.sourceType === "image" ? media.source : undefined, { flipY: true });
+
     React.useEffect(() => {
         if (!activeVideo || !videoTexture) return;
 
@@ -63,6 +123,7 @@ export const Screen = ({
         };
 
         if (activeVideo.readyState >= 1) update();
+
         activeVideo.addEventListener("loadedmetadata", update);
         return () => {
             activeVideo.removeEventListener("loadedmetadata", update);
@@ -70,33 +131,58 @@ export const Screen = ({
     }, [activeVideo, videoTexture]);
 
     React.useEffect(() => {
+        if (!imageTexture) return;
+        const img = imageTexture.image as { width?: number; height?: number } | undefined;
+        const w = img?.width ?? 0;
+        const h = img?.height ?? 0;
+        if (!w || !h) return;
+
+        const targetAspect = 4 / 2.25;
+        applyAspectCover(imageTexture, { videoAspect: w / h, targetAspect });
+    }, [imageTexture]);
+
+    React.useEffect(() => {
         if (video) {
             onVideoReady?.(video);
             return;
         }
 
+        if (media.sourceType !== "video") {
+            // Ensure we don't keep rendering a stale VideoTexture when switching to images.
+            setInternalVideo((prev) => {
+                cleanupVideo(prev);
+                return null;
+            });
+            return;
+        }
+        const videoSrc = media.source;
         if (!videoSrc) return;
         const vid = document.createElement("video");
         vid.src = videoSrc;
         vid.crossOrigin = "Anonymous";
+        vid.preload = "auto";
         vid.loop = true;
         vid.muted = true;
         vid.playsInline = true;
-        void vid.play();
+
+        const playPromise = vid.play();
+        if (playPromise && typeof (playPromise as Promise<void>).catch === "function") {
+            (playPromise as Promise<void>).catch((err: unknown) => {
+                const name = (err as { name?: string } | null)?.name;
+                if (name === "AbortError" || name === "NotAllowedError") return;
+            });
+        }
 
         setInternalVideo(vid);
         onVideoReady?.(vid);
 
         return () => {
-            try {
-                vid.pause();
-                vid.removeAttribute("src");
-                vid.load();
-            } catch {
-                // no-op
-            }
+            cleanupVideo(vid);
+
+            // Only clear if we're still pointing at this video element.
+            setInternalVideo((prev) => (prev === vid ? null : prev));
         };
-    }, [video, videoSrc, onVideoReady]);
+    }, [video, media.sourceType, media.source, onVideoReady, cleanupVideo]);
 
     return (
         <>
@@ -108,6 +194,8 @@ export const Screen = ({
                 <planeGeometry args={[4, 2.25]} />
                 {videoTexture != null ? (
                     <meshBasicMaterial toneMapped={false} map={videoTexture} />
+                ) : imageTexture != null ? (
+                    <meshBasicMaterial toneMapped={false} map={imageTexture} />
                 ) : null}
             </mesh>
         </>

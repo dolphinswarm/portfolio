@@ -1,9 +1,9 @@
 import React from "react";
 
 type SceneVideoContextValue = {
-    videoSrcOverride: string | null;
-    setVideoSrcOverride: (src: string | null) => void;
-    clearVideoSrcOverride: () => void;
+    mediaOverride: { sourceType: "video" | "image"; source: string } | null;
+    setMediaOverride: (media: { sourceType: "video" | "image"; source: string } | null) => void;
+    clearMediaOverride: () => void;
 };
 
 const SceneVideoContext = React.createContext<SceneVideoContextValue | null>(null);
@@ -13,21 +13,21 @@ export const SceneVideoProvider = ({
 }: {
     children: React.ReactNode;
 }) => {
-    const [videoSrcOverride, setVideoSrcOverride] = React.useState<string | null>(
-        null,
-    );
+    const [mediaOverride, setMediaOverride] = React.useState<
+        { sourceType: "video" | "image"; source: string } | null
+    >(null);
 
-    const clearVideoSrcOverride = React.useCallback(() => {
-        setVideoSrcOverride(null);
+    const clearMediaOverride = React.useCallback(() => {
+        setMediaOverride(null);
     }, []);
 
     const value = React.useMemo<SceneVideoContextValue>(
         () => ({
-            videoSrcOverride,
-            setVideoSrcOverride,
-            clearVideoSrcOverride,
+            mediaOverride,
+            setMediaOverride,
+            clearMediaOverride,
         }),
-        [videoSrcOverride, clearVideoSrcOverride],
+        [mediaOverride, clearMediaOverride],
     );
 
     return (

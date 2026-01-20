@@ -29,7 +29,7 @@ type GLTFScreenResult = {
 };
 
 export type BackgroundScreenProps = {
-    videoSrc?: string;
+    media: { sourceType: "video" | "image"; source: string };
     onVideoReady?: (video: HTMLVideoElement) => void;
 
     screenPosition?: THREE.Vector3Tuple;
@@ -95,7 +95,7 @@ const getAspectCoverTransform = (opts: {
  * - backdropPosition: [0, -0.05, -15]
  */
 export const BackgroundScreen = ({
-    videoSrc,
+    media,
     onVideoReady,
     screenPosition = [0, 0, -14.7],
     backdropPosition = [0, -0.05, -15],
@@ -183,6 +183,8 @@ export const BackgroundScreen = ({
         null,
     );
 
+    const [imageTexture, setImageTexture] = React.useState<THREE.Texture | null>(null);
+
     const videoTexture = React.useMemo(() => {
         if (!internalVideo) return null;
         const tex = new THREE.VideoTexture(internalVideo);
@@ -199,6 +201,15 @@ export const BackgroundScreen = ({
         return tex;
     }, [internalVideo]);
 
+    React.useEffect(() => {
+        return () => {
+            setImageTexture((prev) => {
+                prev?.dispose();
+                return null;
+            });
+        };
+    }, []);
+
     const screen1UvBounds = React.useMemo(() => {
         try {
             const s1 = screen1.nodes.Cylinder;
@@ -214,6 +225,57 @@ export const BackgroundScreen = ({
             videoTexture.dispose();
         };
     }, [videoTexture]);
+
+    React.useEffect(() => {
+        // Video takes priority; only load an image if no videoSrc.
+        const src =
+            media.sourceType === "image" && typeof media.source === "string" && media.source.trim().length > 0
+                ? media.source.trim()
+                : "";
+
+        if (!src) {
+            setImageTexture((prev) => {
+                prev?.dispose();
+                return null;
+            });
+            return;
+        }
+
+        let cancelled = false;
+        const loader = new THREE.TextureLoader();
+        loader.load(
+            src,
+            (tex) => {
+                if (cancelled) {
+                    tex.dispose();
+                    return;
+                }
+
+                tex.colorSpace = THREE.SRGBColorSpace;
+                // GLTF UVs typically expect flipY=false.
+                tex.flipY = false;
+                tex.minFilter = THREE.LinearFilter;
+                tex.magFilter = THREE.LinearFilter;
+                tex.generateMipmaps = false;
+                tex.wrapS = THREE.ClampToEdgeWrapping;
+                tex.wrapT = THREE.ClampToEdgeWrapping;
+
+                setImageTexture((prev) => {
+                    prev?.dispose();
+                    return tex;
+                });
+            },
+            undefined,
+            () => {
+                if (cancelled) return;
+                setImageTexture(null);
+            },
+        );
+
+        return () => {
+            cancelled = true;
+        };
+    }, [media.sourceType, media.source]);
 
     React.useEffect(() => {
         if (!internalVideo || !videoTexture) return;
@@ -264,15 +326,63 @@ export const BackgroundScreen = ({
     }, [internalVideo, videoTexture, screen1UvBounds]);
 
     React.useEffect(() => {
-        if (!videoSrc) return;
+        if (!imageTexture) return;
+
+        // Match the front screen plane's perceived aspect.
+        const targetAspect = 4 / 2.25;
+
+        const img = imageTexture.image as { width?: number; height?: number } | undefined;
+        const w = img?.width ?? 0;
+        const h = img?.height ?? 0;
+        if (!w || !h) return;
+
+        const cover = getAspectCoverTransform({ videoAspect: w / h, targetAspect });
+
+        if (screen1UvBounds) {
+            const baseRepeatX = 1 / screen1UvBounds.rangeU;
+            const baseRepeatY = 1 / screen1UvBounds.rangeV;
+            const baseOffsetX = -screen1UvBounds.minU / screen1UvBounds.rangeU;
+            const baseOffsetY = -screen1UvBounds.minV / screen1UvBounds.rangeV;
+
+            imageTexture.repeat.set(
+                baseRepeatX * cover.repeatX,
+                baseRepeatY * cover.repeatY,
+            );
+            imageTexture.offset.set(
+                baseOffsetX * cover.repeatX + cover.offsetX,
+                baseOffsetY * cover.repeatY + cover.offsetY,
+            );
+        } else {
+            imageTexture.repeat.set(cover.repeatX, cover.repeatY);
+            imageTexture.offset.set(cover.offsetX, cover.offsetY);
+        }
+
+        imageTexture.needsUpdate = true;
+    }, [imageTexture, screen1UvBounds]);
+
+    React.useEffect(() => {
+        const src = media.sourceType === "video" && typeof media.source === "string" ? media.source.trim() : "";
+        if (!src) {
+            setInternalVideo(null);
+            return;
+        }
 
         const vid = document.createElement("video");
-        vid.src = videoSrc;
+        vid.src = src;
         vid.crossOrigin = "Anonymous";
+        vid.preload = "auto";
         vid.loop = true;
         vid.muted = true;
         vid.playsInline = true;
-        void vid.play();
+
+        const playPromise = vid.play();
+        if (playPromise && typeof (playPromise as Promise<void>).catch === "function") {
+            (playPromise as Promise<void>).catch((err: unknown) => {
+                const name = (err as { name?: string } | null)?.name;
+                // Common during StrictMode double-invocation and route transitions.
+                if (name === "AbortError" || name === "NotAllowedError") return;
+            });
+        }
 
         setInternalVideo(vid);
         onVideoReady?.(vid);
@@ -286,7 +396,7 @@ export const BackgroundScreen = ({
                 // no-op
             }
         };
-    }, [videoSrc, onVideoReady]);
+    }, [media.sourceType, media.source, onVideoReady]);
 
     const palette = useVideoPalette(internalVideo, {
         sampleSize: 16,
@@ -308,6 +418,8 @@ export const BackgroundScreen = ({
                 >
                     {videoTexture ? (
                         <meshBasicMaterial toneMapped={false} map={videoTexture} />
+                    ) : imageTexture ? (
+                        <meshBasicMaterial toneMapped={false} map={imageTexture} />
                     ) : (
                         <meshBasicMaterial color="#111111" />
                     )}

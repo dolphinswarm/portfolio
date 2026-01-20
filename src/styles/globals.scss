@@ -2,6 +2,7 @@
   --background: #ffffff;
   --foreground: #171717;
   --mobile-nav-height: 72px;
+  --accent: #ff8a00; /* Define the orange accent CSS variable globally */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,7 +27,8 @@ body {
 }
 
 main {
-  min-height: 100vh;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 @media (max-width: 768px) {

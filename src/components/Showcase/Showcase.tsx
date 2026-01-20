@@ -1,15 +1,77 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import styles from "./Showcase.module.scss";
+
+const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
+
+const ThumbImage = ({
+    src,
+    title,
+}: {
+    src: string;
+    title: string;
+}) => {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={title} className={styles.thumbImg} loading="lazy" />;
+};
+
+const ShowcaseThumb = ({
+    item,
+    selected,
+    onSelect,
+}: {
+    item: ShowcaseItem;
+    selected: boolean;
+    onSelect: (slug: string) => void;
+}) => {
+    const explicitThumb =
+        (item.thumb?.kind === "image" ? item.thumb.src : undefined) ??
+        (item.screen?.kind === "image" ? item.screen.src : undefined);
+
+    const thumbSrc = explicitThumb ?? FALLBACK_THUMB_SRC;
+
+    return (
+        <button
+            key={item.slug}
+            type="button"
+            className={selected ? `${styles.thumb} ${styles.thumbSelected}` : styles.thumb}
+            onClick={() => onSelect(item.slug)}
+            aria-pressed={selected}
+            data-showcase-thumb={item.slug}
+            title={item.title}
+        >
+            <div className={styles.thumbMedia}>
+                <ThumbImage src={thumbSrc} title={item.title} />
+            </div>
+
+            <div className={styles.thumbLabel}>
+                <div className={styles.thumbTitle}>{item.title}</div>
+                {item.subtitle ? <div className={styles.thumbSub}>{item.subtitle}</div> : null}
+            </div>
+        </button>
+    );
+};
 
 export type ShowcaseItemLink = {
     label: string;
     href: string;
+    icon?: IconDefinition;
 };
 
-export type ShowcaseMedia =
+export type ShowcaseAsset =
     | { kind: "video"; src: string }
     | { kind: "image"; src: string; alt?: string };
+
+export type ShowcaseScreenMedia = {
+    sourceType: "video" | "image";
+    source: string;
+};
+
+const toScreenMedia = (asset: ShowcaseAsset): ShowcaseScreenMedia => {
+    return { sourceType: asset.kind, source: asset.src };
+};
 
 export type ShowcaseItem = {
     slug: string;
@@ -18,31 +80,39 @@ export type ShowcaseItem = {
     year?: string;
     tags?: string[];
 
-    /** Video to send to the 3D screen. */
-    previewVideoSrc?: string;
+    /** The media to send to the 3D screen (preferred). */
+    screen?: ShowcaseAsset;
 
-    /** Optional thumbnail (recommended for mobile). */
-    previewImageSrc?: string;
+    /** Optional thumbnail media (recommended for mobile). Prefer an image. */
+    thumb?: ShowcaseAsset;
 
     links?: ShowcaseItemLink[];
-    media?: ShowcaseMedia;
     body?: React.ReactNode;
 };
 
 export const Showcase = ({
     pageTitle,
-    pageSubtitle,
     items,
     queryKey,
-    onPreviewVideoSrcChange,
+    onScreenMediaChange,
 }: {
     pageTitle: string;
-    pageSubtitle?: string;
     items: ShowcaseItem[];
     queryKey: string;
-    onPreviewVideoSrcChange?: (src: string) => void;
+    onScreenMediaChange?: (media: ShowcaseScreenMedia | null) => void;
 }) => {
     const router = useRouter();
+
+    const arePreviewEqual = React.useCallback(
+        (a: ShowcaseScreenMedia | null, b: ShowcaseScreenMedia | null) => {
+            if (a === b) return true;
+            if (!a || !b) return false;
+            return a.sourceType === b.sourceType && a.source === b.source;
+        },
+        [],
+    );
+
+    const lastPreviewRef = React.useRef<ShowcaseScreenMedia | null>(null);
 
     const getInitialSlug = React.useCallback(() => {
         const q = router.query?.[queryKey];
@@ -60,7 +130,7 @@ export const Showcase = ({
     React.useEffect(() => {
         if (!router.isReady) return;
         const initial = getInitialSlug();
-        setSelectedSlug(initial);
+        setSelectedSlug((prev) => (prev === initial ? prev : initial));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router.isReady, getInitialSlug]);
 
@@ -80,21 +150,47 @@ export const Showcase = ({
 
         if (shouldSyncUrl) {
             const nextQuery = { ...router.query, [queryKey]: selectedItem.slug };
-            try {
-                void router.replace({ pathname: router.pathname, query: nextQuery }, undefined, {
+            void router
+                .replace({ pathname: router.pathname, query: nextQuery }, undefined, {
                     shallow: true,
                     scroll: false,
+                })
+                .catch(() => {
+                    // no-op (selection still works; URL just won't update)
                 });
-            } catch {
-                // no-op (selection still works; URL just won't update)
-            }
         }
 
-        const src =
-            selectedItem.previewVideoSrc ??
-            (selectedItem.media?.kind === "video" ? selectedItem.media.src : undefined);
-        if (src) onPreviewVideoSrcChange?.(src);
-    }, [router, router.isReady, router.pathname, selectedItem, queryKey, onPreviewVideoSrcChange]);
+        const preferred = selectedItem.screen;
+        const fallback = selectedItem.thumb;
+
+        const next: ShowcaseScreenMedia | null = preferred
+            ? toScreenMedia(preferred)
+            : fallback
+                ? toScreenMedia(fallback)
+                : null;
+
+        // Avoid infinite update loops when the parent passes a non-memoized callback
+        // and we compute a fresh `{ sourceType, source }` object each render.
+        if (!arePreviewEqual(lastPreviewRef.current, next)) {
+            lastPreviewRef.current = next;
+            onScreenMediaChange?.(next);
+        }
+
+        return () => {
+            // Important in StrictMode: effects are intentionally mounted/unmounted twice
+            // in development. If we keep the last preview cached, the second invocation
+            // can be skipped while the parent has already cleared the override.
+            lastPreviewRef.current = null;
+        };
+    }, [
+        router,
+        router.isReady,
+        router.pathname,
+        selectedItem,
+        queryKey,
+        onScreenMediaChange,
+        arePreviewEqual,
+    ]);
 
     const onSelect = React.useCallback((slug: string) => {
         setSelectedSlug(slug);
@@ -133,108 +229,75 @@ export const Showcase = ({
 
     return (
         <div className={styles.wrap}>
-            <header className={styles.header}>
-                <h1 className={styles.title}>{pageTitle}</h1>
-                {pageSubtitle ? <p className={styles.subtitle}>{pageSubtitle}</p> : null}
-            </header>
-
-            {selectedItem ? (
-                <section className={styles.detail} aria-label="Selected item">
-                    <div className={styles.detailTop}>
-                        <div>
-                            <h2 className={styles.itemTitle}>{selectedItem.title}</h2>
-                            {selectedItem.subtitle ? (
-                                <div className={styles.itemSubtitle}>{selectedItem.subtitle}</div>
+            <div className={styles.dock} aria-label={`${pageTitle} detail and items`}>
+                {selectedItem ? (
+                    <section className={styles.detail} aria-label="Selected item">
+                        <div className={styles.detailTop}>
+                            <div>
+                                <h2 className={styles.itemTitle}>{selectedItem.title}</h2>
+                                {selectedItem.subtitle ? (
+                                    <div className={styles.itemSubtitle}>{selectedItem.subtitle}</div>
+                                ) : null}
+                            </div>
+                            {selectedItem.year ? (
+                                <div className={styles.year} aria-label="Year">
+                                    {selectedItem.year}
+                                </div>
                             ) : null}
                         </div>
-                        {selectedItem.year ? (
-                            <div className={styles.year} aria-label="Year">
-                                {selectedItem.year}
+
+                        {selectedItem.tags?.length ? (
+                            <div className={styles.tags} aria-label="Tags">
+                                {selectedItem.tags.map((t) => (
+                                    <span key={t} className={styles.tag}>
+                                        {t}
+                                    </span>
+                                ))}
                             </div>
                         ) : null}
+
+                        {selectedItem.links?.length ? (
+                            <div className={styles.links} aria-label="Links">
+                                {selectedItem.links.map((l) => (
+                                    <a
+                                        key={`${selectedItem.slug}-${l.href}`}
+                                        href={l.href}
+                                        target={l.href.startsWith("/") ? undefined : "_blank"}
+                                        rel={l.href.startsWith("/") ? undefined : "noreferrer"}
+                                        className={styles.link}
+                                    >
+                                        {l.icon ? (
+                                            <span className={styles.linkIcon} aria-hidden="true">
+                                                <FontAwesomeIcon icon={l.icon} fixedWidth />
+                                            </span>
+                                        ) : null}
+                                        {l.label}
+                                    </a>
+                                ))}
+                            </div>
+                        ) : null}
+
+                        {selectedItem.body ? <div className={styles.body}>{selectedItem.body}</div> : null}
+                    </section>
+                ) : null}
+
+                <div className={styles.carousel} aria-label={`${pageTitle} items`}>
+                    <div
+                        className={styles.carouselInner}
+                        onKeyDown={onCarouselKeyDown}
+                    >
+                        {items.map((item) => {
+                            const selected = item.slug === selectedItem?.slug;
+                            return (
+                                <ShowcaseThumb
+                                    key={item.slug}
+                                    item={item}
+                                    selected={selected}
+                                    onSelect={onSelect}
+                                />
+                            );
+                        })}
                     </div>
-
-                    {selectedItem.tags?.length ? (
-                        <div className={styles.tags} aria-label="Tags">
-                            {selectedItem.tags.map((t) => (
-                                <span key={t} className={styles.tag}>
-                                    {t}
-                                </span>
-                            ))}
-                        </div>
-                    ) : null}
-
-                    {selectedItem.links?.length ? (
-                        <div className={styles.links} aria-label="Links">
-                            {selectedItem.links.map((l) => (
-                                <a
-                                    key={`${selectedItem.slug}-${l.href}`}
-                                    href={l.href}
-                                    target={l.href.startsWith("/") ? undefined : "_blank"}
-                                    rel={l.href.startsWith("/") ? undefined : "noreferrer"}
-                                    className={styles.link}
-                                >
-                                    {l.label}
-                                </a>
-                            ))}
-                        </div>
-                    ) : null}
-
-                    {selectedItem.body ? (
-                        <div className={styles.body}>{selectedItem.body}</div>
-                    ) : null}
-                </section>
-            ) : null}
-
-            <div className={styles.carousel} aria-label={`${pageTitle} items`}>
-                <div className={styles.carouselInner} onKeyDown={onCarouselKeyDown}>
-                    {items.map((item) => {
-                        const selected = item.slug === selectedItem?.slug;
-                        return (
-                            <button
-                                key={item.slug}
-                                type="button"
-                                className={selected ? `${styles.thumb} ${styles.thumbSelected}` : styles.thumb}
-                                onClick={() => onSelect(item.slug)}
-                                aria-pressed={selected}
-                                data-showcase-thumb={item.slug}
-                                title={item.title}
-                            >
-                                <div className={styles.thumbMedia}>
-                                    {item.previewImageSrc ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img
-                                            src={item.previewImageSrc}
-                                            alt=""
-                                            className={styles.thumbImg}
-                                            loading="lazy"
-                                        />
-                                    ) : selected && item.previewVideoSrc ? (
-                                        <video
-                                            className={styles.thumbVideo}
-                                            src={item.previewVideoSrc}
-                                            muted
-                                            playsInline
-                                            loop
-                                            autoPlay
-                                            preload="metadata"
-                                        />
-                                    ) : (
-                                        <div className={styles.thumbFallback}>
-                                            <div className={styles.thumbFallbackTitle}>{item.title}</div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className={styles.thumbLabel}>
-                                    <div className={styles.thumbTitle}>{item.title}</div>
-                                    {item.subtitle ? (
-                                        <div className={styles.thumbSub}>{item.subtitle}</div>
-                                    ) : null}
-                                </div>
-                            </button>
-                        );
-                    })}
                 </div>
             </div>
         </div>

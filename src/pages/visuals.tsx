@@ -1,3 +1,4 @@
+import * as React from "react";
 import Head from "next/head";
 import { Showcase, type ShowcaseItem } from "@/components/Showcase/Showcase";
 import { useSceneVideo } from "@/context/SceneVideoContext";
@@ -9,9 +10,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Motion / edits",
 		year: "2026",
 		tags: ["Edit", "Motion"],
-		previewVideoSrc: "/branding/videos/demo-reel.mp4",
 		links: [{ label: "Download", href: "/branding/videos/demo-reel.mp4" }],
-		media: { kind: "video", src: "/branding/videos/demo-reel.mp4" },
+		screen: { kind: "video", src: "/branding/videos/demo-reel.mp4" },
 		body: (
 			<>
 				<p>
@@ -31,9 +31,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Lookdev",
 		year: "2025",
 		tags: ["Lookdev", "Lighting"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
 		links: [{ label: "Case Study", href: "https://example.com" }],
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Replace this with a still/video and a quick note.</p>,
 	},
 	{
@@ -42,9 +41,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Compositing",
 		year: "2025",
 		tags: ["Comp", "Color"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
 		links: [{ label: "Credits", href: "https://example.com" }],
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Keep details light here; link out to the full breakdown.</p>,
 	},
 	{
@@ -53,8 +51,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Print / typography",
 		year: "2024",
 		tags: ["Print", "Type"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>A set of posters exploring type and rhythm.</p>,
 	},
 	{
@@ -63,8 +60,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Realtime",
 		year: "2024",
 		tags: ["GLSL", "Realtime"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Interactive material studies and lighting experiments.</p>,
 	},
 	{
@@ -73,8 +69,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Micro-interactions",
 		year: "2023",
 		tags: ["UX", "Animation"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Motion that clarifies state and feels snappy.</p>,
 	},
 	{
@@ -83,8 +78,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Design system",
 		year: "2023",
 		tags: ["Brand", "System"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>A cohesive set of titles for a series.</p>,
 	},
 	{
@@ -93,8 +87,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Selection",
 		year: "2022",
 		tags: ["Photo"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>A small photo selection with consistent grading.</p>,
 	},
 	{
@@ -103,8 +96,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Explorations",
 		year: "2022",
 		tags: ["Brand"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Quick brand directions and visual language tests.</p>,
 	},
 	{
@@ -113,14 +105,26 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 		subtitle: "Bits and pieces",
 		year: "2021",
 		tags: ["Sketches"],
-		previewVideoSrc: "/branding/videos/tv-static.mp4",
-		media: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Small studies that don’t need a full case study.</p>,
 	},
 ];
 
 const Visuals = () => {
-	const { setVideoSrcOverride } = useSceneVideo();
+	const { setMediaOverride, clearMediaOverride } = useSceneVideo();
+
+	const onScreenMediaChange = React.useCallback(
+		(media: { sourceType: "video" | "image"; source: string } | null) => {
+			setMediaOverride(media);
+		},
+		[setMediaOverride],
+	);
+
+	React.useEffect(() => {
+		return () => {
+			clearMediaOverride();
+		};
+	}, [clearMediaOverride]);
 
 	return (
 		<>
@@ -136,10 +140,9 @@ const Visuals = () => {
 
 			<Showcase
 				pageTitle="Visuals"
-				pageSubtitle="Big preview first. Swipe through pieces on mobile; use the list on desktop."
 				items={VISUAL_ITEMS}
-				queryKey="visual"
-				onPreviewVideoSrcChange={(src) => setVideoSrcOverride(src)}
+				queryKey="project"
+				onScreenMediaChange={onScreenMediaChange}
 			/>
 		</>
 	);

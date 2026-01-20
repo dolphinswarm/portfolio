@@ -1,27 +1,43 @@
 .wrap {
   --carousel-height: 136px;
+  /* Reserved for future tuning (kept for compatibility). */
+  --showcase-screen-bottom: 68svh;
   position: relative;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 32px 20px 40px;
+  padding: 32px 20px 24px;
   color: rgba(255, 255, 255, 0.92);
 }
 
 .header {
   margin-top: 16px;
-  margin-bottom: 18px;
+  margin-bottom: 0;
+  padding: 14px 16px;
+  border-radius: 18px;
+
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .title {
-  font-size: 34px;
-  letter-spacing: 0.02em;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.95;
 }
 
 .subtitle {
-  margin-top: 10px;
+  margin-top: 8px;
   max-width: 72ch;
   opacity: 0.82;
   line-height: 1.5;
+  font-size: 13px;
+}
+
+.dock {
+  margin-top: 16px;
 }
 
 .detail {
@@ -31,6 +47,22 @@
   padding: 18px 18px;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  max-height: 44dvh;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.dock {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1100px, calc(100vw - 40px));
+  bottom: 22px;
+  z-index: 190;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .detailTop {
@@ -88,12 +120,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   height: 34px;
   padding: 0 12px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.10);
   border: 1px solid rgba(255, 255, 255, 0.12);
   transition: transform 120ms ease, background 120ms ease, opacity 120ms ease;
+  opacity: 0.92;
+}
+
+.linkIcon {
+  display: inline-flex;
+  align-items: center;
   opacity: 0.92;
 }
 
@@ -118,7 +157,7 @@
 
 .carousel {
   width: 100%;
-  margin-top: 16px;
+  margin-top: 0;
 }
 
 .carouselInner {
@@ -128,6 +167,7 @@
   padding: 10px 6px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
+  align-items: flex-start;
 
   scrollbar-width: none;
 }
@@ -148,15 +188,17 @@
   color: inherit;
   text-align: left;
   cursor: pointer;
-  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+  transform: scale(0.965);
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
 .thumb:hover {
   background: rgba(0, 0, 0, 0.55);
+  transform: scale(1);
 }
 
 .thumb:active {
-  transform: translateY(0.5px);
+  transform: translateY(0.5px) scale(0.99);
 }
 
 .thumb:focus-visible {
@@ -166,6 +208,7 @@
 
 .thumbSelected {
   border-color: rgba(79, 209, 255, 0.65);
+  transform: scale(1);
 }
 
 .thumbMedia {
@@ -174,6 +217,15 @@
   border-top-right-radius: 16px;
   overflow: hidden;
   background: radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.20), rgba(0, 0, 0, 0.60));
+  transition: filter 160ms ease, opacity 160ms ease;
+}
+
+.thumb:not(.thumbSelected) .thumbMedia {
+  filter: brightness(0.70) saturate(0.95);
+}
+
+.thumb:hover .thumbMedia {
+  filter: none;
 }
 
 .thumbImg,
@@ -202,11 +254,25 @@
 
 .thumbLabel {
   padding: 10px 12px 12px;
+  transition: opacity 160ms ease;
+  min-height: 54px;
+}
+
+.thumb:not(.thumbSelected) .thumbLabel {
+  opacity: 0.78;
+}
+
+.thumb:hover .thumbLabel {
+  opacity: 1;
 }
 
 .thumbTitle {
   font-size: 13px;
   line-height: 1.2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 
 .thumbSub {
@@ -214,27 +280,42 @@
   font-size: 12px;
   opacity: 0.78;
   line-height: 1.2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 @media (max-width: 768px) {
   .wrap {
-    padding: 18px 14px calc(var(--mobile-nav-height) + var(--carousel-height) + 16px);
+    padding: 14px 14px 10px;
+  }
+
+  .header {
+    margin-top: 10px;
+    border-radius: 16px;
   }
 
   .title {
-    font-size: 28px;
+    font-size: 13px;
   }
 
   .detail {
     border-radius: 16px;
+    max-height: 36svh;
+    margin: 0 14px;
+  }
+
+  .dock {
+    left: 0;
+    right: 0;
+    transform: none;
+    width: auto;
+    bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+    gap: 10px;
   }
 
   .carousel {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: var(--mobile-nav-height);
-    z-index: 190;
     margin-top: 0;
     padding: 10px 10px calc(env(safe-area-inset-bottom) + 6px);
 

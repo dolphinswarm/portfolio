@@ -3,22 +3,23 @@ import { Footer } from "./Footer";
 import { Base3DScene } from "./3D/Base";
 import { useGetRouterSceneProps } from "@/hooks/useGetRouterSceneProps";
 import { useSceneVideo } from "@/context/SceneVideoContext";
+import styles from "@/styles/Layout.module.scss";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     const sceneProps = useGetRouterSceneProps();
-    const { videoSrcOverride } = useSceneVideo();
+    const { mediaOverride } = useSceneVideo();
     return (
-        <>
+        <div className={styles.shell}>
             <Header />
-            <main>
+            <main className={styles.main}>
                 {children}
                 <Base3DScene
                     {...sceneProps}
-                    videoSrc={videoSrcOverride ?? sceneProps.videoSrc}
+                    media={mediaOverride ?? sceneProps.media}
                 />
             </main>
             <Footer />
-        </>
+        </div>
     );
 };
 

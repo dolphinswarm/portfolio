@@ -5,32 +5,32 @@ import { useRouter } from "next/router";
 /** The props for each page in the router. */
 const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
     home: {
-        videoSrc: "/branding/videos/demo-reel.mp4",
+        media: { sourceType: "video", source: "/branding/videos/demo-reel.mp4" },
         shouldUseFreeCamera: true,
         shouldRender: true,
     },
     about: {
-        videoSrc: "",
+        media: undefined,
         shouldUseFreeCamera: false,
         shouldRender: false,
     },
     code: {
-        videoSrc: "/branding/videos/tv-static.mp4",
+        media: undefined,
         shouldUseFreeCamera: false,
         shouldRender: true,
     },
     visuals: {
-        videoSrc: "/branding/videos/tv-static.mp4",
+        media: undefined,
         shouldUseFreeCamera: false,
         shouldRender: true,
     },
     music: {
-        videoSrc: "/branding/videos/tv-static.mp4",
+        media: undefined,
         shouldUseFreeCamera: false,
         shouldRender: true,
     },
     connect: {
-        videoSrc: "",
+        media: undefined,
         shouldUseFreeCamera: false,
         shouldRender: true,
     },
@@ -48,7 +48,7 @@ export const useGetRouterSceneProps = () => {
     const base =
         routerPageProps[pageName] ??
         {
-            videoSrc: "",
+            media: undefined,
             shouldUseFreeCamera: false,
             shouldRender: true,
         };

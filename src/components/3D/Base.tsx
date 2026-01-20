@@ -11,6 +11,9 @@ import { Environment } from "@react-three/drei";
 import { BackgroundScreen } from "./BackgroundScreen";
 import * as THREE from "three";
 
+const DEFAULT_STATIC_VIDEO_SRC = "/branding/videos/tv-static.mp4";
+type SceneMedia = { sourceType: "video" | "image"; source: string };
+
 const RouteTransition = ({
     isIndexRoute,
     transitionRef,
@@ -34,12 +37,12 @@ const RouteTransition = ({
 
 const BackdropRig = ({
     transitionRef,
-    videoSrc,
+    media,
     onVideoReady,
     sourceVideo,
 }: {
     transitionRef: React.MutableRefObject<number>;
-    videoSrc: string;
+    media: SceneMedia;
     onVideoReady: (video: HTMLVideoElement) => void;
     sourceVideo: HTMLVideoElement | null;
 }) => {
@@ -64,7 +67,7 @@ const BackdropRig = ({
         <>
             <group ref={backgroundRef}>
                 <BackgroundScreen
-                    videoSrc={videoSrc}
+                    media={media}
                     onVideoReady={onVideoReady}
                     scale={3}
                 />
@@ -78,7 +81,7 @@ const BackdropRig = ({
 
 /** The Base 3D scene. */
 export const Base3DScene = ({
-    videoSrc,
+    media,
     shouldUseFreeCamera,
     shouldRender,
     isIndexRoute,
@@ -94,6 +97,22 @@ export const Base3DScene = ({
         // behind other DOM elements (e.g., after route transitions).
         setEventSource(document.body);
     }, []);
+
+    const resolvedMedia = React.useMemo<SceneMedia>(() => {
+        const type = media?.sourceType;
+        const src = typeof media?.source === "string" ? media.source.trim() : "";
+
+        if ((type === "video" || type === "image") && src.length > 0) {
+            return { sourceType: type, source: src };
+        }
+
+        return { sourceType: "video", source: DEFAULT_STATIC_VIDEO_SRC };
+    }, [media]);
+
+    React.useEffect(() => {
+        // Clear previously created video element when switching to image.
+        if (resolvedMedia.sourceType === "image") setVideoEl(null);
+    }, [resolvedMedia.sourceType]);
 
     return shouldRender ? (
         <div className={styles.canvasContainer}>
@@ -113,10 +132,10 @@ export const Base3DScene = ({
                     />
                     <group position={[0, -1, 0]}>
                         <Brad fadeRef={routeTransitionRef} />
-                        {videoEl ? <Screen video={videoEl} /> : null}
+                        <Screen video={videoEl ?? undefined} media={resolvedMedia} />
                         <BackdropRig
                             transitionRef={routeTransitionRef}
-                            videoSrc={videoSrc}
+                            media={resolvedMedia}
                             onVideoReady={setVideoEl}
                             sourceVideo={videoEl}
                         />
