@@ -14,7 +14,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 			{ label: "Bandcamp", href: "https://example.com" },
 			{ label: "Spotify", href: "https://example.com" },
 		],
-		screen: { kind: "video", src: "/branding/videos/demo-reel.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/demo-reel.mp4" },
 		body: (
 			<>
 				<p>
@@ -35,7 +35,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2025",
 		tags: ["Percussion"],
 		links: [{ label: "Listen", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>A punchy track with lots of transient detail.</p>,
 	},
 	{
@@ -45,7 +45,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2025",
 		tags: ["Drone", "Analog"],
 		links: [{ label: "Listen", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Slow movement, harmonic grit, and space.</p>,
 	},
 	{
@@ -55,7 +55,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2024",
 		tags: ["Score", "Film"],
 		links: [{ label: "Credits", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Minimal cues designed to support the edit.</p>,
 	},
 	{
@@ -65,7 +65,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2024",
 		tags: ["Foley"],
 		links: [{ label: "Download", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Recorded and cut for quick drop-in use.</p>,
 	},
 	{
@@ -75,7 +75,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2023",
 		tags: ["Live"],
 		links: [{ label: "Watch", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>A recorded set—highlights later become clips.</p>,
 	},
 	{
@@ -85,7 +85,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2023",
 		tags: ["Collab"],
 		links: [{ label: "Listen", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Shared palette, quick iteration, fun results.</p>,
 	},
 	{
@@ -95,7 +95,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2022",
 		tags: ["Remix"],
 		links: [{ label: "Listen", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>A new arrangement built around different textures.</p>,
 	},
 	{
@@ -105,7 +105,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2022",
 		tags: ["Library"],
 		links: [{ label: "Playlist", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Short cues optimized for cutting.</p>,
 	},
 	{
@@ -115,7 +115,7 @@ const MUSIC_ITEMS: ShowcaseItem[] = [
 		year: "2021",
 		tags: ["Archive"],
 		links: [{ label: "More", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
+		screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
 		body: <p>Early experiments and sketches.</p>,
 	},
 ];

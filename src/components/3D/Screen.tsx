@@ -1,5 +1,6 @@
 import React from "react";
 import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 
 const applyAspectCover = (
     texture: THREE.Texture,
@@ -71,6 +72,8 @@ const useImageTexture = (src?: string, opts?: { flipY?: boolean }) => {
     return texture;
 };
 
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
 /** The video screen for the various pages. */
 export const Screen = ({
     video,
@@ -111,6 +114,13 @@ export const Screen = ({
 
     const imageTexture = useImageTexture(media.sourceType === "image" ? media.source : undefined, { flipY: true });
 
+    const imageBaseUvRef = React.useRef<{
+        repeatX: number;
+        repeatY: number;
+        offsetX: number;
+        offsetY: number;
+    } | null>(null);
+
     React.useEffect(() => {
         if (!activeVideo || !videoTexture) return;
 
@@ -139,7 +149,48 @@ export const Screen = ({
 
         const targetAspect = 4 / 2.25;
         applyAspectCover(imageTexture, { videoAspect: w / h, targetAspect });
+
+        imageBaseUvRef.current = {
+            repeatX: imageTexture.repeat.x,
+            repeatY: imageTexture.repeat.y,
+            offsetX: imageTexture.offset.x,
+            offsetY: imageTexture.offset.y,
+        };
     }, [imageTexture]);
+
+    useFrame((state) => {
+        if (media.sourceType !== "image") return;
+        if (!imageTexture) return;
+
+        const base = imageBaseUvRef.current;
+        if (!base) return;
+
+        // Subtle Ken Burns: slow zoom + gentle drift.
+        // Texture repeat < 1 means we're "zoomed" (cropped). Smaller repeat => more zoom.
+        const t = state.clock.getElapsedTime();
+        const zoom = 0.04 + 0.02 * Math.sin(t * 0.12); // 4%..6%
+
+        const repeatX = clamp(base.repeatX * (1 - zoom), 0.01, 1);
+        const repeatY = clamp(base.repeatY * (1 - zoom), 0.01, 1);
+
+        const baseCenterX = base.offsetX + base.repeatX / 2;
+        const baseCenterY = base.offsetY + base.repeatY / 2;
+
+        const minCenterX = repeatX / 2;
+        const maxCenterX = 1 - repeatX / 2;
+        const minCenterY = repeatY / 2;
+        const maxCenterY = 1 - repeatY / 2;
+
+        const driftX = 0.05 * Math.sin(t * 0.07);
+        const driftY = 0.04 * Math.cos(t * 0.06);
+
+        const centerX = clamp(baseCenterX + driftX, minCenterX, maxCenterX);
+        const centerY = clamp(baseCenterY + driftY, minCenterY, maxCenterY);
+
+        imageTexture.repeat.set(repeatX, repeatY);
+        imageTexture.offset.set(centerX - repeatX / 2, centerY - repeatY / 2);
+        imageTexture.needsUpdate = true;
+    });
 
     React.useEffect(() => {
         if (video) {

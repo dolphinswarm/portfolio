@@ -9,6 +9,55 @@
   color: rgba(255, 255, 255, 0.92);
 }
 
+.chromeToggle {
+  position: fixed;
+  right: 22px;
+  bottom: calc(env(safe-area-inset-bottom) + 18px + var(--mobile-nav-height, 0px));
+  z-index: 200;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.55);
+  color: inherit;
+  border-radius: 999px;
+  height: 34px;
+  padding: 0 14px;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  opacity: 0.82;
+  transition: opacity 140ms ease, transform 140ms ease, background 140ms ease;
+}
+
+.chromeToggleIcon {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.92;
+}
+
+.chromeToggle:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.chromeToggle:active {
+  transform: translateY(0.5px);
+}
+
+.chromeToggle:focus-visible {
+  outline: 2px solid rgba(79, 209, 255, 0.75);
+  outline-offset: 2px;
+}
+
 .header {
   margin-top: 16px;
   margin-bottom: 0;
@@ -55,7 +104,8 @@
 .dock {
   position: fixed;
   left: 50%;
-  transform: translateX(-50%);
+  --dock-y: 0px;
+  transform: translateX(-50%) translateY(var(--dock-y));
   width: min(1100px, calc(100vw - 40px));
   bottom: 22px;
   z-index: 190;
@@ -63,6 +113,18 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 220ms ease, transform 220ms ease, visibility 0s linear 0s;
+}
+
+.dockHidden {
+  --dock-y: 22px;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 220ms ease, transform 220ms ease, visibility 0s linear 220ms;
 }
 
 .detailTop {
@@ -70,6 +132,20 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+}
+
+
+@media (min-width: 769px) {
+  .chromeToggle {
+    right: 26px;
+    bottom: 26px;
+    height: 38px;
+    padding: 0 16px;
+    font-size: 13px;
+    opacity: 0.98;
+    background: rgba(0, 0, 0, 0.68);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  }
 }
 
 .itemTitle {

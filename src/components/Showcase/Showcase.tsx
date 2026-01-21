@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Showcase.module.scss";
 
 const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
@@ -27,8 +28,8 @@ const ShowcaseThumb = ({
     onSelect: (slug: string) => void;
 }) => {
     const explicitThumb =
-        (item.thumb?.kind === "image" ? item.thumb.src : undefined) ??
-        (item.screen?.kind === "image" ? item.screen.src : undefined);
+        (item.thumbnailSource?.kind === "image" ? item.thumbnailSource.src : undefined) ??
+        (item.screenSource?.kind === "image" ? item.screenSource.src : undefined);
 
     const thumbSrc = explicitThumb ?? FALLBACK_THUMB_SRC;
 
@@ -81,10 +82,10 @@ export type ShowcaseItem = {
     tags?: string[];
 
     /** The media to send to the 3D screen (preferred). */
-    screen?: ShowcaseAsset;
+    screenSource?: ShowcaseAsset;
 
-    /** Optional thumbnail media (recommended for mobile). Prefer an image. */
-    thumb?: ShowcaseAsset;
+    /** Thumbnail media for the carousel. Prefer an image. */
+    thumbnailSource?: ShowcaseAsset;
 
     links?: ShowcaseItemLink[];
     body?: React.ReactNode;
@@ -102,6 +103,32 @@ export const Showcase = ({
     onScreenMediaChange?: (media: ShowcaseScreenMedia | null) => void;
 }) => {
     const router = useRouter();
+
+    const dockId = React.useId();
+
+    const chromeStorageKey = React.useMemo(
+        () => `showcase:${queryKey}:${pageTitle}:chromeVisible`,
+        [queryKey, pageTitle],
+    );
+    const [isChromeVisible, setIsChromeVisible] = React.useState(true);
+
+    React.useEffect(() => {
+        try {
+            const stored = window.localStorage.getItem(chromeStorageKey);
+            if (stored === null) return;
+            setIsChromeVisible(stored === "true");
+        } catch {
+            // no-op
+        }
+    }, [chromeStorageKey]);
+
+    React.useEffect(() => {
+        try {
+            window.localStorage.setItem(chromeStorageKey, String(isChromeVisible));
+        } catch {
+            // no-op
+        }
+    }, [chromeStorageKey, isChromeVisible]);
 
     const arePreviewEqual = React.useCallback(
         (a: ShowcaseScreenMedia | null, b: ShowcaseScreenMedia | null) => {
@@ -160,8 +187,8 @@ export const Showcase = ({
                 });
         }
 
-        const preferred = selectedItem.screen;
-        const fallback = selectedItem.thumb;
+        const preferred = selectedItem.screenSource;
+        const fallback = selectedItem.thumbnailSource;
 
         const next: ShowcaseScreenMedia | null = preferred
             ? toScreenMedia(preferred)
@@ -229,15 +256,35 @@ export const Showcase = ({
 
     return (
         <div className={styles.wrap}>
-            <div className={styles.dock} aria-label={`${pageTitle} detail and items`}>
+            <button
+                type="button"
+                className={styles.chromeToggle}
+                onClick={() => setIsChromeVisible((v) => !v)}
+                aria-expanded={isChromeVisible}
+                aria-controls={dockId}
+            >
+                <span className={styles.chromeToggleIcon} aria-hidden="true">
+                    <FontAwesomeIcon
+                        icon={isChromeVisible ? faEyeSlash : faEye}
+                        fixedWidth
+                    />
+                </span>
+                <span>{isChromeVisible ? "Hide UI" : "Show UI"}</span>
+            </button>
+
+            <div
+                id={dockId}
+                className={
+                    isChromeVisible ? styles.dock : `${styles.dock} ${styles.dockHidden}`
+                }
+                aria-label={`${pageTitle} detail and items`}
+                aria-hidden={!isChromeVisible}
+            >
                 {selectedItem ? (
                     <section className={styles.detail} aria-label="Selected item">
                         <div className={styles.detailTop}>
                             <div>
                                 <h2 className={styles.itemTitle}>{selectedItem.title}</h2>
-                                {selectedItem.subtitle ? (
-                                    <div className={styles.itemSubtitle}>{selectedItem.subtitle}</div>
-                                ) : null}
                             </div>
                             {selectedItem.year ? (
                                 <div className={styles.year} aria-label="Year">
@@ -277,7 +324,11 @@ export const Showcase = ({
                             </div>
                         ) : null}
 
-                        {selectedItem.body ? <div className={styles.body}>{selectedItem.body}</div> : null}
+                        {selectedItem.body ? (
+                            <div className={styles.body}>
+                                {selectedItem.body}
+                            </div>
+                        ) : null}
                     </section>
                 ) : null}
 

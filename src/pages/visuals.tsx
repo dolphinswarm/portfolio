@@ -2,111 +2,28 @@ import * as React from "react";
 import Head from "next/head";
 import { Showcase, type ShowcaseItem } from "@/components/Showcase/Showcase";
 import { useSceneVideo } from "@/context/SceneVideoContext";
+import Link from "next/link";
 
 const VISUAL_ITEMS: ShowcaseItem[] = [
 	{
-		slug: "demo-reel",
-		title: "Demo Reel",
-		subtitle: "Motion / edits",
+		slug: "futerra",
+		title: "FuTerra | I Was The Earth",
+		subtitle: "Installation at BLINK 2024",
 		year: "2026",
 		tags: ["Edit", "Motion"],
-		links: [{ label: "Download", href: "/branding/videos/demo-reel.mp4" }],
-		screen: { kind: "video", src: "/branding/videos/demo-reel.mp4" },
+		links: [{ label: "Download", href: "/branding/videos/futerra.mp4" }],
+		screenSource: { kind: "video", src: "/branding/videos/visuals/futerra-abridged.mp4" },
+		thumbnailSource: { kind: "image", src: "/branding/img/visuals/futerra-2.jpg" },
 		body: (
 			<>
 				<p>
-					This is a great fit for the “screen-first” presentation:
-					visuals want big preview real estate.
+					<b>FuTerra | I Was The Earth</b> is an immersive projection experience, which was presented at BLINK 2024 in Cincinnati, Ohio. It explores themes of community, urbanity, nature, humanity, and technology. It offers a glimpse of a future city where these themes harmoniously intertwine, representing the city's strength. Rooted in a vision informed by the past and present, the duality and contrast of synthetic and organic have been retired. People are together as active participants in nature, not champions of its improvement.
 				</p>
 				<p>
-					On mobile, you swipe the strip to switch pieces without
-					scrolling a massive list.
+					This installation was made as part of a collaborative effort from the various members of <a href="https://www.and-friends.studio/">&FRIENDS Studio</a>. My role in this project was music director and a technical artist, where I created a generative music system to "infinitely" play with the installation (more details can be found on the  <Link href="music?project=futerra-music-generator">music page</Link>). I also helped with projection mapping, media server programming, Unreal engine scene development, and overall technical direction.
 				</p>
 			</>
 		),
-	},
-	{
-		slug: "short-01",
-		title: "Short Film 01",
-		subtitle: "Lookdev",
-		year: "2025",
-		tags: ["Lookdev", "Lighting"],
-		links: [{ label: "Case Study", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>Replace this with a still/video and a quick note.</p>,
-	},
-	{
-		slug: "short-02",
-		title: "Short Film 02",
-		subtitle: "Compositing",
-		year: "2025",
-		tags: ["Comp", "Color"],
-		links: [{ label: "Credits", href: "https://example.com" }],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>Keep details light here; link out to the full breakdown.</p>,
-	},
-	{
-		slug: "poster-series",
-		title: "Poster Series",
-		subtitle: "Print / typography",
-		year: "2024",
-		tags: ["Print", "Type"],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>A set of posters exploring type and rhythm.</p>,
-	},
-	{
-		slug: "shader-study",
-		title: "Shader Study",
-		subtitle: "Realtime",
-		year: "2024",
-		tags: ["GLSL", "Realtime"],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>Interactive material studies and lighting experiments.</p>,
-	},
-	{
-		slug: "ui-motion",
-		title: "UI Motion",
-		subtitle: "Micro-interactions",
-		year: "2023",
-		tags: ["UX", "Animation"],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>Motion that clarifies state and feels snappy.</p>,
-	},
-	{
-		slug: "title-cards",
-		title: "Title Cards",
-		subtitle: "Design system",
-		year: "2023",
-		tags: ["Brand", "System"],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>A cohesive set of titles for a series.</p>,
-	},
-	{
-		slug: "photo-set",
-		title: "Photo Set",
-		subtitle: "Selection",
-		year: "2022",
-		tags: ["Photo"],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>A small photo selection with consistent grading.</p>,
-	},
-	{
-		slug: "brand-studies",
-		title: "Brand Studies",
-		subtitle: "Explorations",
-		year: "2022",
-		tags: ["Brand"],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>Quick brand directions and visual language tests.</p>,
-	},
-	{
-		slug: "misc-vis",
-		title: "Misc Visuals",
-		subtitle: "Bits and pieces",
-		year: "2021",
-		tags: ["Sketches"],
-		screen: { kind: "video", src: "/branding/videos/tv-static.mp4" },
-		body: <p>Small studies that don’t need a full case study.</p>,
 	},
 ];
 

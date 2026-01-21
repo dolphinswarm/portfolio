@@ -12,7 +12,7 @@ const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
     about: {
         media: undefined,
         shouldUseFreeCamera: false,
-        shouldRender: false,
+        shouldRender: true,
     },
     code: {
         media: undefined,

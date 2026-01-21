@@ -8,13 +8,14 @@ const CODE_ITEMS: ShowcaseItem[] = [
   {
     slug: "parkinsons-vr",
     title: "Parkinson's VR Training",
-    subtitle: "Virtual reality simulation made for a study on using VR to train nurses",
+    subtitle: "Virtual reality training sim",
     year: "2021",
     tags: ["Unity", "C#", "VR"],
     links: [
       { label: "GitHub", href: "https://github.com/dolphinswarm/Malone-University-Parkinson-s-VR-Training", icon: faGithub },
     ],
-    screen: { kind: "video", src: "/branding/videos/code/parkinsons-vr.mp4" },
+    screenSource: { kind: "video", src: "/branding/videos/code/parkinsons-vr.mp4" },
+    thumbnailSource: { kind: "image", src: "/branding/img/code/parkinsons-vr.png" },
     body: (
       <>
         <p>
@@ -37,8 +38,8 @@ const CODE_ITEMS: ShowcaseItem[] = [
     links: [
       { label: "GitHub", href: "https://github.com/dolphinswarm/vrchery", icon: faGithub },
     ],
-    screen: { kind: "image", src: "/branding/img/code/vrchery.png" },
-    thumb: { kind: "image", src: "/branding/img/code/vrchery.png" },
+    screenSource: { kind: "image", src: "/branding/img/code/vrchery.png" },
+    thumbnailSource: { kind: "image", src: "/branding/img/code/vrchery.png" },
     body: (
       <>
         <p>
@@ -61,7 +62,7 @@ const CODE_ITEMS: ShowcaseItem[] = [
     links: [
       { label: "GitHub", href: "https://github.com/", icon: faGithub },
     ],
-    screen: { kind: "video", src: "/branding/videos/code/r3f-portfolio.mp4" },
+    screenSource: { kind: "video", src: "/branding/videos/code/r3f-portfolio.mp4" },
     body: (
       <>
         <p>
