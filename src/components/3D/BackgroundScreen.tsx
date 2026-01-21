@@ -29,7 +29,11 @@ type GLTFScreenResult = {
 };
 
 export type BackgroundScreenProps = {
-    media: { sourceType: "video" | "image"; source: string };
+    media: {
+        sourceType: "video" | "image";
+        source: string;
+        audio?: { enabled: boolean; volume?: number };
+    };
     onVideoReady?: (video: HTMLVideoElement) => void;
 
     screenPosition?: THREE.Vector3Tuple;
@@ -367,12 +371,16 @@ export const BackgroundScreen = ({
             return;
         }
 
+        const audioEnabled = media.audio?.enabled === true;
+        const audioVolume = typeof media.audio?.volume === "number" ? media.audio.volume : 1;
+
         const vid = document.createElement("video");
         vid.src = src;
         vid.crossOrigin = "Anonymous";
         vid.preload = "auto";
         vid.loop = true;
-        vid.muted = true;
+        vid.muted = !audioEnabled;
+        if (audioEnabled) vid.volume = Math.min(1, Math.max(0, audioVolume));
         vid.playsInline = true;
 
         const playPromise = vid.play();
@@ -397,6 +405,28 @@ export const BackgroundScreen = ({
             }
         };
     }, [media.sourceType, media.source, onVideoReady]);
+
+    React.useEffect(() => {
+        if (!internalVideo) return;
+        if (media.sourceType !== "video") return;
+
+        const audioEnabled = media.audio?.enabled === true;
+        const audioVolume = typeof media.audio?.volume === "number" ? media.audio.volume : 1;
+
+        internalVideo.muted = !audioEnabled;
+        if (audioEnabled) {
+            internalVideo.volume = Math.min(1, Math.max(0, audioVolume));
+
+            const playPromise = internalVideo.play();
+            if (playPromise && typeof (playPromise as Promise<void>).catch === "function") {
+                (playPromise as Promise<void>).catch((err: unknown) => {
+                    const name = (err as { name?: string } | null)?.name;
+                    // If the browser blocks unmuted autoplay, we'll just stay silent.
+                    if (name === "AbortError" || name === "NotAllowedError") return;
+                });
+            }
+        }
+    }, [internalVideo, media.sourceType, media.audio?.enabled, media.audio?.volume]);
 
     const palette = useVideoPalette(internalVideo, {
         sampleSize: 16,

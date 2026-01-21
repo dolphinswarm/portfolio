@@ -82,7 +82,11 @@ export const Screen = ({
 }: {
     video?: HTMLVideoElement;
     onVideoReady?: (video: HTMLVideoElement) => void;
-    media: { sourceType: "video" | "image"; source: string };
+    media: {
+        sourceType: "video" | "image";
+        source: string;
+        audio?: { enabled: boolean; volume?: number };
+    };
 }) => {
     const [internalVideo, setInternalVideo] = React.useState<HTMLVideoElement | null>(null);
     const activeVideo = video ?? internalVideo;
@@ -194,6 +198,12 @@ export const Screen = ({
 
     React.useEffect(() => {
         if (video) {
+            // If we previously created an internal video element, drop it once we have a shared one.
+            setInternalVideo((prev) => {
+                if (!prev) return null;
+                cleanupVideo(prev);
+                return null;
+            });
             onVideoReady?.(video);
             return;
         }
@@ -213,6 +223,7 @@ export const Screen = ({
         vid.crossOrigin = "Anonymous";
         vid.preload = "auto";
         vid.loop = true;
+        // Keep this internal fallback muted to avoid duplicate audio.
         vid.muted = true;
         vid.playsInline = true;
 

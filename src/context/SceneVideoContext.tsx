@@ -1,8 +1,9 @@
 import React from "react";
+import type { SceneMedia } from "@/utils/types";
 
 type SceneVideoContextValue = {
-    mediaOverride: { sourceType: "video" | "image"; source: string } | null;
-    setMediaOverride: (media: { sourceType: "video" | "image"; source: string } | null) => void;
+    mediaOverride: SceneMedia | null;
+    setMediaOverride: (media: SceneMedia | null) => void;
     clearMediaOverride: () => void;
 };
 
@@ -14,7 +15,7 @@ export const SceneVideoProvider = ({
     children: React.ReactNode;
 }) => {
     const [mediaOverride, setMediaOverride] = React.useState<
-        { sourceType: "video" | "image"; source: string } | null
+        SceneMedia | null
     >(null);
 
     const clearMediaOverride = React.useCallback(() => {

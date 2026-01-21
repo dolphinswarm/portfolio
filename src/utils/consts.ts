@@ -6,6 +6,7 @@ export const pages = [
     "music",
     "visuals",
     "connect",
+    "bork",
 ] as const;
 
 export type Page = (typeof pages)[number];

@@ -6,13 +6,12 @@ import { Ground } from "./Ground";
 import { Screen } from "./Screen";
 import { Pillars } from "./Pillars";
 import { PointAtCamera } from "./PointAtCamera";
-import { SceneProps } from "@/utils/types";
+import type { SceneMedia, SceneProps } from "@/utils/types";
 import { Environment } from "@react-three/drei";
 import { BackgroundScreen } from "./BackgroundScreen";
 import * as THREE from "three";
 
 const DEFAULT_STATIC_VIDEO_SRC = "/branding/videos/tv-static.mp4";
-type SceneMedia = { sourceType: "video" | "image"; source: string };
 
 const RouteTransition = ({
     isIndexRoute,
@@ -103,10 +102,24 @@ export const Base3DScene = ({
         const src = typeof media?.source === "string" ? media.source.trim() : "";
 
         if ((type === "video" || type === "image") && src.length > 0) {
-            return { sourceType: type, source: src };
+            return {
+                sourceType: type,
+                source: src,
+                audio:
+                    type === "video" && media?.audio?.enabled
+                        ? {
+                              enabled: true,
+                              volume: media.audio.volume,
+                          }
+                        : { enabled: false },
+            };
         }
 
-        return { sourceType: "video", source: DEFAULT_STATIC_VIDEO_SRC };
+        return {
+            sourceType: "video",
+            source: DEFAULT_STATIC_VIDEO_SRC,
+            audio: { enabled: false },
+        };
     }, [media]);
 
     React.useEffect(() => {

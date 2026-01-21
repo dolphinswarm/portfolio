@@ -34,6 +34,15 @@ const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
         shouldUseFreeCamera: false,
         shouldRender: true,
     },
+    bork: {
+        media: {
+            sourceType: "video",
+            source: "/branding/videos/visuals/2001-a-doge-odyssey.mp4",
+            audio: { enabled: true, volume: 1 },
+        },
+        shouldUseFreeCamera: false,
+        shouldRender: true,
+    }
 };
 
 /** Get the props for the current router scene. */

@@ -27,9 +27,10 @@ const ShowcaseThumb = ({
     selected: boolean;
     onSelect: (slug: string) => void;
 }) => {
+    const primaryScreenAsset = getPrimaryScreenAsset(item.screenSource);
     const explicitThumb =
         (item.thumbnailSource?.kind === "image" ? item.thumbnailSource.src : undefined) ??
-        (item.screenSource?.kind === "image" ? item.screenSource.src : undefined);
+        (primaryScreenAsset?.kind === "image" ? primaryScreenAsset.src : undefined);
 
     const thumbSrc = explicitThumb ?? FALLBACK_THUMB_SRC;
 
@@ -59,11 +60,25 @@ export type ShowcaseItemLink = {
     label: string;
     href: string;
     icon?: IconDefinition;
+    /** Force opening the link in a new tab/window (or keep it in the same tab). */
+    openInNewWindow?: boolean;
 };
 
 export type ShowcaseAsset =
     | { kind: "video"; src: string }
     | { kind: "image"; src: string; alt?: string };
+
+export type ShowcaseScreenSourceEntry = ShowcaseAsset & {
+    label?: string;
+    icon?: IconDefinition;
+};
+
+export type ShowcaseScreenSource =
+    | ShowcaseAsset
+    | {
+          primary: ShowcaseScreenSourceEntry;
+          secondary?: ShowcaseScreenSourceEntry;
+      };
 
 export type ShowcaseScreenMedia = {
     sourceType: "video" | "image";
@@ -74,6 +89,20 @@ const toScreenMedia = (asset: ShowcaseAsset): ShowcaseScreenMedia => {
     return { sourceType: asset.kind, source: asset.src };
 };
 
+const getPrimaryScreenAsset = (
+    screenSource?: ShowcaseScreenSource,
+): ShowcaseScreenSourceEntry | undefined => {
+    if (!screenSource) return undefined;
+    return "kind" in screenSource ? screenSource : screenSource.primary;
+};
+
+const getSecondaryScreenAsset = (
+    screenSource?: ShowcaseScreenSource,
+): ShowcaseScreenSourceEntry | undefined => {
+    if (!screenSource) return undefined;
+    return "kind" in screenSource ? undefined : screenSource.secondary;
+};
+
 export type ShowcaseItem = {
     slug: string;
     title: string;
@@ -82,7 +111,7 @@ export type ShowcaseItem = {
     tags?: string[];
 
     /** The media to send to the 3D screen (preferred). */
-    screenSource?: ShowcaseAsset;
+    screenSource?: ShowcaseScreenSource;
 
     /** Thumbnail media for the carousel. Prefer an image. */
     thumbnailSource?: ShowcaseAsset;
@@ -154,6 +183,8 @@ export const Showcase = ({
         items[0]?.slug ? items[0].slug : "",
     );
 
+    const [isAltScreenSourceActive, setIsAltScreenSourceActive] = React.useState(false);
+
     React.useEffect(() => {
         if (!router.isReady) return;
         const initial = getInitialSlug();
@@ -164,6 +195,11 @@ export const Showcase = ({
     const selectedItem = React.useMemo(() => {
         return items.find((i) => i.slug === selectedSlug) ?? items[0];
     }, [items, selectedSlug]);
+
+    // Reset the per-item toggle when changing selection.
+    React.useEffect(() => {
+        setIsAltScreenSourceActive(false);
+    }, [selectedSlug]);
 
     React.useEffect(() => {
         if (!router.isReady) return;
@@ -187,7 +223,10 @@ export const Showcase = ({
                 });
         }
 
-        const preferred = selectedItem.screenSource;
+        const secondary = getSecondaryScreenAsset(selectedItem.screenSource);
+        const primary = getPrimaryScreenAsset(selectedItem.screenSource);
+
+        const preferred = isAltScreenSourceActive && secondary ? secondary : primary;
         const fallback = selectedItem.thumbnailSource;
 
         const next: ShowcaseScreenMedia | null = preferred
@@ -214,10 +253,26 @@ export const Showcase = ({
         router.isReady,
         router.pathname,
         selectedItem,
+        isAltScreenSourceActive,
         queryKey,
         onScreenMediaChange,
         arePreviewEqual,
     ]);
+
+    const primaryScreenAsset = getPrimaryScreenAsset(selectedItem?.screenSource);
+    const secondaryScreenAsset = getSecondaryScreenAsset(selectedItem?.screenSource);
+
+    const hasVideoToggle =
+        primaryScreenAsset?.kind === "video" &&
+        secondaryScreenAsset?.kind === "video";
+
+    const primaryLabel = primaryScreenAsset?.label ?? "Video 1";
+    const secondaryLabel = secondaryScreenAsset?.label ?? "Video 2";
+    const nextLabel = isAltScreenSourceActive ? primaryLabel : secondaryLabel;
+
+    const nextIcon = isAltScreenSourceActive
+        ? primaryScreenAsset?.icon
+        : secondaryScreenAsset?.icon;
 
     const onSelect = React.useCallback((slug: string) => {
         setSelectedSlug(slug);
@@ -285,6 +340,21 @@ export const Showcase = ({
                         <div className={styles.detailTop}>
                             <div>
                                 <h2 className={styles.itemTitle}>{selectedItem.title}</h2>
+                                {hasVideoToggle ? (
+                                    <button
+                                        type="button"
+                                        className={styles.videoToggle}
+                                        onClick={() => setIsAltScreenSourceActive((v) => !v)}
+                                        aria-pressed={isAltScreenSourceActive}
+                                    >
+                                        {nextIcon ? (
+                                            <span className={styles.videoToggleIcon} aria-hidden="true">
+                                                <FontAwesomeIcon icon={nextIcon} fixedWidth />
+                                            </span>
+                                        ) : null}
+                                        Switch to {nextLabel}
+                                    </button>
+                                ) : null}
                             </div>
                             {selectedItem.year ? (
                                 <div className={styles.year} aria-label="Year">
@@ -306,11 +376,23 @@ export const Showcase = ({
                         {selectedItem.links?.length ? (
                             <div className={styles.links} aria-label="Links">
                                 {selectedItem.links.map((l) => (
+                                    (() => {
+                                        const isInternal = l.href.startsWith("/");
+                                        const shouldOpenInNewWindow =
+                                            typeof l.openInNewWindow === "boolean"
+                                                ? l.openInNewWindow
+                                                : !isInternal;
+                                        const target = shouldOpenInNewWindow ? "_blank" : undefined;
+                                        const rel = shouldOpenInNewWindow
+                                            ? "noopener noreferrer"
+                                            : undefined;
+
+                                        return (
                                     <a
                                         key={`${selectedItem.slug}-${l.href}`}
                                         href={l.href}
-                                        target={l.href.startsWith("/") ? undefined : "_blank"}
-                                        rel={l.href.startsWith("/") ? undefined : "noreferrer"}
+                                        target={target}
+                                        rel={rel}
                                         className={styles.link}
                                     >
                                         {l.icon ? (
@@ -320,6 +402,8 @@ export const Showcase = ({
                                         ) : null}
                                         {l.label}
                                     </a>
+                                        );
+                                    })()
                                 ))}
                             </div>
                         ) : null}

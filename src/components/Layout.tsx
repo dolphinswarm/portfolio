@@ -3,9 +3,11 @@ import { Footer } from "./Footer";
 import { Base3DScene } from "./3D/Base";
 import { useGetRouterSceneProps } from "@/hooks/useGetRouterSceneProps";
 import { useSceneVideo } from "@/context/SceneVideoContext";
+import { useKonamiCode } from "@/hooks/useKonamiCode";
 import styles from "@/styles/Layout.module.scss";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
+    useKonamiCode();
     const sceneProps = useGetRouterSceneProps();
     const { mediaOverride } = useSceneVideo();
     return (
