@@ -1,6 +1,6 @@
 import * as React from "react";
 import Head from "next/head";
-import { Showcase, type ShowcaseItem } from "@/components/Showcase/Showcase";
+import { Showcase, type ShowcaseItem, type ShowcaseScreenMedia } from "@/components/Showcase/Showcase";
 import { useSceneVideo } from "@/context/SceneVideoContext";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
@@ -54,6 +54,58 @@ const CODE_ITEMS: ShowcaseItem[] = [
     ),
   },
   {
+    slug: "ninjas-vs-knights",
+    title: "Ninjas vs. Knights",
+    subtitle: "Unity capture-the-flag game for CSE 389",
+    year: "2026",
+    tags: ["Next.js", "TypeScript", "Three.js"],
+    links: [
+      { label: "GitHub", href: "https://github.com/", icon: faGithub },
+    ],
+    screenSource: { kind: "video", src: "/branding/videos/code/ninjas-vs-knights.mp4" },
+    thumbnailSource: { kind: "image", src: "/branding/img/code/ninjas-vs-knights.png" },
+    body: (
+      <>
+        <p>
+          A responsive “screen-first” layout: big preview up top on
+          mobile, split view on desktop.
+        </p>
+        <p>
+          This card list is meant to be short (≈10 items) and fun to
+          browse with your thumb.
+        </p>
+      </>
+    ),
+  }, 
+  {
+    slug: "the-ultimate-drum-machine",
+    title: "The Ultimate Drum Machine",
+    subtitle: "Unity capture-the-flag game for CSE 389",
+    year: "2026",
+    tags: ["Next.js", "TypeScript", "Three.js"],
+    links: [
+      { label: "GitHub", href: "https://github.com/", icon: faGithub },
+    ],
+    screenSource: {
+      kind: "video",
+      src: "/branding/videos/code/the-ultimate-drum-machine.mp4",
+      audio: { toggleable: true, defaultEnabled: false, volume: 1 },
+    },
+    thumbnailSource: { kind: "image", src: "/branding/img/code/the-ultimate-drum-machine.png" },
+    body: (
+      <>
+        <p>
+          A responsive “screen-first” layout: big preview up top on
+          mobile, split view on desktop.
+        </p>
+        <p>
+          This card list is meant to be short (≈10 items) and fun to
+          browse with your thumb.
+        </p>
+      </>
+    ),
+  }, 
+  {
     slug: "r3f-portfolio",
     title: "3D Portfolio",
     subtitle: "Next.js + R3F",
@@ -82,7 +134,7 @@ const Code = () => {
   const { setMediaOverride, clearMediaOverride } = useSceneVideo();
 
   const onScreenMediaChange = React.useCallback(
-    (media: { sourceType: "video" | "image"; source: string } | null) => {
+    (media: ShowcaseScreenMedia | null) => {
       setMediaOverride(media);
     },
     [setMediaOverride],

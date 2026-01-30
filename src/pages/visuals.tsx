@@ -1,9 +1,9 @@
 import * as React from "react";
 import Head from "next/head";
-import { Showcase, type ShowcaseItem } from "@/components/Showcase/Showcase";
+import { Showcase, type ShowcaseItem, type ShowcaseScreenMedia } from "@/components/Showcase/Showcase";
 import { useSceneVideo } from "@/context/SceneVideoContext";
 import Link from "next/link";
-import { faBook, faClapperboard, faFilm } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUpRightFromSquare, faBook, faClapperboard, faFilm } from "@fortawesome/free-solid-svg-icons";
 
 const VISUAL_ITEMS: ShowcaseItem[] = [
 	{
@@ -134,6 +134,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 			primary: {
 				kind: "video",
 				src: "/branding/videos/visuals/fort-knox.mp4",
+				audio: { toggleable: true, defaultEnabled: false, volume: 1 },
 			},
 		},
 		thumbnailSource: { kind: "image", src: "/branding/img/visuals/fort-knox.png" },
@@ -168,7 +169,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 	},{
 		slug: "steampunk-mobile-fortress",
 		title: "Steampunk Mobile Fortress",
-		subtitle: "Final Project for IMS 319 @ Miami University",
+		subtitle: "3D Model and Animation Final Project for IMS 319 @ Miami University",
 		year: "2020",
 		tags: ["TouchDesigner", "Projection Mapping"],
 		links: [{ label: "Read More", href: "https://sites.miamioh.edu/mother-earths-gallery-of-broken-things/letter-from-the-ocean/", icon: faBook, openInNewWindow: true }],
@@ -186,6 +187,27 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
 				</p>
 			</>
 		),
+	},{
+		slug: "miami-university-sundial",
+		title: "Miami University Sundial",
+		subtitle: "Final Project for IMS 319 @ Miami University",
+		year: "2020",
+		tags: ["TouchDesigner", "Projection Mapping"],
+		links: [{ label: "Image of IRL Sundial", href: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.topuniversities.com%2Fsites%2Fdefault%2Ffiles%2Fprofiles-slideshow%2FOutdoor%2520orientation%2520sundial%2520resized-1664204307.jpg&f=1&nofb=1&ipt=e724a147795ee029fc81fe500b64bc135704789963b07ff276f1363b9e193ad6", icon: faArrowUpRightFromSquare, openInNewWindow: true }],
+		screenSource: {
+			primary: {
+				kind: "image",
+				src: "/branding/img/visuals/miami-sundial.png",
+			},
+		},
+		thumbnailSource: { kind: "image", src: "/branding/img/visuals/miami-sundial.png" },
+		body: (
+			<>
+				<p>
+					<b>Fort Knox - TouchDesigner Music Video</b> was an interactive projection installation created for Miami University's annual ArtsFest in 2020. The installation invited participants to explore a virtual environment projected onto the walls of the Shriver Center, responding to their movements and interactions.
+				</p>
+			</>
+		),
 	},
 ];
 
@@ -193,7 +215,7 @@ const Visuals = () => {
 	const { setMediaOverride, clearMediaOverride } = useSceneVideo();
 
 	const onScreenMediaChange = React.useCallback(
-		(media: { sourceType: "video" | "image"; source: string } | null) => {
+		(media: ShowcaseScreenMedia | null) => {
 			setMediaOverride(media);
 		},
 		[setMediaOverride],

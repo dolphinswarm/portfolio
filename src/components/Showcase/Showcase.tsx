@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faVolumeHigh, faVolumeXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Showcase.module.scss";
 
 const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
@@ -65,7 +65,19 @@ export type ShowcaseItemLink = {
 };
 
 export type ShowcaseAsset =
-    | { kind: "video"; src: string }
+    | {
+          kind: "video";
+          src: string;
+          /** Optional audio controls for this specific video asset. */
+          audio?: {
+              /** When true, show an Audio On/Off toggle in the Showcase UI. */
+              toggleable?: boolean;
+              /** Default state when the item/asset becomes active. */
+              defaultEnabled?: boolean;
+              /** 0..1; defaults to 1 when enabled. */
+              volume?: number;
+          };
+      }
     | { kind: "image"; src: string; alt?: string };
 
 export type ShowcaseScreenSourceEntry = ShowcaseAsset & {
@@ -83,10 +95,21 @@ export type ShowcaseScreenSource =
 export type ShowcaseScreenMedia = {
     sourceType: "video" | "image";
     source: string;
+    audio?: { enabled: boolean; volume?: number };
 };
 
-const toScreenMedia = (asset: ShowcaseAsset): ShowcaseScreenMedia => {
-    return { sourceType: asset.kind, source: asset.src };
+const toScreenMedia = (asset: ShowcaseAsset, opts?: { audioEnabled?: boolean }): ShowcaseScreenMedia => {
+    if (asset.kind === "video") {
+        const volume = typeof asset.audio?.volume === "number" ? asset.audio.volume : 1;
+        const shouldIncludeAudio = opts?.audioEnabled === true;
+        return {
+            sourceType: "video",
+            source: asset.src,
+            audio: shouldIncludeAudio ? { enabled: true, volume } : { enabled: false },
+        };
+    }
+
+    return { sourceType: "image", source: asset.src };
 };
 
 const getPrimaryScreenAsset = (
@@ -163,7 +186,17 @@ export const Showcase = ({
         (a: ShowcaseScreenMedia | null, b: ShowcaseScreenMedia | null) => {
             if (a === b) return true;
             if (!a || !b) return false;
-            return a.sourceType === b.sourceType && a.source === b.source;
+            const aAudioEnabled = a.audio?.enabled === true;
+            const bAudioEnabled = b.audio?.enabled === true;
+            const aVol = typeof a.audio?.volume === "number" ? a.audio.volume : 1;
+            const bVol = typeof b.audio?.volume === "number" ? b.audio.volume : 1;
+
+            return (
+                a.sourceType === b.sourceType &&
+                a.source === b.source &&
+                aAudioEnabled === bAudioEnabled &&
+                (aAudioEnabled ? aVol === bVol : true)
+            );
         },
         [],
     );
@@ -184,6 +217,7 @@ export const Showcase = ({
     );
 
     const [isAltScreenSourceActive, setIsAltScreenSourceActive] = React.useState(false);
+    const [isAudioEnabled, setIsAudioEnabled] = React.useState(false);
 
     React.useEffect(() => {
         if (!router.isReady) return;
@@ -200,6 +234,26 @@ export const Showcase = ({
     React.useEffect(() => {
         setIsAltScreenSourceActive(false);
     }, [selectedSlug]);
+
+    const activeScreenAsset = React.useMemo(() => {
+        if (!selectedItem) return undefined;
+        const secondary = getSecondaryScreenAsset(selectedItem.screenSource);
+        const primary = getPrimaryScreenAsset(selectedItem.screenSource);
+        return isAltScreenSourceActive && secondary ? secondary : primary;
+    }, [selectedItem, isAltScreenSourceActive]);
+
+    const isAudioToggleAvailable =
+        activeScreenAsset?.kind === "video" && activeScreenAsset.audio?.toggleable === true;
+
+    // Reset audio state when switching items or the active asset.
+    React.useEffect(() => {
+        if (activeScreenAsset?.kind !== "video") {
+            setIsAudioEnabled(false);
+            return;
+        }
+        const nextDefault = activeScreenAsset.audio?.defaultEnabled === true;
+        setIsAudioEnabled(nextDefault);
+    }, [activeScreenAsset]);
 
     React.useEffect(() => {
         if (!router.isReady) return;
@@ -223,14 +277,13 @@ export const Showcase = ({
                 });
         }
 
-        const secondary = getSecondaryScreenAsset(selectedItem.screenSource);
-        const primary = getPrimaryScreenAsset(selectedItem.screenSource);
-
-        const preferred = isAltScreenSourceActive && secondary ? secondary : primary;
+        const preferred = activeScreenAsset;
         const fallback = selectedItem.thumbnailSource;
 
+        const audioEnabled = isAudioToggleAvailable ? isAudioEnabled : (preferred?.kind === "video" && preferred.audio?.defaultEnabled === true);
+
         const next: ShowcaseScreenMedia | null = preferred
-            ? toScreenMedia(preferred)
+            ? toScreenMedia(preferred, { audioEnabled })
             : fallback
                 ? toScreenMedia(fallback)
                 : null;
@@ -254,6 +307,9 @@ export const Showcase = ({
         router.pathname,
         selectedItem,
         isAltScreenSourceActive,
+        activeScreenAsset,
+        isAudioEnabled,
+        isAudioToggleAvailable,
         queryKey,
         onScreenMediaChange,
         arePreviewEqual,
@@ -353,6 +409,20 @@ export const Showcase = ({
                                             </span>
                                         ) : null}
                                         Switch to {nextLabel}
+                                    </button>
+                                ) : null}
+
+                                {isAudioToggleAvailable ? (
+                                    <button
+                                        type="button"
+                                        className={styles.audioToggle}
+                                        onClick={() => setIsAudioEnabled((v) => !v)}
+                                        aria-pressed={isAudioEnabled}
+                                    >
+                                        <span className={styles.audioToggleIcon} aria-hidden="true">
+                                            <FontAwesomeIcon icon={isAudioEnabled ? faVolumeHigh : faVolumeXmark} fixedWidth />
+                                        </span>
+                                        Audio: {isAudioEnabled ? "On" : "Off"}
                                     </button>
                                 ) : null}
                             </div>

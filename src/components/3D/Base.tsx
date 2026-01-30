@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import styles from "@/styles/Three.module.scss";
 import { Brad } from "./Brad";
 import { Ground } from "./Ground";
@@ -10,6 +10,10 @@ import type { SceneMedia, SceneProps } from "@/utils/types";
 import { Environment } from "@react-three/drei";
 import { BackgroundScreen } from "./BackgroundScreen";
 import * as THREE from "three";
+import {
+    ProceduralScreenMaterial,
+    type ProceduralScreenVariant,
+} from "./ProceduralScreenMaterial";
 
 const DEFAULT_STATIC_VIDEO_SRC = "/branding/videos/tv-static.mp4";
 
@@ -34,16 +38,105 @@ const RouteTransition = ({
     return null;
 };
 
+const BradVisibilityTransition = ({
+    shouldShowBrad,
+    transitionRef,
+    speed = 6,
+}: {
+    shouldShowBrad: boolean;
+    transitionRef: React.MutableRefObject<number>;
+    speed?: number;
+}) => {
+    useFrame((_, delta) => {
+        const target = shouldShowBrad ? 1 : 0;
+        transitionRef.current = THREE.MathUtils.damp(
+            transitionRef.current,
+            target,
+            speed,
+            delta,
+        );
+    });
+    return null;
+};
+
+const ProceduralShaderWarmup = () => {
+    const { gl, scene, camera } = useThree();
+    const didCompileRef = React.useRef(false);
+
+    React.useEffect(() => {
+        if (didCompileRef.current) return;
+        didCompileRef.current = true;
+
+        // Compile shaders once early so route transitions don't hitch.
+        // rAF ensures the warmup meshes have been committed to the scene.
+        const id = window.requestAnimationFrame(() => {
+            try {
+                gl.compile(scene, camera);
+            } catch {
+                // no-op
+            }
+        });
+
+        return () => {
+            window.cancelAnimationFrame(id);
+        };
+    }, [gl, scene, camera]);
+
+    // Keep these tiny, always-rendered, and non-writing.
+    return (
+        <group>
+            <mesh
+                frustumCulled={false}
+                position={[0, 0, 99]}
+                renderOrder={-1000}
+            >
+                <planeGeometry args={[0.02, 0.02]} />
+                <ProceduralScreenMaterial
+                    variant="about"
+                    intensity={1}
+                    speed={1}
+                    seed={101}
+                    transparent={true}
+                    opacity={0}
+                    depthWrite={false}
+                    depthTest={false}
+                    colorWrite={false}
+                />
+            </mesh>
+            <mesh
+                frustumCulled={false}
+                position={[0.05, 0, 99]}
+                renderOrder={-1000}
+            >
+                <planeGeometry args={[0.02, 0.02]} />
+                <ProceduralScreenMaterial
+                    variant="connect"
+                    intensity={1}
+                    speed={1}
+                    seed={202}
+                    transparent={true}
+                    opacity={0}
+                    depthWrite={false}
+                    depthTest={false}
+                    colorWrite={false}
+                />
+            </mesh>
+        </group>
+    );
+};
+
 const BackdropRig = ({
     transitionRef,
     media,
     onVideoReady,
     sourceVideo,
+    proceduralVariant,
 }: {
     transitionRef: React.MutableRefObject<number>;
     media: SceneMedia;
     onVideoReady: (video: HTMLVideoElement) => void;
     sourceVideo: HTMLVideoElement | null;
+    proceduralVariant?: ProceduralScreenVariant;
 }) => {
     const backgroundRef = React.useRef<THREE.Group>(null);
     const pillarsRef = React.useRef<THREE.Group>(null);
@@ -68,6 +161,7 @@ const BackdropRig = ({
                 <BackgroundScreen
                     media={media}
                     onVideoReady={onVideoReady}
+                    proceduralVariant={proceduralVariant}
                     scale={3}
                 />
             </group>
@@ -81,12 +175,15 @@ const BackdropRig = ({
 /** The Base 3D scene. */
 export const Base3DScene = ({
     media,
+    backgroundVariant,
     shouldUseFreeCamera,
     shouldRender,
     isIndexRoute,
+    shouldShowBrad,
 }: SceneProps) => {
     const [videoEl, setVideoEl] = React.useState<HTMLVideoElement | null>(null);
     const routeTransitionRef = React.useRef(isIndexRoute ? 1 : 0);
+    const bradVisibilityRef = React.useRef(isIndexRoute || shouldShowBrad ? 1 : 0);
     const [eventSource, setEventSource] = React.useState<HTMLElement | undefined>(
         undefined,
     );
@@ -122,6 +219,12 @@ export const Base3DScene = ({
         };
     }, [media]);
 
+    const proceduralVariant = React.useMemo<ProceduralScreenVariant | undefined>(() => {
+        if (backgroundVariant === "about") return "about";
+        if (backgroundVariant === "connect") return "connect";
+        return undefined;
+    }, [backgroundVariant]);
+
     React.useEffect(() => {
         // Clear previously created video element when switching to image.
         if (resolvedMedia.sourceType === "image") setVideoEl(null);
@@ -138,19 +241,30 @@ export const Base3DScene = ({
                 <color attach="background" args={["black"]} />
                 <fog attach="fog" args={["black", 18, 36]} />
                 <Suspense fallback={null}>
+                    <ProceduralShaderWarmup />
                     <RouteTransition
                         isIndexRoute={isIndexRoute}
                         transitionRef={routeTransitionRef}
                         speed={2}
                     />
+                    <BradVisibilityTransition
+                        shouldShowBrad={isIndexRoute || shouldShowBrad}
+                        transitionRef={bradVisibilityRef}
+                        speed={6}
+                    />
                     <group position={[0, -1, 0]}>
-                        <Brad fadeRef={routeTransitionRef} />
-                        <Screen video={videoEl ?? undefined} media={resolvedMedia} />
+                        <Brad fadeRef={bradVisibilityRef} />
+                        <Screen
+                            video={videoEl ?? undefined}
+                            media={resolvedMedia}
+                            proceduralVariant={proceduralVariant}
+                        />
                         <BackdropRig
                             transitionRef={routeTransitionRef}
                             media={resolvedMedia}
                             onVideoReady={setVideoEl}
                             sourceVideo={videoEl}
+                            proceduralVariant={proceduralVariant}
                         />
                         <Ground />
                     </group>

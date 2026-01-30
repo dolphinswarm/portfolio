@@ -1,6 +1,10 @@
 import React from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
+import {
+    ProceduralScreenMaterial,
+    type ProceduralScreenVariant,
+} from "./ProceduralScreenMaterial";
 
 const applyAspectCover = (
     texture: THREE.Texture,
@@ -79,6 +83,7 @@ export const Screen = ({
     video,
     onVideoReady,
     media,
+    proceduralVariant,
 }: {
     video?: HTMLVideoElement;
     onVideoReady?: (video: HTMLVideoElement) => void;
@@ -87,6 +92,7 @@ export const Screen = ({
         source: string;
         audio?: { enabled: boolean; volume?: number };
     };
+    proceduralVariant?: ProceduralScreenVariant;
 }) => {
     const [internalVideo, setInternalVideo] = React.useState<HTMLVideoElement | null>(null);
     const activeVideo = video ?? internalVideo;
@@ -197,6 +203,15 @@ export const Screen = ({
     });
 
     React.useEffect(() => {
+        if (proceduralVariant) {
+            // Procedural routes do not use any video/image element.
+            setInternalVideo((prev) => {
+                cleanupVideo(prev);
+                return null;
+            });
+            return;
+        }
+
         if (video) {
             // If we previously created an internal video element, drop it once we have a shared one.
             setInternalVideo((prev) => {
@@ -254,11 +269,20 @@ export const Screen = ({
             </mesh>
             <mesh rotation={[0, 0, 0]} position={[0, 1.1, -0.5]}>
                 <planeGeometry args={[4, 2.25]} />
-                {videoTexture != null ? (
+                {proceduralVariant ? (
+                    <ProceduralScreenMaterial
+                        variant={proceduralVariant}
+                        intensity={1}
+                        speed={proceduralVariant === "about" ? 0.95 : 0.85}
+                        seed={proceduralVariant === "connect" ? 9 : 3}
+                    />
+                ) : videoTexture != null ? (
                     <meshBasicMaterial toneMapped={false} map={videoTexture} />
                 ) : imageTexture != null ? (
                     <meshBasicMaterial toneMapped={false} map={imageTexture} />
-                ) : null}
+                ) : (
+                    <meshBasicMaterial color="#0b0b0d" />
+                )}
             </mesh>
         </>
     );

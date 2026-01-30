@@ -1,6 +1,6 @@
 import * as React from "react";
 import Head from "next/head";
-import { Showcase, type ShowcaseItem } from "@/components/Showcase/Showcase";
+import { Showcase, type ShowcaseItem, type ShowcaseScreenMedia } from "@/components/Showcase/Showcase";
 import { useSceneVideo } from "@/context/SceneVideoContext";
 
 const MUSIC_ITEMS: ShowcaseItem[] = [
@@ -124,7 +124,7 @@ const Music = () => {
 	const { setMediaOverride, clearMediaOverride } = useSceneVideo();
 
 	const onScreenMediaChange = React.useCallback(
-		(media: { sourceType: "video" | "image"; source: string } | null) => {
+		(media: ShowcaseScreenMedia | null) => {
 			setMediaOverride(media);
 		},
 		[setMediaOverride],

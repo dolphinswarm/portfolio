@@ -1,0 +1,181 @@
+.root {
+  position: fixed;
+  left: 50%;
+  top: 56%;
+  transform: translate(-50%, -50%);
+
+  /* Bigger by default: this is the "screen" size on the page. */
+  width: min(1700px, 98vw);
+  aspect-ratio: 4 / 2.25;
+  /* Keep it from colliding with the header/nav. */
+  max-height: calc(100dvh - 170px);
+
+  z-index: 20;
+  /* Let the scene remain interactive unless the user interacts with content. */
+  pointer-events: none;
+
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.viewport {
+  position: relative;
+  z-index: 1;
+
+  height: 100%;
+  width: 100%;
+
+  /* Re-enable interaction only inside the screen. */
+  pointer-events: auto;
+
+  padding: 40px 40px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  /* No background/blur here: keep it feeling like text emitted from the screen. */
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow:
+    0 0 10px rgba(79, 209, 255, 0.15),
+    0 0 22px rgb(var(--accent-rgb) / 0.10),
+    0 2px 0 rgba(0, 0, 0, 0.55);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.9;
+  margin-bottom: 16px;
+}
+
+.body {
+  font-size: 18px;
+  line-height: 1.55;
+  opacity: 0.95;
+}
+
+.body > p,
+.col > p {
+  margin: 0 0 14px 0;
+}
+
+.body h2,
+.col h2 {
+  margin: 20px 0 10px 0;
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+
+.body ul,
+.col ul {
+  margin: 0 0 14px 18px;
+}
+
+.body li,
+.col li {
+  margin: 6px 0;
+}
+
+.body a,
+.col a {
+  color: rgba(79, 209, 255, 0.92);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.body a:hover,
+.col a:hover {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* Two-column layout with a hard center gap (keeps text off Brad). */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(260px, 30vw, 460px) minmax(0, 1fr);
+  column-gap: 0;
+  row-gap: 18px;
+  align-items: start;
+}
+
+.top {
+  grid-column: 1 / -1;
+  max-width: 100%;
+}
+
+.col {
+  min-width: 0;
+}
+
+.left {
+  grid-column: 1;
+  padding-right: 22px;
+}
+
+.right {
+  grid-column: 3;
+  padding-left: 22px;
+}
+
+@media (max-width: 1024px) {
+  .root {
+    top: 110px;
+    transform: translateX(-50%);
+    aspect-ratio: auto;
+    height: calc(100dvh - 140px);
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .root {
+    left: 0;
+    top: 0;
+    transform: none;
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+
+  .viewport {
+    padding: 22px 18px;
+    padding-top: calc(22px + 54px + env(safe-area-inset-top));
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .body {
+    font-size: 16px;
+  }
+
+  .grid {
+    display: block;
+  }
+
+  .left,
+  .right {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+@media (max-height: 720px) {
+  .root {
+    left: 0;
+    top: 0;
+    transform: none;
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+}

@@ -11,6 +11,8 @@ export type PillarsProps = {
     y?: number;
     size?: [number, number, number];
     sourceVideo?: HTMLVideoElement | null;
+    colorA?: string;
+    colorB?: string;
 } & Omit<ThreeElements["group"], "children">;
 
 /** Simple cube pillars on both sides of the screen extending backwards. */
@@ -22,6 +24,8 @@ export const Pillars = ({
     y = 1.3,
     size = [0.8, 2.6, 0.8],
     sourceVideo = null,
+    colorA: colorAOverride,
+    colorB: colorBOverride,
     ...groupProps
 }: PillarsProps) => {
     const step = count <= 1 ? 0 : (endZ - startZ) / (count - 1);
@@ -31,8 +35,8 @@ export const Pillars = ({
         fps: 12,
         smoothing: 0.22,
     });
-    const colorA = palette.average;
-    const colorB = palette.vibrant;
+    const colorA = colorAOverride ?? palette.average;
+    const colorB = colorBOverride ?? palette.vibrant;
 
     return (
         <group {...groupProps}>

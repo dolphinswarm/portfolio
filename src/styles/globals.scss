@@ -1,8 +1,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --mobile-nav-height: 72px;
-  --accent: #ff8a00; /* Define the orange accent CSS variable globally */
+  --mobile-nav-height: 0px;
+  --accent: #F7941E;
+  --accent-rgb: 247 148 30;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,8 +23,26 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+main strong {
+  color: var(--accent);
+}
+
+main :is(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+
+main :is(h1, h2, h3, h4, h5, h6)::after {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 2px;
+  margin-top: 6px;
+  background: rgb(var(--accent-rgb) / 0.95);
 }
 
 main {
@@ -31,11 +50,6 @@ main {
   min-height: 0;
 }
 
-@media (max-width: 768px) {
-  main {
-    padding-bottom: var(--mobile-nav-height);
-  }
-}
 
 * {
   box-sizing: border-box;

@@ -4,6 +4,11 @@ import { useGLTF, useTexture } from "@react-three/drei";
 import type { ThreeElements } from "@react-three/fiber";
 import { PillarEnergyMaterial } from "./PillarEnergyMaterial";
 import { useVideoPalette } from "@/hooks/useVideoPalette";
+import {
+    ProceduralScreenMaterial,
+    getProceduralVariantColors,
+    type ProceduralScreenVariant,
+} from "./ProceduralScreenMaterial";
 
 const BACKDROP_MODEL_PATH = "/threejs/portfolio_backdrop.glb";
 const SCREEN_1_PATH = "/threejs/portfolio_backdrop_screen_1.glb";
@@ -35,6 +40,9 @@ export type BackgroundScreenProps = {
         audio?: { enabled: boolean; volume?: number };
     };
     onVideoReady?: (video: HTMLVideoElement) => void;
+
+    /** If set, renders a procedural shader on the screen instead of video/image. */
+    proceduralVariant?: ProceduralScreenVariant;
 
     screenPosition?: THREE.Vector3Tuple;
     backdropPosition?: THREE.Vector3Tuple;
@@ -101,6 +109,7 @@ const getAspectCoverTransform = (opts: {
 export const BackgroundScreen = ({
     media,
     onVideoReady,
+    proceduralVariant,
     screenPosition = [0, 0, -14.7],
     backdropPosition = [0, -0.05, -15],
     scale,
@@ -231,6 +240,14 @@ export const BackgroundScreen = ({
     }, [videoTexture]);
 
     React.useEffect(() => {
+        if (proceduralVariant) {
+            setImageTexture((prev) => {
+                prev?.dispose();
+                return null;
+            });
+            return;
+        }
+
         // Video takes priority; only load an image if no videoSrc.
         const src =
             media.sourceType === "image" && typeof media.source === "string" && media.source.trim().length > 0
@@ -365,6 +382,11 @@ export const BackgroundScreen = ({
     }, [imageTexture, screen1UvBounds]);
 
     React.useEffect(() => {
+        if (proceduralVariant) {
+            setInternalVideo(null);
+            return;
+        }
+
         const src = media.sourceType === "video" && typeof media.source === "string" ? media.source.trim() : "";
         if (!src) {
             setInternalVideo(null);
@@ -434,6 +456,14 @@ export const BackgroundScreen = ({
         smoothing: 0.22,
     });
 
+    const proceduralColors = React.useMemo(() => {
+        if (!proceduralVariant) return null;
+        return getProceduralVariantColors(proceduralVariant);
+    }, [proceduralVariant]);
+
+    const accentA = proceduralColors?.colorA ?? palette.average;
+    const accentB = proceduralColors?.colorB ?? palette.vibrant;
+
     const s1 = screen1.nodes.Cylinder;
     const s2 = screen2.nodes.Cylinder;
 
@@ -446,7 +476,14 @@ export const BackgroundScreen = ({
                     rotation={s1.rotation}
                     scale={s1.scale}
                 >
-                    {videoTexture ? (
+                    {proceduralVariant ? (
+                        <ProceduralScreenMaterial
+                            variant={proceduralVariant}
+                            intensity={1.05}
+                            speed={proceduralVariant === "about" ? 0.85 : 0.75}
+                            seed={proceduralVariant === "connect" ? 11 : 4}
+                        />
+                    ) : videoTexture ? (
                         <meshBasicMaterial toneMapped={false} map={videoTexture} />
                     ) : imageTexture ? (
                         <meshBasicMaterial toneMapped={false} map={imageTexture} />
@@ -465,8 +502,8 @@ export const BackgroundScreen = ({
                         intensity={1.5}
                         speed={0.6}
                         seed={2}
-                        colorA={palette.average}
-                        colorB={palette.vibrant}
+                        colorA={accentA}
+                        colorB={accentB}
                     />
                 </mesh>
             </group>

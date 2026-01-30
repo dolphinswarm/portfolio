@@ -51,8 +51,8 @@
 }
 
 .topLinkActive {
-  background: rgba(255, 138, 0, 0.18);
-  border: 1px solid rgba(255, 138, 0, 0.32);
+  background: rgb(var(--accent-rgb) / 0.18);
+  border: 1px solid rgb(var(--accent-rgb) / 0.32);
   color: var(--accent);
   opacity: 1;
   font-weight: 600;
@@ -118,7 +118,7 @@
   .bottomItemActive {
     opacity: 1;
     color: var(--accent);
-    background: rgba(255, 138, 0, 0.14);
+    background: rgb(var(--accent-rgb) / 0.14);
   }
 
   .bottomIcon {
