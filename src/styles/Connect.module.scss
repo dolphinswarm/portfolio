@@ -1,0 +1,155 @@
+.container {
+  max-width: 860px;
+}
+
+.header {
+  margin: 0 0 18px 0;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.95;
+  margin: 0 0 10px 0;
+}
+
+.lede {
+  font-size: 18px;
+  line-height: 1.55;
+  opacity: 0.92;
+  margin: 0;
+}
+
+.sectionHeader {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionIcon {
+  color: var(--accent);
+}
+
+.stack {
+  display: grid;
+  gap: 12px;
+  margin: 8px 0 0 0;
+}
+
+.card.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 14px 14px;
+  border-radius: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.18);
+
+  text-decoration: none;
+  text-shadow: none;
+  color: rgba(255, 255, 255, 0.92);
+
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.card.card:hover {
+  background: rgba(0, 0, 0, 0.28);
+  border-color: rgb(var(--accent-rgb) / 0.42);
+  transform: translateY(-1px);
+}
+
+.cardIcon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: rgb(var(--accent-rgb) / 0.92);
+}
+
+.cardBody {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cardChevron {
+  flex: 0 0 auto;
+  margin-left: auto;
+  opacity: 0.65;
+  color: rgba(255, 255, 255, 0.85);
+  transform: translateX(0);
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.card.card:hover .cardChevron {
+  opacity: 0.9;
+  transform: translateX(2px);
+}
+
+.cardTopRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+  min-width: 0;
+}
+
+.cardMeta {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  opacity: 0.78;
+  text-align: right;
+  flex: 0 1 auto;
+  max-width: 52%;
+}
+
+.emailRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.copyButton.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 12px 12px;
+  border-radius: 12px;
+
+  border: 1px solid rgb(var(--accent-rgb) / 0.55);
+  background: rgb(var(--accent-rgb) / 0.10);
+  color: rgba(255, 255, 255, 0.92);
+
+  font-weight: 650;
+  letter-spacing: 0.01em;
+
+  text-shadow: none;
+  cursor: pointer;
+
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.copyButton.copyButton:hover {
+  background: rgb(var(--accent-rgb) / 0.18);
+  border-color: rgb(var(--accent-rgb) / 0.78);
+  transform: translateY(-1px);
+}
+
+.copyButton.copyButton:disabled {
+  opacity: 0.7;
+  cursor: default;
+  transform: none;
+}
