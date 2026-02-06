@@ -479,7 +479,12 @@ export const BackgroundScreen = ({
                     {proceduralVariant ? (
                         <ProceduralScreenMaterial
                             variant={proceduralVariant}
-                            intensity={1.05}
+                            intensity={
+                                proceduralVariant === "about" ||
+                                proceduralVariant === "connect"
+                                    ? 1.45
+                                    : 1.05
+                            }
                             speed={proceduralVariant === "about" ? 0.85 : 0.75}
                             seed={proceduralVariant === "connect" ? 11 : 4}
                         />

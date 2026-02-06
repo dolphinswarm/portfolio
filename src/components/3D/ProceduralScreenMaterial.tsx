@@ -2,22 +2,41 @@ import React from "react";
 import * as THREE from "three";
 import { useFrame, type ThreeElements } from "@react-three/fiber";
 
-export type ProceduralScreenVariant = "about" | "connect";
+export type ProceduralScreenVariant = "about" | "connect" | "music";
 
 export type ProceduralScreenMaterialProps = {
     variant: ProceduralScreenVariant;
     intensity?: number;
     speed?: number;
     seed?: number;
+    /** Optional per-instance color overrides (hex or any CSS color THREE.Color supports). */
+    overrideColors?: { colorA?: string; colorB?: string; base?: string };
+    /** Optional 1D (width=bins, height=1) texture containing FFT magnitudes. */
+    spectrumTexture?: THREE.DataTexture | null;
+    /** FFT bin count (texture width). If omitted, inferred when possible. */
+    spectrumSize?: number;
+    /** Strength multiplier for the spectrum visualization. */
+    spectrumStrength?: number;
 } & Omit<ThreeElements["shaderMaterial"], "ref" | "args" | "attach">;
 
-export const getProceduralVariantColors = (variant: ProceduralScreenVariant) => {
+export const getProceduralVariantColors = (
+    variant: ProceduralScreenVariant,
+) => {
     if (variant === "connect") {
         return {
             // CRT-ish phosphor palette (keeps the screen dark; energy provides color)
             colorA: "#63ff7c", // green phosphor
             colorB: "#ffd166", // warm amber
             base: new THREE.Color("#040405"),
+        };
+    }
+
+    if (variant === "music") {
+        return {
+            // Neon spectrum palette on a dark base
+            colorA: "#3fe5ff", // cyan
+            colorB: "#ff2bd6", // magenta
+            base: new THREE.Color("#0b0c14"),
         };
     }
 
@@ -52,6 +71,9 @@ const fragmentShader = /* glsl */ `
     uniform vec3 uColorA;
     uniform vec3 uColorB;
     uniform vec3 uBase;
+    uniform sampler2D uSpectrumTex;
+    uniform float uSpectrumSize;
+    uniform float uSpectrumStrength;
 
     float hash(vec2 p) {
         return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -173,7 +195,7 @@ const fragmentShader = /* glsl */ `
             float strength = uIntensity * 0.085;
             col += energy * glow * strength;
             col += 0.02 * energy * (0.5 + 0.5 * sin((p.y + w.y) * 3.0 + t * 0.8));
-        } else {
+        } else if (uMode < 1.5) {
             // CONNECT: CRT/retro (no grid)
             // Barrel distortion + mild scanline jitter
             vec2 q = uv * 2.0 - 1.0;
@@ -247,16 +269,73 @@ const fragmentShader = /* glsl */ `
 
             // Fade effect out at warped borders (prevents edge smear)
             col = mix(uBase, col, inBounds);
+        } else {
+            // MUSIC: audio-reactive spectrum bars
+            // Map x to a slightly log-ish curve so lows get more resolution.
+            float x = clamp(uv.x, 0.0, 1.0);
+            float fx = pow(x, 2.2);
+
+            float bins = max(1.0, uSpectrumSize);
+            float idx = floor(fx * (bins - 1.0));
+            float u = (idx + 0.5) / bins;
+            float amp = texture2D(uSpectrumTex, vec2(u, 0.5)).r; // 0..1
+
+            // Shape the amplitude for nicer movement.
+            float h = pow(clamp(amp, 0.0, 1.0), 1.10);
+            h = clamp(h * 1.05, 0.0, 1.0);
+
+            // Anti-aliased bar edge.
+            float aa = 0.008;
+            float bar = 1.0 - smoothstep(h - aa, h + aa, uv.y);
+            // A thin outline at the top edge helps readability on both light and dark bases.
+            float topLine = smoothstep(h - aa * 2.5, h - aa * 0.7, uv.y)
+                - smoothstep(h + aa * 0.7, h + aa * 2.5, uv.y);
+
+            // Subtle scanlines to keep it feeling like the in-world screen.
+            float scan = 0.5 + 0.5 * sin((uv.y * 280.0) + t * 2.2);
+            scan = 0.92 + 0.08 * scan;
+
+            vec3 energy = mix(cA, cB, fx);
+
+            // If the base is bright (including white), additive bars wash out.
+            // Switch to a contrast-aware mix (dark bars on bright bases, bright bars on dark bases).
+            float baseLum = dot(uBase, vec3(0.2126, 0.7152, 0.0722));
+            float brightBase = smoothstep(0.55, 0.90, baseLum);
+
+            // Preserve the chosen bar colors even on bright bases (including white).
+            // We *darken* the energy for contrast instead of forcing it to black.
+            float barDarken = mix(1.0, 0.22, brightBase);
+            vec3 barColor = energy * barDarken;
+
+            // Compose bars via mix so they remain visible even on white bases.
+            float barAlpha = clamp(bar * (0.30 + 0.70 * h) * uSpectrumStrength, 0.0, 1.0);
+            col = mix(uBase, barColor, barAlpha);
+
+            // Add a little emissive glow (reduced on bright bases to avoid whitening).
+            float glow = bar * (0.20 + 1.35 * h);
+            col += energy * glow * (0.10 * uSpectrumStrength) * scan * (1.0 - 0.75 * brightBase);
+
+            // Outline: keep it energy-tinted (not white) to avoid “white-capped” bars.
+            vec3 outlineColor = mix(energy * 1.15, vec3(0.06), brightBase);
+            col = mix(col, outlineColor, clamp(topLine * 0.55, 0.0, 1.0));
+
+            // Add a little "floor" energy so silence isn't dead.
+            col += 0.015 * energy * (0.5 + 0.5 * sin(t * 0.8 + fx * 12.0));
         }
 
         // Vignette (keeps corners from blowing out)
         col *= 0.76 + 0.24 * vignette;
 
         // Slight exposure lift so the visuals don't blend into the page background.
-        col *= 1.5;
+        // About/Connect can be brighter; Music stays slightly dimmer to keep its bars readable.
+        float exposure = (uMode < 1.5) ? 2.4 : 1.5;
+        col *= exposure;
 
-        // Hard clamp so white text stays readable
-        col = min(col, vec3(0.25));
+        // Hard clamp so white text stays readable.
+        // About/Connect: allow a bit more headroom.
+        // Music previously clamped very low, which crushed bar contrast unless colors were near-white.
+        float clampMax = (uMode < 1.5) ? 0.56 : 0.85;
+        col = min(col, vec3(clampMax));
 
         gl_FragColor = vec4(col, 1.0);
     }
@@ -267,12 +346,50 @@ export const ProceduralScreenMaterial = ({
     intensity = 1,
     speed = 0.7,
     seed = 0,
+    overrideColors,
+    spectrumTexture,
+    spectrumSize,
+    spectrumStrength = 1,
     ...materialProps
 }: ProceduralScreenMaterialProps) => {
-    const { colorA, colorB, base } = React.useMemo(
+    const defaults = React.useMemo(
         () => getProceduralVariantColors(variant),
         [variant],
     );
+
+    const resolvedColors = React.useMemo(() => {
+        const colorA = overrideColors?.colorA ?? defaults.colorA;
+        const colorB = overrideColors?.colorB ?? defaults.colorB;
+        const base = overrideColors?.base
+            ? new THREE.Color(overrideColors.base)
+            : defaults.base;
+        return { colorA, colorB, base };
+    }, [
+        defaults,
+        overrideColors?.colorA,
+        overrideColors?.colorB,
+        overrideColors?.base,
+    ]);
+
+    const fallbackSpectrumTex = React.useMemo(() => {
+        const tex = new THREE.DataTexture(
+            new Uint8Array([0]),
+            1,
+            1,
+            THREE.RedFormat,
+            THREE.UnsignedByteType,
+        );
+        tex.flipY = false;
+        tex.generateMipmaps = false;
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.wrapS = THREE.ClampToEdgeWrapping;
+        tex.wrapT = THREE.ClampToEdgeWrapping;
+        tex.unpackAlignment = 1;
+        tex.colorSpace = THREE.NoColorSpace;
+        tex.needsUpdate = true;
+        return tex;
+    }, []);
 
     const uniforms = React.useMemo(
         () => ({
@@ -280,24 +397,67 @@ export const ProceduralScreenMaterial = ({
             uIntensity: { value: intensity },
             uSpeed: { value: speed },
             uSeed: { value: seed },
-            uMode: { value: variant === "connect" ? 1 : 0 },
-            uColorA: { value: new THREE.Color(colorA) },
-            uColorB: { value: new THREE.Color(colorB) },
-            uBase: { value: base.clone() },
+            uMode: {
+                value: variant === "connect" ? 1 : variant === "music" ? 2 : 0,
+            },
+            uColorA: { value: new THREE.Color(resolvedColors.colorA) },
+            uColorB: { value: new THREE.Color(resolvedColors.colorB) },
+            uBase: { value: resolvedColors.base.clone() },
+            uSpectrumTex: { value: fallbackSpectrumTex },
+            uSpectrumSize: { value: 1 },
+            uSpectrumStrength: { value: spectrumStrength },
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        []
+        [],
     );
 
     React.useEffect(() => {
         uniforms.uIntensity.value = intensity;
         uniforms.uSpeed.value = speed;
         uniforms.uSeed.value = seed;
-        uniforms.uMode.value = variant === "connect" ? 1 : 0;
-        uniforms.uColorA.value.set(colorA);
-        uniforms.uColorB.value.set(colorB);
-        uniforms.uBase.value.copy(base);
-    }, [intensity, speed, seed, variant, colorA, colorB, base, uniforms]);
+        uniforms.uMode.value =
+            variant === "connect" ? 1 : variant === "music" ? 2 : 0;
+        uniforms.uColorA.value.set(resolvedColors.colorA);
+        uniforms.uColorB.value.set(resolvedColors.colorB);
+        uniforms.uBase.value.copy(resolvedColors.base);
+        uniforms.uSpectrumTex.value = spectrumTexture ?? fallbackSpectrumTex;
+        uniforms.uSpectrumSize.value =
+            typeof spectrumSize === "number"
+                ? spectrumSize
+                : spectrumTexture?.image?.width
+                  ? (spectrumTexture.image.width as number)
+                  : 1;
+        uniforms.uSpectrumStrength.value = spectrumStrength;
+    }, [
+        intensity,
+        speed,
+        seed,
+        variant,
+        resolvedColors,
+        spectrumTexture,
+        spectrumSize,
+        spectrumStrength,
+        fallbackSpectrumTex,
+        uniforms,
+    ]);
+
+    React.useEffect(() => {
+        // Keep spectrum uniforms in sync without forcing material re-creation.
+        uniforms.uSpectrumTex.value = spectrumTexture ?? fallbackSpectrumTex;
+        uniforms.uSpectrumSize.value =
+            typeof spectrumSize === "number"
+                ? spectrumSize
+                : spectrumTexture?.image?.width
+                  ? (spectrumTexture.image.width as number)
+                  : 1;
+        uniforms.uSpectrumStrength.value = spectrumStrength;
+    }, [
+        spectrumTexture,
+        spectrumSize,
+        spectrumStrength,
+        uniforms,
+        fallbackSpectrumTex,
+    ]);
 
     useFrame((state) => {
         uniforms.uTime.value = state.clock.getElapsedTime();
@@ -318,6 +478,12 @@ export const ProceduralScreenMaterial = ({
             material.dispose();
         };
     }, [material]);
+
+    React.useEffect(() => {
+        return () => {
+            fallbackSpectrumTex.dispose();
+        };
+    }, [fallbackSpectrumTex]);
 
     return <primitive object={material} attach="material" {...materialProps} />;
 };

@@ -2,7 +2,12 @@ import React from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faEye, faEyeSlash, faVolumeHigh, faVolumeXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+    faEye,
+    faEyeSlash,
+    faVolumeHigh,
+    faVolumeXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import styles from "./Showcase.module.scss";
 
 const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
@@ -10,12 +15,32 @@ const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
 const ThumbImage = ({
     src,
     title,
+    objectPosition,
 }: {
     src: string;
     title: string;
+    objectPosition?: string;
 }) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={title} className={styles.thumbImg} loading="lazy" />;
+    return (
+        <img
+            src={src}
+            alt={title}
+            className={styles.thumbImg}
+            loading="lazy"
+            style={objectPosition ? { objectPosition } : undefined}
+        />
+    );
+};
+
+const clamp = (value: number, min: number, max: number) =>
+    Math.min(max, Math.max(min, value));
+
+const toThumbObjectPosition = (focus?: { x?: number; y?: number }) => {
+    if (!focus) return undefined;
+    const x = clamp(50 + (focus.x ?? 0), 0, 100);
+    const y = clamp(50 + (focus.y ?? 0), 0, 100);
+    return `${x}% ${y}%`;
 };
 
 const ShowcaseThumb = ({
@@ -28,29 +53,50 @@ const ShowcaseThumb = ({
     onSelect: (slug: string) => void;
 }) => {
     const primaryScreenAsset = getPrimaryScreenAsset(item.screenSource);
+
+    const explicitThumbImage =
+        item.thumbnailSource?.kind === "image"
+            ? item.thumbnailSource
+            : undefined;
+
     const explicitThumb =
-        (item.thumbnailSource?.kind === "image" ? item.thumbnailSource.src : undefined) ??
-        (primaryScreenAsset?.kind === "image" ? primaryScreenAsset.src : undefined);
+        explicitThumbImage?.src ??
+        (primaryScreenAsset?.kind === "image"
+            ? primaryScreenAsset.src
+            : undefined);
 
     const thumbSrc = explicitThumb ?? FALLBACK_THUMB_SRC;
+    const thumbObjectPosition = toThumbObjectPosition(
+        explicitThumbImage?.focus,
+    );
 
     return (
         <button
             key={item.slug}
             type="button"
-            className={selected ? `${styles.thumb} ${styles.thumbSelected}` : styles.thumb}
+            className={
+                selected
+                    ? `${styles.thumb} ${styles.thumbSelected}`
+                    : styles.thumb
+            }
             onClick={() => onSelect(item.slug)}
             aria-pressed={selected}
             data-showcase-thumb={item.slug}
             title={item.title}
         >
             <div className={styles.thumbMedia}>
-                <ThumbImage src={thumbSrc} title={item.title} />
+                <ThumbImage
+                    src={thumbSrc}
+                    title={item.title}
+                    objectPosition={thumbObjectPosition}
+                />
             </div>
 
             <div className={styles.thumbLabel}>
                 <div className={styles.thumbTitle}>{item.title}</div>
-                {item.subtitle ? <div className={styles.thumbSub}>{item.subtitle}</div> : null}
+                {item.subtitle ? (
+                    <div className={styles.thumbSub}>{item.subtitle}</div>
+                ) : null}
             </div>
         </button>
     );
@@ -80,6 +126,23 @@ export type ShowcaseAsset =
       }
     | { kind: "image"; src: string; alt?: string };
 
+/**
+ * Per-thumbnail object-position adjustments in percentage points.
+ *
+ * Example: `{ focus: { x: 0, y: -15 } }` moves the crop up a bit.
+ */
+export type ShowcaseThumbFocusAdjustment = {
+    /** Horizontal adjustment from center in percentage points. */
+    x?: number;
+    /** Vertical adjustment from center in percentage points. */
+    y?: number;
+};
+
+/** Thumbnail media for the carousel, with optional crop focus adjustment. */
+export type ShowcaseThumbnailSource = ShowcaseAsset & {
+    focus?: ShowcaseThumbFocusAdjustment;
+};
+
 export type ShowcaseScreenSourceEntry = ShowcaseAsset & {
     label?: string;
     icon?: IconDefinition;
@@ -98,14 +161,20 @@ export type ShowcaseScreenMedia = {
     audio?: { enabled: boolean; volume?: number };
 };
 
-const toScreenMedia = (asset: ShowcaseAsset, opts?: { audioEnabled?: boolean }): ShowcaseScreenMedia => {
+const toScreenMedia = (
+    asset: ShowcaseAsset,
+    opts?: { audioEnabled?: boolean },
+): ShowcaseScreenMedia => {
     if (asset.kind === "video") {
-        const volume = typeof asset.audio?.volume === "number" ? asset.audio.volume : 1;
+        const volume =
+            typeof asset.audio?.volume === "number" ? asset.audio.volume : 1;
         const shouldIncludeAudio = opts?.audioEnabled === true;
         return {
             sourceType: "video",
             source: asset.src,
-            audio: shouldIncludeAudio ? { enabled: true, volume } : { enabled: false },
+            audio: shouldIncludeAudio
+                ? { enabled: true, volume }
+                : { enabled: false },
         };
     }
 
@@ -137,7 +206,7 @@ export type ShowcaseItem = {
     screenSource?: ShowcaseScreenSource;
 
     /** Thumbnail media for the carousel. Prefer an image. */
-    thumbnailSource?: ShowcaseAsset;
+    thumbnailSource?: ShowcaseThumbnailSource;
 
     links?: ShowcaseItemLink[];
     body?: React.ReactNode;
@@ -148,11 +217,17 @@ export const Showcase = ({
     items,
     queryKey,
     onScreenMediaChange,
+    renderBodyPrefix,
+    onSelectedItemChange,
 }: {
     pageTitle: string;
     items: ShowcaseItem[];
     queryKey: string;
     onScreenMediaChange?: (media: ShowcaseScreenMedia | null) => void;
+    /** Optional UI to render above the selected item's body (inside the description area). */
+    renderBodyPrefix?: (item: ShowcaseItem) => React.ReactNode;
+    /** Optional callback when the selected item changes. */
+    onSelectedItemChange?: (item: ShowcaseItem | null) => void;
 }) => {
     const router = useRouter();
 
@@ -176,7 +251,10 @@ export const Showcase = ({
 
     React.useEffect(() => {
         try {
-            window.localStorage.setItem(chromeStorageKey, String(isChromeVisible));
+            window.localStorage.setItem(
+                chromeStorageKey,
+                String(isChromeVisible),
+            );
         } catch {
             // no-op
         }
@@ -188,8 +266,10 @@ export const Showcase = ({
             if (!a || !b) return false;
             const aAudioEnabled = a.audio?.enabled === true;
             const bAudioEnabled = b.audio?.enabled === true;
-            const aVol = typeof a.audio?.volume === "number" ? a.audio.volume : 1;
-            const bVol = typeof b.audio?.volume === "number" ? b.audio.volume : 1;
+            const aVol =
+                typeof a.audio?.volume === "number" ? a.audio.volume : 1;
+            const bVol =
+                typeof b.audio?.volume === "number" ? b.audio.volume : 1;
 
             return (
                 a.sourceType === b.sourceType &&
@@ -202,11 +282,15 @@ export const Showcase = ({
     );
 
     const lastPreviewRef = React.useRef<ShowcaseScreenMedia | null>(null);
+    const lastSelectedSlugRef = React.useRef<string | null>(null);
 
     const getInitialSlug = React.useCallback(() => {
         const q = router.query?.[queryKey];
         const requested = Array.isArray(q) ? q[0] : q;
-        if (typeof requested === "string" && items.some((i) => i.slug === requested)) {
+        if (
+            typeof requested === "string" &&
+            items.some((i) => i.slug === requested)
+        ) {
             return requested;
         }
         return items[0]?.slug ?? "";
@@ -216,7 +300,8 @@ export const Showcase = ({
         items[0]?.slug ? items[0].slug : "",
     );
 
-    const [isAltScreenSourceActive, setIsAltScreenSourceActive] = React.useState(false);
+    const [isAltScreenSourceActive, setIsAltScreenSourceActive] =
+        React.useState(false);
     const [isAudioEnabled, setIsAudioEnabled] = React.useState(false);
 
     React.useEffect(() => {
@@ -243,7 +328,8 @@ export const Showcase = ({
     }, [selectedItem, isAltScreenSourceActive]);
 
     const isAudioToggleAvailable =
-        activeScreenAsset?.kind === "video" && activeScreenAsset.audio?.toggleable === true;
+        activeScreenAsset?.kind === "video" &&
+        activeScreenAsset.audio?.toggleable === true;
 
     // Reset audio state when switching items or the active asset.
     React.useEffect(() => {
@@ -259,19 +345,33 @@ export const Showcase = ({
         if (!router.isReady) return;
         if (!selectedItem) return;
 
+        if (lastSelectedSlugRef.current !== selectedItem.slug) {
+            lastSelectedSlugRef.current = selectedItem.slug;
+            onSelectedItemChange?.(selectedItem);
+        }
+
         // Sync selection to the URL (deep-linking). Some embedded browsers / sandboxed
         // contexts can throw a SecurityError when touching the History API.
         const currentQ = router.query?.[queryKey];
         const currentSlug = Array.isArray(currentQ) ? currentQ[0] : currentQ;
-        const shouldSyncUrl = typeof currentSlug !== "string" || currentSlug !== selectedItem.slug;
+        const shouldSyncUrl =
+            typeof currentSlug !== "string" ||
+            currentSlug !== selectedItem.slug;
 
         if (shouldSyncUrl) {
-            const nextQuery = { ...router.query, [queryKey]: selectedItem.slug };
+            const nextQuery = {
+                ...router.query,
+                [queryKey]: selectedItem.slug,
+            };
             void router
-                .replace({ pathname: router.pathname, query: nextQuery }, undefined, {
-                    shallow: true,
-                    scroll: false,
-                })
+                .replace(
+                    { pathname: router.pathname, query: nextQuery },
+                    undefined,
+                    {
+                        shallow: true,
+                        scroll: false,
+                    },
+                )
                 .catch(() => {
                     // no-op (selection still works; URL just won't update)
                 });
@@ -280,13 +380,16 @@ export const Showcase = ({
         const preferred = activeScreenAsset;
         const fallback = selectedItem.thumbnailSource;
 
-        const audioEnabled = isAudioToggleAvailable ? isAudioEnabled : (preferred?.kind === "video" && preferred.audio?.defaultEnabled === true);
+        const audioEnabled = isAudioToggleAvailable
+            ? isAudioEnabled
+            : preferred?.kind === "video" &&
+              preferred.audio?.defaultEnabled === true;
 
         const next: ShowcaseScreenMedia | null = preferred
             ? toScreenMedia(preferred, { audioEnabled })
             : fallback
-                ? toScreenMedia(fallback)
-                : null;
+              ? toScreenMedia(fallback)
+              : null;
 
         // Avoid infinite update loops when the parent passes a non-memoized callback
         // and we compute a fresh `{ sourceType, source }` object each render.
@@ -312,11 +415,16 @@ export const Showcase = ({
         isAudioToggleAvailable,
         queryKey,
         onScreenMediaChange,
+        onSelectedItemChange,
         arePreviewEqual,
     ]);
 
-    const primaryScreenAsset = getPrimaryScreenAsset(selectedItem?.screenSource);
-    const secondaryScreenAsset = getSecondaryScreenAsset(selectedItem?.screenSource);
+    const primaryScreenAsset = getPrimaryScreenAsset(
+        selectedItem?.screenSource,
+    );
+    const secondaryScreenAsset = getSecondaryScreenAsset(
+        selectedItem?.screenSource,
+    );
 
     const hasVideoToggle =
         primaryScreenAsset?.kind === "video" &&
@@ -336,8 +444,9 @@ export const Showcase = ({
         // Keep the selected thumb centered when possible.
         const el = document.querySelector(`[data-showcase-thumb='${slug}']`);
         if (el instanceof HTMLElement) {
-            const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")
-                .matches;
+            const prefersReduced = window.matchMedia?.(
+                "(prefers-reduced-motion: reduce)",
+            ).matches;
             el.scrollIntoView({
                 behavior: prefersReduced ? "auto" : "smooth",
                 block: "nearest",
@@ -356,7 +465,9 @@ export const Showcase = ({
             if (idx < 0) return;
 
             const next =
-                e.key === "ArrowLeft" ? items[idx - 1] ?? items[items.length - 1] : items[idx + 1] ?? items[0];
+                e.key === "ArrowLeft"
+                    ? (items[idx - 1] ?? items[items.length - 1])
+                    : (items[idx + 1] ?? items[0]);
 
             if (next?.slug) onSelect(next.slug);
         },
@@ -386,26 +497,45 @@ export const Showcase = ({
             <div
                 id={dockId}
                 className={
-                    isChromeVisible ? styles.dock : `${styles.dock} ${styles.dockHidden}`
+                    isChromeVisible
+                        ? styles.dock
+                        : `${styles.dock} ${styles.dockHidden}`
                 }
                 aria-label={`${pageTitle} detail and items`}
                 aria-hidden={!isChromeVisible}
             >
                 {selectedItem ? (
-                    <section className={styles.detail} aria-label="Selected item">
+                    <section
+                        className={styles.detail}
+                        aria-label="Selected item"
+                    >
                         <div className={styles.detailTop}>
                             <div>
-                                <h2 className={styles.itemTitle}>{selectedItem.title}</h2>
+                                <h2 className={styles.itemTitle}>
+                                    {selectedItem.title}
+                                </h2>
                                 {hasVideoToggle ? (
                                     <button
                                         type="button"
                                         className={styles.videoToggle}
-                                        onClick={() => setIsAltScreenSourceActive((v) => !v)}
+                                        onClick={() =>
+                                            setIsAltScreenSourceActive(
+                                                (v) => !v,
+                                            )
+                                        }
                                         aria-pressed={isAltScreenSourceActive}
                                     >
                                         {nextIcon ? (
-                                            <span className={styles.videoToggleIcon} aria-hidden="true">
-                                                <FontAwesomeIcon icon={nextIcon} fixedWidth />
+                                            <span
+                                                className={
+                                                    styles.videoToggleIcon
+                                                }
+                                                aria-hidden="true"
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={nextIcon}
+                                                    fixedWidth
+                                                />
                                             </span>
                                         ) : null}
                                         Switch to {nextLabel}
@@ -416,11 +546,23 @@ export const Showcase = ({
                                     <button
                                         type="button"
                                         className={styles.audioToggle}
-                                        onClick={() => setIsAudioEnabled((v) => !v)}
+                                        onClick={() =>
+                                            setIsAudioEnabled((v) => !v)
+                                        }
                                         aria-pressed={isAudioEnabled}
                                     >
-                                        <span className={styles.audioToggleIcon} aria-hidden="true">
-                                            <FontAwesomeIcon icon={isAudioEnabled ? faVolumeHigh : faVolumeXmark} fixedWidth />
+                                        <span
+                                            className={styles.audioToggleIcon}
+                                            aria-hidden="true"
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={
+                                                    isAudioEnabled
+                                                        ? faVolumeHigh
+                                                        : faVolumeXmark
+                                                }
+                                                fixedWidth
+                                            />
                                         </span>
                                         Audio: {isAudioEnabled ? "On" : "Off"}
                                     </button>
@@ -445,48 +587,66 @@ export const Showcase = ({
 
                         {selectedItem.links?.length ? (
                             <div className={styles.links} aria-label="Links">
-                                {selectedItem.links.map((l) => (
+                                {selectedItem.links.map((l) =>
                                     (() => {
-                                        const isInternal = l.href.startsWith("/");
+                                        const isInternal =
+                                            l.href.startsWith("/");
                                         const shouldOpenInNewWindow =
-                                            typeof l.openInNewWindow === "boolean"
+                                            typeof l.openInNewWindow ===
+                                            "boolean"
                                                 ? l.openInNewWindow
                                                 : !isInternal;
-                                        const target = shouldOpenInNewWindow ? "_blank" : undefined;
+                                        const target = shouldOpenInNewWindow
+                                            ? "_blank"
+                                            : undefined;
                                         const rel = shouldOpenInNewWindow
                                             ? "noopener noreferrer"
                                             : undefined;
 
                                         return (
-                                    <a
-                                        key={`${selectedItem.slug}-${l.href}`}
-                                        href={l.href}
-                                        target={target}
-                                        rel={rel}
-                                        className={styles.link}
-                                    >
-                                        {l.icon ? (
-                                            <span className={styles.linkIcon} aria-hidden="true">
-                                                <FontAwesomeIcon icon={l.icon} fixedWidth />
-                                            </span>
-                                        ) : null}
-                                        {l.label}
-                                    </a>
+                                            <a
+                                                key={`${selectedItem.slug}-${l.href}`}
+                                                href={l.href}
+                                                target={target}
+                                                rel={rel}
+                                                className={styles.link}
+                                            >
+                                                {l.icon ? (
+                                                    <span
+                                                        className={
+                                                            styles.linkIcon
+                                                        }
+                                                        aria-hidden="true"
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={l.icon}
+                                                            fixedWidth
+                                                        />
+                                                    </span>
+                                                ) : null}
+                                                {l.label}
+                                            </a>
                                         );
-                                    })()
-                                ))}
+                                    })(),
+                                )}
                             </div>
                         ) : null}
 
-                        {selectedItem.body ? (
+                        {renderBodyPrefix || selectedItem.body ? (
                             <div className={styles.body}>
+                                {selectedItem
+                                    ? renderBodyPrefix?.(selectedItem)
+                                    : null}
                                 {selectedItem.body}
                             </div>
                         ) : null}
                     </section>
                 ) : null}
 
-                <div className={styles.carousel} aria-label={`${pageTitle} items`}>
+                <div
+                    className={styles.carousel}
+                    aria-label={`${pageTitle} items`}
+                >
                     <div
                         className={styles.carouselInner}
                         onKeyDown={onCarouselKeyDown}

@@ -5,6 +5,8 @@ import {
     ProceduralScreenMaterial,
     type ProceduralScreenVariant,
 } from "./ProceduralScreenMaterial";
+import { useAudioSpectrum } from "@/context/AudioSpectrumContext";
+import { useSceneVideo } from "@/context/SceneVideoContext";
 
 const applyAspectCover = (
     texture: THREE.Texture,
@@ -76,7 +78,8 @@ const useImageTexture = (src?: string, opts?: { flipY?: boolean }) => {
     return texture;
 };
 
-const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+const clamp = (v: number, min: number, max: number) =>
+    Math.min(max, Math.max(min, v));
 
 /** The video screen for the various pages. */
 export const Screen = ({
@@ -94,7 +97,10 @@ export const Screen = ({
     };
     proceduralVariant?: ProceduralScreenVariant;
 }) => {
-    const [internalVideo, setInternalVideo] = React.useState<HTMLVideoElement | null>(null);
+    const { texture: spectrumTexture, size: spectrumSize } = useAudioSpectrum();
+    const { screenStyleOverride } = useSceneVideo();
+    const [internalVideo, setInternalVideo] =
+        React.useState<HTMLVideoElement | null>(null);
     const activeVideo = video ?? internalVideo;
 
     const cleanupVideo = React.useCallback((vid: HTMLVideoElement | null) => {
@@ -122,7 +128,10 @@ export const Screen = ({
         return tex;
     }, [activeVideo]);
 
-    const imageTexture = useImageTexture(media.sourceType === "image" ? media.source : undefined, { flipY: true });
+    const imageTexture = useImageTexture(
+        media.sourceType === "image" ? media.source : undefined,
+        { flipY: true },
+    );
 
     const imageBaseUvRef = React.useRef<{
         repeatX: number;
@@ -139,7 +148,10 @@ export const Screen = ({
             const w = activeVideo.videoWidth;
             const h = activeVideo.videoHeight;
             if (!w || !h) return;
-            applyAspectCover(videoTexture, { videoAspect: w / h, targetAspect });
+            applyAspectCover(videoTexture, {
+                videoAspect: w / h,
+                targetAspect,
+            });
         };
 
         if (activeVideo.readyState >= 1) update();
@@ -152,7 +164,9 @@ export const Screen = ({
 
     React.useEffect(() => {
         if (!imageTexture) return;
-        const img = imageTexture.image as { width?: number; height?: number } | undefined;
+        const img = imageTexture.image as
+            | { width?: number; height?: number }
+            | undefined;
         const w = img?.width ?? 0;
         const h = img?.height ?? 0;
         if (!w || !h) return;
@@ -243,7 +257,10 @@ export const Screen = ({
         vid.playsInline = true;
 
         const playPromise = vid.play();
-        if (playPromise && typeof (playPromise as Promise<void>).catch === "function") {
+        if (
+            playPromise &&
+            typeof (playPromise as Promise<void>).catch === "function"
+        ) {
             (playPromise as Promise<void>).catch((err: unknown) => {
                 const name = (err as { name?: string } | null)?.name;
                 if (name === "AbortError" || name === "NotAllowedError") return;
@@ -272,9 +289,50 @@ export const Screen = ({
                 {proceduralVariant ? (
                     <ProceduralScreenMaterial
                         variant={proceduralVariant}
-                        intensity={1}
-                        speed={proceduralVariant === "about" ? 0.95 : 0.85}
-                        seed={proceduralVariant === "connect" ? 9 : 3}
+                        intensity={
+                            proceduralVariant === "about" ||
+                            proceduralVariant === "connect"
+                                ? 1.55
+                                : 1
+                        }
+                        speed={
+                            proceduralVariant === "about"
+                                ? 0.95
+                                : proceduralVariant === "music"
+                                  ? 1.1
+                                  : 0.85
+                        }
+                        seed={
+                            proceduralVariant === "connect"
+                                ? 9
+                                : proceduralVariant === "music"
+                                  ? 5
+                                  : 3
+                        }
+                        spectrumTexture={
+                            proceduralVariant === "music"
+                                ? spectrumTexture
+                                : undefined
+                        }
+                        spectrumSize={
+                            proceduralVariant === "music"
+                                ? spectrumSize
+                                : undefined
+                        }
+                        spectrumStrength={
+                            proceduralVariant === "music" ? 1.25 : undefined
+                        }
+                        overrideColors={
+                            proceduralVariant === "music"
+                                ? {
+                                      colorA: screenStyleOverride?.music
+                                          ?.colorA,
+                                      colorB: screenStyleOverride?.music
+                                          ?.colorB,
+                                      base: screenStyleOverride?.music?.base,
+                                  }
+                                : undefined
+                        }
                     />
                 ) : videoTexture != null ? (
                     <meshBasicMaterial toneMapped={false} map={videoTexture} />

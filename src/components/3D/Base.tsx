@@ -121,6 +121,25 @@ const ProceduralShaderWarmup = () => {
                     colorWrite={false}
                 />
             </mesh>
+
+            <mesh
+                frustumCulled={false}
+                position={[0.1, 0, 99]}
+                renderOrder={-1000}
+            >
+                <planeGeometry args={[0.02, 0.02]} />
+                <ProceduralScreenMaterial
+                    variant="music"
+                    intensity={1}
+                    speed={1}
+                    seed={303}
+                    transparent={true}
+                    opacity={0}
+                    depthWrite={false}
+                    depthTest={false}
+                    colorWrite={false}
+                />
+            </mesh>
         </group>
     );
 };
@@ -183,10 +202,12 @@ export const Base3DScene = ({
 }: SceneProps) => {
     const [videoEl, setVideoEl] = React.useState<HTMLVideoElement | null>(null);
     const routeTransitionRef = React.useRef(isIndexRoute ? 1 : 0);
-    const bradVisibilityRef = React.useRef(isIndexRoute || shouldShowBrad ? 1 : 0);
-    const [eventSource, setEventSource] = React.useState<HTMLElement | undefined>(
-        undefined,
+    const bradVisibilityRef = React.useRef(
+        isIndexRoute || shouldShowBrad ? 1 : 0,
     );
+    const [eventSource, setEventSource] = React.useState<
+        HTMLElement | undefined
+    >(undefined);
 
     React.useEffect(() => {
         // Ensure pointer tracking keeps working even if the canvas is layered
@@ -196,7 +217,8 @@ export const Base3DScene = ({
 
     const resolvedMedia = React.useMemo<SceneMedia>(() => {
         const type = media?.sourceType;
-        const src = typeof media?.source === "string" ? media.source.trim() : "";
+        const src =
+            typeof media?.source === "string" ? media.source.trim() : "";
 
         if ((type === "video" || type === "image") && src.length > 0) {
             return {
@@ -219,9 +241,20 @@ export const Base3DScene = ({
         };
     }, [media]);
 
-    const proceduralVariant = React.useMemo<ProceduralScreenVariant | undefined>(() => {
+    const proceduralVariant = React.useMemo<
+        ProceduralScreenVariant | undefined
+    >(() => {
         if (backgroundVariant === "about") return "about";
         if (backgroundVariant === "connect") return "connect";
+        return undefined;
+    }, [backgroundVariant]);
+
+    const screenProceduralVariant = React.useMemo<
+        ProceduralScreenVariant | undefined
+    >(() => {
+        if (backgroundVariant === "about") return "about";
+        if (backgroundVariant === "connect") return "connect";
+        if (backgroundVariant === "music") return "music";
         return undefined;
     }, [backgroundVariant]);
 
@@ -238,8 +271,8 @@ export const Base3DScene = ({
                 eventPrefix="client"
                 camera={{ position: [0, 3, 100], fov: 15 }}
             >
-                <color attach="background" args={["black"]} />
-                <fog attach="fog" args={["black", 18, 36]} />
+                <color attach="background" args={["#05060b"]} />
+                <fog attach="fog" args={["#05060b", 18, 36]} />
                 <Suspense fallback={null}>
                     <ProceduralShaderWarmup />
                     <RouteTransition
@@ -257,7 +290,7 @@ export const Base3DScene = ({
                         <Screen
                             video={videoEl ?? undefined}
                             media={resolvedMedia}
-                            proceduralVariant={proceduralVariant}
+                            proceduralVariant={screenProceduralVariant}
                         />
                         <BackdropRig
                             transitionRef={routeTransitionRef}
@@ -276,7 +309,13 @@ export const Base3DScene = ({
                             intensity={0.7}
                         />
                     </group>
-                    <PointAtCamera mode={isIndexRoute && shouldUseFreeCamera ? "free" : "locked"} />
+                    <PointAtCamera
+                        mode={
+                            isIndexRoute && shouldUseFreeCamera
+                                ? "free"
+                                : "locked"
+                        }
+                    />
                 </Suspense>
                 <Environment preset="city" />
             </Canvas>

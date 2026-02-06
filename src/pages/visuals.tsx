@@ -66,9 +66,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                     artist, where I created a generative music system to
                     "infinitely" play with the installation (more details can be
                     found on the{" "}
-                    <Link href="music?project=futerra-music-generator">
-                        music page
-                    </Link>
+                    <Link href="music?project=futerra">music page</Link>
                     ). I also helped with projection mapping, media server
                     programming, Unreal engine scene development, and overall
                     technical direction.

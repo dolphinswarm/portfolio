@@ -5,7 +5,10 @@ import { useRouter } from "next/router";
 /** The props for each page in the router. */
 const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
     home: {
-        media: { sourceType: "video", source: "/branding/videos/demo-reel.mp4" },
+        media: {
+            sourceType: "video",
+            source: "/branding/videos/demo-reel.mp4",
+        },
         backgroundVariant: "default",
         shouldUseFreeCamera: true,
         shouldRender: true,
@@ -34,7 +37,7 @@ const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
     },
     music: {
         media: undefined,
-        backgroundVariant: "default",
+        backgroundVariant: "music",
         shouldUseFreeCamera: false,
         shouldRender: true,
         shouldShowBrad: false,
@@ -56,7 +59,7 @@ const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
         shouldUseFreeCamera: false,
         shouldRender: true,
         shouldShowBrad: false,
-    }
+    },
 };
 
 /** Get the props for the current router scene. */
@@ -65,18 +68,16 @@ export const useGetRouterSceneProps = () => {
     const isIndexRoute = pathname === "/";
     const pageName = (pathname === "/" ? "/home" : pathname).replace(
         "/",
-        ""
+        "",
     ) as Page;
 
-    const base =
-        routerPageProps[pageName] ??
-        {
-            media: undefined,
-            backgroundVariant: "default",
-            shouldUseFreeCamera: false,
-            shouldRender: true,
-            shouldShowBrad: false,
-        };
+    const base = routerPageProps[pageName] ?? {
+        media: undefined,
+        backgroundVariant: "default",
+        shouldUseFreeCamera: false,
+        shouldRender: true,
+        shouldShowBrad: false,
+    };
 
     return {
         ...base,
