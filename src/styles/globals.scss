@@ -1,69 +1,77 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --mobile-nav-height: 0px;
-  --accent: #F7941E;
-  --accent-rgb: 247 148 30;
+    --background: #ffffff;
+    --foreground: #171717;
+    --mobile-nav-height: 0px;
+    --accent: #f7941e;
+    --accent-rgb: 247 148 30;
+    --font-body: var(--font-cabin);
+    --font-handwritten: var(--font-indie);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
+    max-width: 100vw;
+    overflow-x: hidden;
+    font-family: var(--font-body), sans-serif;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 18px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    color: var(--foreground);
+    background: var(--background);
+    font-family: var(--font-body), sans-serif;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+.handwritten {
+    font-family: var(--font-handwritten, cursive);
 }
 
 main strong {
-  color: var(--accent);
+    color: var(--accent);
 }
 
 main :is(h1, h2, h3, h4, h5, h6) {
-  color: inherit;
+    color: inherit;
 }
 
 main :is(h1, h2, h3, h4, h5, h6)::after {
-  content: "";
-  display: block;
-  width: 44px;
-  height: 2px;
-  margin-top: 6px;
-  background: rgb(var(--accent-rgb) / 0.95);
+    content: "";
+    display: block;
+    width: 44px;
+    height: 2px;
+    margin-top: 6px;
+    background: rgb(var(--accent-rgb) / 0.95);
 }
 
 main {
-  flex: 1 1 auto;
-  min-height: 0;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
-
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }
 
 @media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+    html {
+        color-scheme: dark;
+    }
 }

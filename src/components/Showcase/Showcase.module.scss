@@ -1,494 +1,520 @@
 .wrap {
-  --carousel-height: 136px;
-  /* Reserved for future tuning (kept for compatibility). */
-  --showcase-screen-bottom: 68svh;
-  position: relative;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 20px 24px;
-  color: rgba(255, 255, 255, 0.92);
+    --carousel-height: 136px;
+    /* Reserved for future tuning (kept for compatibility). */
+    --showcase-screen-bottom: 68svh;
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px 24px;
+    color: rgba(255, 255, 255, 0.92);
 }
 
 .chromeToggle {
-  position: fixed;
-  right: 22px;
-  bottom: calc(env(safe-area-inset-bottom) + 18px + var(--mobile-nav-height, 0px));
-  z-index: 200;
+    position: fixed;
+    right: 22px;
+    bottom: calc(
+        env(safe-area-inset-bottom) + 18px + var(--mobile-nav-height, 0px)
+    );
+    z-index: 200;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-  appearance: none;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(0, 0, 0, 0.55);
-  color: inherit;
-  border-radius: 999px;
-  height: 34px;
-  padding: 0 14px;
-  font-size: 12px;
-  letter-spacing: 0.01em;
-  cursor: pointer;
+    appearance: none;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(0, 0, 0, 0.55);
+    color: inherit;
+    border-radius: 999px;
+    height: 34px;
+    padding: 0 14px;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+    cursor: pointer;
 
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 
-  opacity: 0.82;
-  transition: opacity 140ms ease, transform 140ms ease, background 140ms ease;
+    opacity: 0.82;
+    transition:
+        opacity 140ms ease,
+        transform 140ms ease,
+        background 140ms ease;
 }
 
 .chromeToggleIcon {
-  display: inline-flex;
-  align-items: center;
-  opacity: 0.92;
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.92;
 }
 
 .chromeToggle:hover {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.65);
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.65);
 }
 
 .chromeToggle:active {
-  transform: translateY(0.5px);
+    transform: translateY(0.5px);
 }
 
 .chromeToggle:focus-visible {
-  outline: 2px solid rgba(79, 209, 255, 0.75);
-  outline-offset: 2px;
+    outline: 2px solid rgba(79, 209, 255, 0.75);
+    outline-offset: 2px;
 }
 
 .header {
-  margin-top: 16px;
-  margin-bottom: 0;
-  padding: 14px 16px;
-  border-radius: 18px;
+    margin-top: 16px;
+    margin-bottom: 0;
+    padding: 14px 16px;
+    border-radius: 18px;
 
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .title {
-  font-size: 14px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.95;
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.95;
+    font-family: var(--font-handwritten, cursive);
 }
 
 .subtitle {
-  margin-top: 8px;
-  max-width: 72ch;
-  opacity: 0.82;
-  line-height: 1.5;
-  font-size: 13px;
+    margin-top: 8px;
+    max-width: 72ch;
+    opacity: 0.82;
+    line-height: 1.5;
+    font-size: 13px;
 }
 
 .dock {
-  margin-top: 16px;
+    margin-top: 16px;
 }
 
 .detail {
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 18px;
-  padding: 18px 18px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  max-height: 44dvh;
-  overflow: auto;
-  overscroll-behavior: contain;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 18px 18px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    max-height: 44dvh;
+    overflow: auto;
+    overscroll-behavior: contain;
 }
 
 .dock {
-  position: fixed;
-  left: 50%;
-  --dock-y: 0px;
-  transform: translateX(-50%) translateY(var(--dock-y));
-  width: min(1100px, calc(100vw - 40px));
-  bottom: 22px;
-  z-index: 190;
+    position: fixed;
+    left: 50%;
+    --dock-y: 0px;
+    transform: translateX(-50%) translateY(var(--dock-y));
+    width: min(1100px, calc(100vw - 40px));
+    bottom: 22px;
+    z-index: 190;
 
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 220ms ease, transform 220ms ease, visibility 0s linear 0s;
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity 220ms ease,
+        transform 220ms ease,
+        visibility 0s linear 0s;
 }
 
 .dockHidden {
-  --dock-y: 22px;
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-  transition: opacity 220ms ease, transform 220ms ease, visibility 0s linear 220ms;
+    --dock-y: 22px;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition:
+        opacity 220ms ease,
+        transform 220ms ease,
+        visibility 0s linear 220ms;
 }
 
 .detailTop {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
 }
 
-
 @media (min-width: 769px) {
-  .chromeToggle {
-    right: 26px;
-    bottom: 26px;
-    height: 38px;
-    padding: 0 16px;
-    font-size: 13px;
-    opacity: 0.98;
-    background: rgba(0, 0, 0, 0.68);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
-  }
+    .chromeToggle {
+        right: 26px;
+        bottom: 26px;
+        height: 38px;
+        padding: 0 16px;
+        font-size: 13px;
+        opacity: 0.98;
+        background: rgba(0, 0, 0, 0.68);
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+    }
 }
 
 .itemTitle {
-  font-size: 20px;
-  line-height: 1.15;
-}
-
-.itemSubtitle {
-  margin-top: 4px;
-  opacity: 0.82;
-  font-size: 14px;
+    font-size: 24px;
+    line-height: 1.15;
+    font-family: var(--font-handwritten, cursive);
+    font-weight: 400;
 }
 
 .videoToggle {
-  margin-top: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-  appearance: none;
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: inherit;
-  font-size: 12px;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  opacity: 0.92;
-  transition: transform 120ms ease, background 120ms ease, opacity 120ms ease;
+    appearance: none;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: inherit;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    opacity: 0.92;
+    transition:
+        transform 120ms ease,
+        background 120ms ease,
+        opacity 120ms ease;
 }
 
 .videoToggleIcon {
-  display: inline-flex;
-  align-items: center;
-  opacity: 0.92;
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.92;
 }
 
 .audioToggle {
-  margin-top: 10px;
-  margin-left: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+    margin-top: 10px;
+    margin-left: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-  appearance: none;
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: inherit;
-  font-size: 12px;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  opacity: 0.92;
-  transition: transform 120ms ease, background 120ms ease, opacity 120ms ease;
+    appearance: none;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: inherit;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    opacity: 0.92;
+    transition:
+        transform 120ms ease,
+        background 120ms ease,
+        opacity 120ms ease;
 }
 
 .audioToggleIcon {
-  display: inline-flex;
-  align-items: center;
-  opacity: 0.92;
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.92;
 }
 
 .audioToggle:hover {
-  background: rgba(255, 255, 255, 0.12);
-  opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+    opacity: 1;
 }
 
 .audioToggle:active {
-  transform: translateY(0.5px);
+    transform: translateY(0.5px);
 }
 
 .audioToggle:focus-visible {
-  outline: 2px solid rgba(79, 209, 255, 0.75);
-  outline-offset: 2px;
+    outline: 2px solid rgba(79, 209, 255, 0.75);
+    outline-offset: 2px;
 }
 
 .videoToggle:hover {
-  background: rgba(255, 255, 255, 0.12);
-  opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+    opacity: 1;
 }
 
 .videoToggle:active {
-  transform: translateY(0.5px);
+    transform: translateY(0.5px);
 }
 
 .videoToggle:focus-visible {
-  outline: 2px solid rgba(79, 209, 255, 0.75);
-  outline-offset: 2px;
+    outline: 2px solid rgba(79, 209, 255, 0.75);
+    outline-offset: 2px;
 }
 
 .year {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.8;
-  font-size: 13px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.06);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+    font-size: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .tags {
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .tag {
-  font-size: 12px;
-  opacity: 0.9;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.06);
+    font-size: 12px;
+    opacity: 0.9;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .links {
-  margin-top: 12px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 34px;
-  padding: 0 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  transition: transform 120ms ease, background 120ms ease, opacity 120ms ease;
-  opacity: 0.92;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition:
+        transform 120ms ease,
+        background 120ms ease,
+        opacity 120ms ease;
+    opacity: 0.92;
 }
 
 .linkIcon {
-  display: inline-flex;
-  align-items: center;
-  opacity: 0.92;
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.92;
 }
 
 .link:hover {
-  background: rgba(255, 255, 255, 0.14);
-  opacity: 1;
+    background: rgba(255, 255, 255, 0.14);
+    opacity: 1;
 }
 
 .link:active {
-  transform: translateY(0.5px);
+    transform: translateY(0.5px);
 }
 
 .body {
-  margin-top: 12px;
-  line-height: 1.6;
-  opacity: 0.9;
+    margin-top: 12px;
+    line-height: 1.6;
+    opacity: 0.9;
 }
 
 .body p + p {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 
 .carousel {
-  width: 100%;
-  margin-top: 0;
+    width: 100%;
+    margin-top: 0;
 }
 
 .carouselInner {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding: 10px 6px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  align-items: flex-start;
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 10px 6px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    align-items: flex-start;
 
-  scrollbar-width: none;
+    scrollbar-width: none;
 }
 
 .carouselInner::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 .thumb {
-  scroll-snap-align: center;
-  flex: 0 0 auto;
-  width: 180px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 16px;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  transform: scale(0.965);
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    scroll-snap-align: center;
+    flex: 0 0 auto;
+    width: 180px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transform: scale(0.965);
+    transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
 }
 
 .thumb:hover {
-  background: rgba(0, 0, 0, 0.55);
-  transform: scale(1);
+    background: rgba(0, 0, 0, 0.55);
+    transform: scale(1);
 }
 
 .thumb:active {
-  transform: translateY(0.5px) scale(0.99);
+    transform: translateY(0.5px) scale(0.99);
 }
 
 .thumb:focus-visible {
-  outline: 2px solid rgba(79, 209, 255, 0.75);
-  outline-offset: 2px;
+    outline: 2px solid rgba(79, 209, 255, 0.75);
+    outline-offset: 2px;
 }
 
 .thumbSelected {
-  border-color: rgba(79, 209, 255, 0.65);
-  transform: scale(1);
+    border-color: rgba(79, 209, 255, 0.65);
+    transform: scale(1);
 }
 
 .thumbMedia {
-  height: 76px;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  overflow: hidden;
-  background: radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.20), rgba(0, 0, 0, 0.60));
-  transition: filter 160ms ease, opacity 160ms ease;
+    height: 76px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    overflow: hidden;
+    background: radial-gradient(
+        circle at 20% 10%,
+        rgba(255, 255, 255, 0.2),
+        rgba(0, 0, 0, 0.6)
+    );
+    transition:
+        filter 160ms ease,
+        opacity 160ms ease;
 }
 
 .thumb:not(.thumbSelected) .thumbMedia {
-  filter: brightness(0.70) saturate(0.95);
+    filter: brightness(0.7) saturate(0.95);
 }
 
 .thumb:hover .thumbMedia {
-  filter: none;
+    filter: none;
 }
 
 .thumbImg,
 .thumbVideo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .thumbFallback {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 10px;
 }
 
 .thumbFallbackTitle {
-  font-size: 12px;
-  line-height: 1.2;
-  opacity: 0.9;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    line-height: 1.2;
+    opacity: 0.9;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
 }
 
 .thumbLabel {
-  padding: 10px 12px 12px;
-  transition: opacity 160ms ease;
-  /* Reserve space for title + up to three subtitle lines so cards don't jump. */
-  height: 88px;
-  overflow: hidden;
+    padding: 10px 12px 12px;
+    transition: opacity 160ms ease;
+    /* Reserve space for title + up to three subtitle lines so cards don't jump. */
+    height: 88px;
+    overflow: hidden;
 }
 
 .thumb:not(.thumbSelected) .thumbLabel {
-  opacity: 0.78;
+    opacity: 0.78;
 }
 
 .thumb:hover .thumbLabel {
-  opacity: 1;
+    opacity: 1;
 }
 
 .thumbTitle {
-  font-size: 13px;
-  line-height: 1.2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .thumbSub {
-  margin-top: 4px;
-  font-size: 12px;
-  opacity: 0.78;
-  line-height: 1.2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.78;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (max-width: 768px) {
-  .wrap {
-    padding: 14px 14px 10px;
-  }
+    .wrap {
+        padding: 14px 14px 10px;
+    }
 
-  .header {
-    margin-top: 10px;
-    border-radius: 16px;
-  }
+    .header {
+        margin-top: 10px;
+        border-radius: 16px;
+    }
 
-  .title {
-    font-size: 13px;
-  }
+    .title {
+        font-size: 13px;
+    }
 
-  .detail {
-    border-radius: 16px;
-    max-height: 36svh;
-    margin: 0 14px;
-  }
+    .detail {
+        border-radius: 16px;
+        max-height: 36svh;
+        margin: 0 14px;
+    }
 
-  .dock {
-    left: 0;
-    right: 0;
-    transform: none;
-    width: auto;
-    bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
-    gap: 10px;
-  }
+    .dock {
+        left: 0;
+        right: 0;
+        transform: none;
+        width: auto;
+        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+        gap: 10px;
+    }
 
-  .carousel {
-    margin-top: 0;
-    padding: 10px 10px calc(env(safe-area-inset-bottom) + 6px);
+    .carousel {
+        margin-top: 0;
+        padding: 10px 10px calc(env(safe-area-inset-bottom) + 6px);
 
-    background: rgba(0, 0, 0, 0.68);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
+        background: rgba(0, 0, 0, 0.68);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
 
-  .thumb {
-    width: 150px;
-  }
+    .thumb {
+        width: 150px;
+    }
 }
