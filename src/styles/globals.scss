@@ -8,6 +8,12 @@
     --font-handwritten: var(--font-indie);
 }
 
+@media (max-width: 768px) {
+    :root {
+        --mobile-nav-height: 72px;
+    }
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --background: #0a0a0a;
