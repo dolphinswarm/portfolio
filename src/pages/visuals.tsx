@@ -222,8 +222,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                     text input with visuals that complemented the themes and
                     emotions of the poems being shared, using AI to infer the
                     mood and tone of the text. The visualizer also filtered out
-                    inappropriate content to maintain a
-                    respectful and inclusive environment for all participants.
+                    inappropriate content to maintain a respectful and inclusive
+                    environment for all participants.
                 </p>
             </>
         ),
