@@ -712,7 +712,10 @@ const MUSIC_ITEMS = [
             },
         ],
         previewAudioSrc: "/branding/audio/forge.mp3",
-        thumbnailSource: { kind: "image", src: "/img/thumbs/forge.jpg" },
+        thumbnailSource: {
+            kind: "image",
+            src: "/branding/img/audio/composition.png",
+        },
         body: (
             <p>
                 <em>Forge</em> is a cinematic orchestral piece meant to convey
@@ -742,7 +745,10 @@ const MUSIC_ITEMS = [
             },
         ],
         previewAudioSrc: "/branding/audio/landward-ho.mp3",
-        thumbnailSource: { kind: "image", src: "/img/thumbs/landward-ho.jpg" },
+        thumbnailSource: {
+            kind: "image",
+            src: "/branding/img/audio/composition.png",
+        },
         body: (
             <p>
                 <em>Landward Ho!</em> is a cinematic orchestral piece, invoking
@@ -770,7 +776,10 @@ const MUSIC_ITEMS = [
             },
         ],
         previewAudioSrc: "/branding/audio/heist.mp3",
-        thumbnailSource: { kind: "image", src: "/img/thumbs/heist.jpg" },
+        thumbnailSource: {
+            kind: "image",
+            src: "/branding/img/audio/composition.png",
+        },
         screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
         body: (
             <p>
@@ -1059,7 +1068,7 @@ const Music = () => {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/favicon/favicon.ico" />
             </Head>
 
             <Showcase

@@ -12,6 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import type { Page } from "@/utils/consts";
 import styles from "@/styles/Nav.module.scss";
+import Image from "next/image";
 
 type NavItem = {
     page: Page;
@@ -100,6 +101,12 @@ export const Header = () => {
                         onClick={onNavClick("/")}
                     >
                         Brad Schmitz
+                        <Image
+                            src="/branding/img/me/logo.png"
+                            alt=""
+                            width={32}
+                            height={32}
+                        />
                     </a>
 
                     <nav className={styles.topNav} aria-label="Primary">
