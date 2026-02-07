@@ -46,7 +46,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
             <>
                 <p>
                     <em>FuTerra | I Was The Earth</em> is an immersive
-                    projection experience, which was presented at BLINK 2024 in
+                    projection experience that was presented at BLINK 2024 in
                     Cincinnati, Ohio. It explores themes of community, urbanity,
                     nature, humanity, and technology. It offers a glimpse of a
                     future city where these themes harmoniously intertwine,
@@ -58,17 +58,17 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                 </p>
                 <p>
                     This installation was made as part of a collaborative effort
-                    from the various members of{" "}
+                    by the members of{" "}
                     <a href="https://www.and-friends.studio/">
                         &FRIENDS Studio
                     </a>
-                    . My role in this project was music director and a technical
+                    . My role in this project was music director and technical
                     artist, where I created a generative music system to
                     "infinitely" play with the installation (more details can be
                     found on the{" "}
                     <Link href="music?project=futerra">music page</Link>
                     ). I also helped with projection mapping, media server
-                    programming, Unreal engine scene development, and overall
+                    programming, Unreal Engine scene development, and overall
                     technical direction.
                 </p>
             </>
@@ -108,8 +108,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                     self, others, nature, and more.
                 </p>
                 <p>
-                    This artwork was made as part of a collaborative effort from
-                    the various members of{" "}
+                    This artwork was made as part of a collaborative effort by
+                    the members of{" "}
                     <a href="https://www.and-friends.studio/">
                         &FRIENDS Studio
                     </a>
@@ -217,12 +217,12 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                 </p>
                 <p>
                     The <em>Poem Visualizer</em> was an accompanying projection
-                    piece, which displayed live poetry entered into the Poet's
+                    piece that displayed live poetry entered into the Poet's
                     Shack web app by visitors. The visualizer responded to the
                     text input with visuals that complemented the themes and
-                    emotions of the poems being shared, utilizing AI to decipher
-                    the mood and tone of the text. Additionally, the visualizer
-                    also filtered out any inappropriate content to maintain a
+                    emotions of the poems being shared, using AI to infer the
+                    mood and tone of the text. The visualizer also filtered out
+                    inappropriate content to maintain a
                     respectful and inclusive environment for all participants.
                 </p>
             </>
@@ -322,7 +322,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         links: [
             {
                 label: "View Full Video",
-                href: "https://drive.google.com/file/d/1OAdW4G2iH4rpxxWUaIxJ7Km5nylGFI3G/view?usp=sharing",
+                href: "https://drive.google.com/file/d/1QHdOYWTqy4DotJDw42TCKuyEeZ0nJDoS/view?usp=sharing",
                 icon: faFilm,
                 openInNewWindow: true,
             },
@@ -398,14 +398,6 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
             "3D Model and Animation Final Project for IMS 319 @ Miami University",
         year: "2020",
         tags: ["3D Modeling", "Animation", "AutoDesk Maya"],
-        links: [
-            {
-                label: "Read More",
-                href: "https://sites.miamioh.edu/mother-earths-gallery-of-broken-things/letter-from-the-ocean/",
-                icon: faBook,
-                openInNewWindow: true,
-            },
-        ],
         screenSource: {
             primary: {
                 kind: "video",

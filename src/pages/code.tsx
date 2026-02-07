@@ -35,12 +35,12 @@ const CODE_ITEMS: ShowcaseItem[] = [
             <>
                 <p>
                     <em>Parkinson's VR Training</em> was a virtual reality
-                    application developed as a training simulator, developed as
-                    part of a study conducted by a nursing professor at Malone
-                    University (unnamed for privacy purposes). The study was
-                    about testing the effectiveness of virtual reality in
-                    training nurses. As the name implies, the application
-                    focused on treating a Parkinson's Disease patient.
+                    application developed as a training simulator as part of a
+                    study conducted by a nursing professor at Malone University
+                    (unnamed for privacy purposes). The study was about testing
+                    the effectiveness of virtual reality in training nurses. As
+                    the name implies, the application focused on treating a
+                    Parkinson's Disease patient.
                 </p>
                 <p>
                     The application featured several scenarios of taking care of
@@ -125,15 +125,13 @@ const CODE_ITEMS: ShowcaseItem[] = [
             <>
                 <p>
                     <em>AR Looper</em> is an augmented reality music looper
-                    built in Unity using the Oculus VR stack. It was created as
-                    a first VR project / learning demo: you spawn in a
-                    medieval-style town with a target ~25m away, and you shoot a
-                    limited number of arrows to score points.
-                </p>
-                <p>
-                    Features include a VR UI, bow-and-arrow pullback + release
-                    using VR controllers, scoring based on distance from the
-                    bullseye, and haptic feedback.
+                    built in Unity using the Vuforia AR stack. It was created as
+                    a first AR project / learning demo: you point your phone at
+                    a printed piece of paper (shown) with a specific marker on
+                    it, and a virtual music looper interface appears on top of
+                    the marker. You can then interact with the interface to
+                    create loops of different drum sounds, adjusting the tempo
+                    and pattern as you like.
                 </p>
             </>
         ),
@@ -142,10 +140,14 @@ const CODE_ITEMS: ShowcaseItem[] = [
         slug: "ninjas-vs-knights",
         title: "Ninjas vs. Knights",
         subtitle: "Unity capture-the-flag game for CSE 389",
-        year: "2026",
+        year: "2021",
         tags: ["Unity", "C#", "Game Development"],
         links: [
-            { label: "GitHub", href: "https://github.com/", icon: faGithub },
+            {
+                label: "GitHub",
+                href: "https://github.com/dolphinswarm/Ninjas-vs.-Knights",
+                icon: faGithub,
+            },
         ],
         screenSource: {
             kind: "video",
@@ -164,10 +166,10 @@ const CODE_ITEMS: ShowcaseItem[] = [
                     this game, you and a team of AI-controlled ninjas must
                     travel to the enemy castle and steal their flag. However, at
                     the same time, a team of AI-controlled knights is trying to
-                    the steal the flag from your village! Show them who's boss
-                    by capturing their flag and brining it back to your base.
-                    You can pick up and fire a vareity of guns to help secure
-                    your chances of capturing the enemy's flag.
+                    steal the flag from your village! Show them who's boss by
+                    capturing their flag and bringing it back to your base. You
+                    can pick up and fire a variety of guns to help secure your
+                    chances of capturing the enemy's flag.
                 </p>
                 <p>
                     Built around a Unity "systems" stack for a 3rd-person CTF
@@ -251,20 +253,28 @@ const CODE_ITEMS: ShowcaseItem[] = [
         year: "2026",
         tags: ["Next.js", "TypeScript", "Three.js"],
         links: [
-            { label: "GitHub", href: "https://github.com/", icon: faGithub },
+            {
+                label: "GitHub",
+                href: "https://github.com/dolphinswarm/portfolio",
+                icon: faGithub,
+            },
         ],
+        thumbnailSource: {
+            kind: "image",
+            src: "/branding/img/code/this-website.png",
+        },
         screenSource: {
             kind: "video",
-            src: "/branding/videos/code/r3f-portfolio.mp4",
+            src: "/branding/videos/demo-reel.mp4",
         },
         body: (
             <>
                 <p>This portfolio website!</p>
                 <p>
                     Built with Next.js and React Three Fiber (R3F), this site
-                    showcases my projects and skills in a 3D interactive format.
-                    It features smooth animations, responsive design, and
-                    intuitive navigation to provide an engaging user experience.
+                    showcases my projects and skills in a 3D, engaging, and
+                    interactive "TV screen" format. The site is also built for
+                    responsiveness with mobile phones.
                 </p>
             </>
         ),

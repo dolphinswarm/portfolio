@@ -26,15 +26,15 @@ const About = () => {
 						Hello! I'm <strong>Bradley Schmitz</strong> (he/him) — or just Brad
 						 if you want fewer syllables. I'm a software engineer, creative
 						 technologist, and musician based in Denver, CO. I'm originally from the
-						 cornfields of Northwest Ohio, studied at Miami University of Ohio, and have
-						 previously also lived in San Francisco, CA and Los Angeles, CA.
+						 cornfields of Northwest Ohio, studied at Miami University (Ohio), and
+						 previously lived in San Francisco, CA, and Los Angeles, CA.
 					</p>
 					<br />
 					<p>
 						 I'm drawn to creative coding and interactive systems — such as virtual/augmented
-						 reality, projection mapping, installations, and live visuals — which make
+						 reality, projection mapping, installations, and live visuals — that make
 						 light, sound, motion, and space feel responsive and alive. I love seeing where
-						 technology, art, and music intersect, to create truly immersive and engaging
+						 technology, art, and music intersect to create truly immersive and engaging
 						 experiences.
 					</p>
 				</>

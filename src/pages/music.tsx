@@ -17,7 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faSoundcloud } from "@fortawesome/free-brands-svg-icons";
 
-const DEMO_AUDIO_SRC = "/branding/audio/show_demo.mp3";
+const DEMO_AUDIO_SRC = "/branding/audio/show-demo.mp3";
 
 type MusicItem = ShowcaseItem & {
     previewAudioSrc?: string;
@@ -420,7 +420,7 @@ const MUSIC_ITEMS = [
                 </p>
                 <p>
                     <em>movin' on</em> is an upbeat, happy folk track about the
-                    desire and excitement of starting fresh and pursing new
+                    desire and excitement of starting fresh and pursuing new
                     opportunities.
                 </p>
             </>
@@ -553,9 +553,9 @@ const MUSIC_ITEMS = [
                 </p>
                 <p>
                     <em>screaming to the sky</em> is a spacey indie folk track
-                    about frustations with dating apps. It reatures a repeated
-                    guitar riff in a an open G tuning, as well as lots of
-                    crunchy jazz chords.
+                    about frustrations with dating apps. It features a repeated
+                    guitar riff in an open G tuning, as well as lots of crunchy
+                    jazz chords.
                 </p>
             </>
         ),
@@ -675,7 +675,7 @@ const MUSIC_ITEMS = [
             <>
                 <p>
                     <em>Fantasia for Soprano Saxophone</em> by Heitor
-                    Villa-Lobos perhaps the most well-known soprano saxophone
+                    Villa-Lobos is perhaps the most well-known soprano saxophone
                     solo piece, which I performed as part of my junior recital.
                     Originally accompanied by a chamber orchestra, I performed a
                     version with piano reduction.
@@ -683,9 +683,9 @@ const MUSIC_ITEMS = [
                 <p>
                     For my recital, I performed movements II and III. Movement
                     II is marked "Lent" and is a short, lyrical movement with a
-                    very "jumpy" melodic line. This is follow immediately after
-                    by with Movement III, marked "Très animé", which is a lively
-                    and rhythmically complex movement that features fast passags
+                    very "jumpy" melodic line. It is followed immediately by
+                    Movement III, marked "Très animé", which is a lively and
+                    rhythmically complex movement that features fast passages
                     and requires lots of focus on the soprano saxophone's
                     "touchy" tone.
                 </p>
