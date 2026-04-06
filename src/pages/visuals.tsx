@@ -28,6 +28,12 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         ],
         links: [
             {
+                label: "More Info",
+                href: "https://www.blinkcincinnati.com/experience/art-and-artists/projections/futerra-i-was-the-earth",
+                icon: faBook,
+                openInNewWindow: true,
+            },
+            {
                 label: "View Full Video",
                 href: "https://drive.google.com/file/d/1qEKORAOorDiQXzrEezOVH6YbbtHf3Fug/view?usp=sharing",
                 icon: faFilm,
@@ -76,10 +82,24 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
     },
     {
         slug: "denver-night-lights",
-        title: "Denver Night Lights", // TODO update actual name
+        title: "With/in: The Dance Between Being & Becoming",
         subtitle: "Art for Denver clock tower by &FRIENDS Studio",
         year: "2026",
         tags: ["Installation", "Projection Mapping"],
+        links: [
+            {
+                label: "More Info",
+                href: "https://www.denvertheatredistrict.com/artists/andfriends-studio",
+                icon: faBook,
+                openInNewWindow: true,
+            },
+            {
+                label: "View Full Video",
+                href: "https://drive.google.com/file/d/1ZgB_ggyP3s-vqLsYuHWYhk2pgmqdwgGb/view?usp=sharing",
+                icon: faFilm,
+                openInNewWindow: true,
+            },
+        ],
         screenSource: {
             kind: "video",
             src: "/branding/videos/visuals/denver-night-lights.mp4",
@@ -91,9 +111,10 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         body: (
             <>
                 <p>
-                    <em>Denver Night Lights</em> is an upcoming projection art
-                    piece, set to premiere in April 2026 as part of Downtown
-                    Denver's clock tower projection series called{" "}
+                    <em>With/in: The Dance Between Being & Becoming</em> is a
+                    projection art piece that was part of the April 2026
+                    installment of Downtown Denver's clock tower projection
+                    series called{" "}
                     <a
                         href="https://www.denvertheatredistrict.com/night-lights-denver"
                         target="_blank"
@@ -101,11 +122,11 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                     >
                         Night Lights Denver
                     </a>
-                    . The piece will be projected onto the iconic Daniels &
-                    Fisher Tower, a historic landmark in the heart of Denver.
-                    The piece displays various imaginative scenes, each of which
-                    convey themes of community, discovery, and connection with
-                    self, others, nature, and more.
+                    . The piece was projected onto the iconic Daniels & Fisher
+                    Tower, a historic landmark in the heart of Denver. The piece
+                    displayed various imaginative scenes, each of which conveyed
+                    themes of community, discovery, and connection with self,
+                    others, nature, and more.
                 </p>
                 <p>
                     This artwork was made as part of a collaborative effort by
@@ -113,10 +134,10 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                     <a href="https://www.and-friends.studio/">
                         &FRIENDS Studio
                     </a>
-                    . For this project, I served as producer, communicating with
-                    the team and client to ensure smooth progress and delivery.
-                    I also composed a short musical piece to accompany the
-                    visuals.
+                    . For this project, I served as producer, handling
+                    client/team communication and logistics to ensure smooth
+                    progress and delivery. I also composed a short musical piece
+                    to accompany the visuals.
                 </p>
             </>
         ),
