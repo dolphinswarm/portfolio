@@ -9,6 +9,7 @@ export default function Document() {
                     name="viewport"
                     content="width=device-width, initial-scale=1, viewport-fit=cover"
                 />
+                <meta name="darkreader-lock" />
                 <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
                 <link rel="shortcut icon" href="/favicon/favicon.ico" />
                 <link

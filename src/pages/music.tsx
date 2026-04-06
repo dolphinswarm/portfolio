@@ -154,7 +154,7 @@ const MusicPlayerBar = ({
     initialVolume: number;
     currentTime: number;
     duration: number;
-    timelineRef: React.RefObject<HTMLInputElement>;
+    timelineRef: React.RefObject<HTMLInputElement | null>;
     onTogglePlayback: () => void;
     onSetVolume: (volume: number) => void;
     onSeekStart: () => void;
