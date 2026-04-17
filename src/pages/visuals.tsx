@@ -81,7 +81,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         ),
     },
     {
-        slug: "denver-night-lights",
+        slug: "within",
         title: "With/in: The Dance Between Being & Becoming",
         subtitle: "Art for Denver clock tower by &FRIENDS Studio",
         year: "2026",
@@ -94,8 +94,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                 openInNewWindow: true,
             },
             {
-                label: "View Full Video",
-                href: "https://drive.google.com/file/d/1ZgB_ggyP3s-vqLsYuHWYhk2pgmqdwgGb/view?usp=sharing",
+                label: "View Full Video (with audio)",
+                href: "https://drive.google.com/file/d/1yWzi8W_Gs7cdlVEwMpO76rq7bTmmYCcs/view?usp=sharing",
                 icon: faFilm,
                 openInNewWindow: true,
             },

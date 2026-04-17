@@ -8,6 +8,7 @@ import {
     faVolumeHigh,
     faVolumeXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import { useDrag } from "@use-gesture/react";
 import styles from "./Showcase.module.scss";
 
 const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
@@ -474,6 +475,38 @@ export const Showcase = ({
         [items, selectedItem, onSelect],
     );
 
+    const carouselRef = React.useRef<HTMLDivElement>(null);
+    const isDraggingRef = React.useRef(false);
+
+    const bindCarouselDrag = useDrag(
+        ({ active, movement: [mx], first, memo }) => {
+            const el = carouselRef.current;
+            if (!el) return memo;
+
+            if (first) {
+                isDraggingRef.current = false;
+                return el.scrollLeft;
+            }
+
+            // Mark as dragging once past a small threshold so clicks still work.
+            if (Math.abs(mx) > 3) {
+                isDraggingRef.current = true;
+            }
+
+            el.scrollLeft = (memo as number) - mx;
+
+            if (!active) {
+                // Reset after a tick so the click handler can check.
+                requestAnimationFrame(() => {
+                    isDraggingRef.current = false;
+                });
+            }
+
+            return memo;
+        },
+        { axis: "x", pointer: { touch: true }, filterTaps: true },
+    );
+
     if (!items.length) return null;
 
     return (
@@ -648,8 +681,11 @@ export const Showcase = ({
                     aria-label={`${pageTitle} items`}
                 >
                     <div
+                        ref={carouselRef}
                         className={styles.carouselInner}
                         onKeyDown={onCarouselKeyDown}
+                        {...bindCarouselDrag()}
+                        style={{ touchAction: "pan-y" }}
                     >
                         {items.map((item) => {
                             const selected = item.slug === selectedItem?.slug;

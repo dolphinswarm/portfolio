@@ -76,6 +76,10 @@ a {
     text-decoration: none;
 }
 
+p a {
+    color: var(--accent);
+}
+
 @media (prefers-color-scheme: dark) {
     html {
         color-scheme: dark;

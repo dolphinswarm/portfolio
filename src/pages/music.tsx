@@ -16,6 +16,7 @@ import {
     faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import { faSoundcloud } from "@fortawesome/free-brands-svg-icons";
+import Link from "next/link";
 
 const DEMO_AUDIO_SRC = "/branding/audio/show-demo.mp3";
 
@@ -99,6 +100,10 @@ const MUSIC_SCREEN_PALETTE_BY_SLUG: Record<string, MusicScreenPalette> = {
     heist: {
         spectrumBars: { colorA: "#22c55e", colorB: "#ef4444" },
         screenBase: "#050a07",
+    },
+    within: {
+        spectrumBars: { colorA: "#f472b6", colorB: "#c084fc" },
+        screenBase: "#2d1b4e",
     },
 };
 
@@ -579,7 +584,19 @@ const MUSIC_ITEMS = [
             src: "/branding/img/visuals/futerra-2.jpg",
         },
         previewAudioSrc: "/branding/audio/show-demo.mp3",
-        body: <p>Recorded and cut for quick drop-in use.</p>,
+        body: (
+            <p>
+                <em>FuTerra | I Was The Earth</em> is the generative music
+                soundscape I created for the BLINK 2024 video installation of
+                the same name (see the piece on the{" "}
+                <Link href="/visuals#futerra">Visuals</Link> page). The music is
+                meant to evoke a sense of awe, wonder, evolution, and the
+                passage of time, reflecting the themes of the installation. It
+                was created using Ableton Live with various generative
+                techniques, including randomization, algorithmic composition,
+                and live processing of field recordings.
+            </p>
+        ),
     },
     {
         slug: "improvisation-1",
@@ -787,6 +804,29 @@ const MUSIC_ITEMS = [
                 and heist films, cinematically portraying the tension of
                 attempting to pull off a robbery. Notable thing about this piece
                 is it's mostly in 7/8 time!
+            </p>
+        ),
+    },
+    {
+        slug: "within",
+        title: "With/in: The Dance Between Being & Becoming",
+        subtitle: "Composition for Denver Night Lights Video Installation",
+        year: "2026",
+        tags: ["Soundtrack", "Classical"],
+        previewAudioSrc: "/branding/audio/within.mp3",
+        thumbnailSource: {
+            kind: "image",
+            src: "/branding/img/visuals/denver-night-lights.png",
+        },
+        body: (
+            <p>
+                <em>With/in: The Dance Between Being & Becoming</em> is the I
+                composed as the accompanying music for the Denver Night Lights
+                video installation of the same name (see the piece on the{" "}
+                <Link href="/visuals#within">Visuals</Link> page). The piece is
+                a whimsical, carnival-esque waltz (think a merry-go-round) that
+                is meant to evoke feelings of nostalgia, joy, and
+                bittersweetness.
             </p>
         ),
     },
