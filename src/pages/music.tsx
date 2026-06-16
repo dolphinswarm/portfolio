@@ -9,7 +9,6 @@ import { useSceneVideo } from "@/context/SceneVideoContext";
 import { useAudioSpectrum } from "@/context/AudioSpectrumContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faFile,
     faFilm,
     faMusic,
     faPause,

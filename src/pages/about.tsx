@@ -10,7 +10,6 @@ import {
     faVrCardboard,
     faMusic,
     faBrain,
-    faShrimp,
     faComputer,
     faCat,
     faHandPointer,
@@ -23,7 +22,7 @@ const About = () => {
             top={
                 <>
                     <p>
-                        Hello! I'm <strong>Bradley Schmitz</strong> (he/him) —
+                        Hello! I'm <strong>Bradley Schmitz</strong> (he/him) -
                         or just Brad if you want fewer syllables. I'm a software
                         engineer, creative technologist, and musician based in
                         Denver, CO. I'm originally from the cornfields of
@@ -33,9 +32,9 @@ const About = () => {
                     </p>
                     <br />
                     <p>
-                        I'm drawn to creative coding and interactive systems —
+                        I'm drawn to creative coding and interactive systems -
                         such as virtual/augmented reality, projection mapping,
-                        installations, and live visuals — that make light,
+                        installations, and live visuals - that make light,
                         sound, motion, and space feel responsive and alive. I
                         love seeing where technology, art, and music intersect
                         to create truly immersive and engaging experiences.

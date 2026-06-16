@@ -18,6 +18,8 @@ const eslintConfig = defineConfig([
             // Three.js textures/materials must be mutated in-place; this rule
             // is incompatible with the @react-three/fiber programming model.
             "react-hooks/immutability": "off",
+            // Bare apostrophes in JSX prose are safe; escaping adds noise.
+            "react/no-unescaped-entities": "off",
         },
     },
     globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
