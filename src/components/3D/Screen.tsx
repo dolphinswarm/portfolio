@@ -335,9 +335,11 @@ export const Screen = ({
                         }
                     />
                 ) : videoTexture != null ? (
-                    <meshBasicMaterial toneMapped={false} map={videoTexture} />
+                    // Explicit white: R3F reuses this material instance across branches and
+                    // resets a dropped `color` prop to black, which multiplies the map to black.
+                    <meshBasicMaterial toneMapped={false} color="#ffffff" map={videoTexture} />
                 ) : imageTexture != null ? (
-                    <meshBasicMaterial toneMapped={false} map={imageTexture} />
+                    <meshBasicMaterial toneMapped={false} color="#ffffff" map={imageTexture} />
                 ) : (
                     <meshBasicMaterial color="#0b0b0d" />
                 )}
