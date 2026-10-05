@@ -305,11 +305,14 @@ export const Showcase = ({
         React.useState(false);
     const [isAudioEnabled, setIsAudioEnabled] = React.useState(false);
 
+    // Read the selection from the URL once. After that, local state is the
+    // source of truth: re-reading the query would let a still-pending
+    // router.replace() from an earlier tap override a newer selection.
+    const hasReadUrlRef = React.useRef(false);
     React.useEffect(() => {
-        if (!router.isReady) return;
-        const initial = getInitialSlug();
-        setSelectedSlug((prev) => (prev === initial ? prev : initial));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (!router.isReady || hasReadUrlRef.current) return;
+        hasReadUrlRef.current = true;
+        setSelectedSlug(getInitialSlug());
     }, [router.isReady, getInitialSlug]);
 
     const selectedItem = React.useMemo(() => {
@@ -479,7 +482,13 @@ export const Showcase = ({
     const isDraggingRef = React.useRef(false);
 
     const bindCarouselDrag = useDrag(
-        ({ active, movement: [mx], first, memo }) => {
+        ({ active, movement: [mx], first, memo, event }) => {
+            // Touch devices use native scrolling (momentum + snap); this only
+            // adds click-and-drag scrolling for mouse users.
+            const isMouse =
+                "pointerType" in event && event.pointerType === "mouse";
+            if (!isMouse) return memo;
+
             const el = carouselRef.current;
             if (!el) return memo;
 
@@ -504,7 +513,16 @@ export const Showcase = ({
 
             return memo;
         },
-        { axis: "x", pointer: { touch: true }, filterTaps: true },
+        { axis: "x", filterTaps: true },
+    );
+
+    // Ignore the click that fires when a mouse drag is released over a thumb.
+    const onThumbClick = React.useCallback(
+        (slug: string) => {
+            if (isDraggingRef.current) return;
+            onSelect(slug);
+        },
+        [onSelect],
     );
 
     if (!items.length) return null;
@@ -685,7 +703,6 @@ export const Showcase = ({
                         className={styles.carouselInner}
                         onKeyDown={onCarouselKeyDown}
                         {...bindCarouselDrag()}
-                        style={{ touchAction: "pan-y" }}
                     >
                         {items.map((item) => {
                             const selected = item.slug === selectedItem?.slug;
@@ -694,7 +711,7 @@ export const Showcase = ({
                                     key={item.slug}
                                     item={item}
                                     selected={selected}
-                                    onSelect={onSelect}
+                                    onSelect={onThumbClick}
                                 />
                             );
                         })}

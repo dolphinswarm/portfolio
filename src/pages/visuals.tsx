@@ -29,7 +29,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         links: [
             {
                 label: "More Info",
-                href: "https://www.blinkcincinnati.com/experience/art-and-artists/projections/futerra-i-was-the-earth",
+                href: "https://web.archive.org/web/20241015130333/https://www.blinkcincinnati.com/experience/art-and-artists/projections/futerra-i-was-the-earth",
                 icon: faBook,
                 openInNewWindow: true,
             },
@@ -152,7 +152,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         links: [
             {
                 label: "Read More",
-                href: "https://miamioh.edu/cca/news/2020/12/poet-shack-2020.html",
+                href: "https://web.archive.org/web/20240414054626/https://miamioh.edu/cca/news/2020/12/poet-shack-2020.html",
                 icon: faBook,
                 openInNewWindow: true,
             },
@@ -211,7 +211,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         links: [
             {
                 label: "Read More",
-                href: "https://miamioh.edu/cca/news/2020/12/poet-shack-2020.html",
+                href: "https://web.archive.org/web/20240414054626/https://miamioh.edu/cca/news/2020/12/poet-shack-2020.html",
                 icon: faBook,
                 openInNewWindow: true,
             },
@@ -259,7 +259,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         links: [
             {
                 label: "Read More",
-                href: "https://miamioh.edu/cca/news/2020/12/poet-shack-2020.html",
+                href: "https://web.archive.org/web/20240414054626/https://miamioh.edu/cca/news/2020/12/poet-shack-2020.html",
                 icon: faBook,
                 openInNewWindow: true,
             },
@@ -450,7 +450,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         links: [
             {
                 label: "Image of IRL Sundial",
-                href: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.topuniversities.com%2Fsites%2Fdefault%2Ffiles%2Fprofiles-slideshow%2FOutdoor%2520orientation%2520sundial%2520resized-1664204307.jpg&f=1&nofb=1&ipt=e724a147795ee029fc81fe500b64bc135704789963b07ff276f1363b9e193ad6",
+                href: "/branding/img/visuals/tridelt-sundial-irl.jpg",
                 icon: faArrowUpRightFromSquare,
                 openInNewWindow: true,
             },

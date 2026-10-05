@@ -343,6 +343,10 @@
     -webkit-overflow-scrolling: touch;
     align-items: flex-start;
     cursor: grab;
+    /* Native panning on touch; mouse drag is handled in JS. */
+    touch-action: pan-x pan-y;
+    /* Don't trigger browser back/forward swipes at the ends. */
+    overscroll-behavior-x: contain;
 
     scrollbar-width: none;
 }
@@ -373,9 +377,20 @@
         background 160ms ease;
 }
 
-.thumb:hover {
-    background: rgba(0, 0, 0, 0.55);
-    transform: scale(1);
+/* Hover styles only where hover exists; on touch they stick after a tap. */
+@media (hover: hover) {
+    .thumb:hover {
+        background: rgba(0, 0, 0, 0.55);
+        transform: scale(1);
+    }
+
+    .thumb:hover .thumbMedia {
+        filter: none;
+    }
+
+    .thumb:hover .thumbLabel {
+        opacity: 1;
+    }
 }
 
 .thumb:active {
@@ -409,10 +424,6 @@
 
 .thumb:not(.thumbSelected) .thumbMedia {
     filter: brightness(0.7) saturate(0.95);
-}
-
-.thumb:hover .thumbMedia {
-    filter: none;
 }
 
 .thumbImg,
@@ -449,10 +460,6 @@
 
 .thumb:not(.thumbSelected) .thumbLabel {
     opacity: 0.78;
-}
-
-.thumb:hover .thumbLabel {
-    opacity: 1;
 }
 
 .thumbTitle {
@@ -492,9 +499,16 @@
         font-size: 13px;
     }
 
+    /* Sit under the header instead of on top of the carousel. */
+    .chromeToggle {
+        top: calc(env(safe-area-inset-top) + 70px);
+        bottom: auto;
+        right: 14px;
+    }
+
     .detail {
         border-radius: 16px;
-        max-height: 36svh;
+        max-height: 30svh;
         margin: 0 14px;
     }
 
@@ -509,7 +523,8 @@
 
     .carousel {
         margin-top: 0;
-        padding: 10px 10px calc(env(safe-area-inset-bottom) + 6px);
+        /* The dock already sits above the nav + safe area. */
+        padding: 6px 10px;
 
         background: rgba(0, 0, 0, 0.68);
         border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -517,7 +532,37 @@
         -webkit-backdrop-filter: blur(16px);
     }
 
+    .carouselInner {
+        padding: 6px 4px;
+        scroll-padding-inline: 10px;
+    }
+
     .thumb {
-        width: 150px;
+        width: 136px;
+    }
+
+    .thumbMedia {
+        height: 64px;
+    }
+
+    .thumbLabel {
+        padding: 8px 10px 10px;
+        /* Title + up to two subtitle lines. */
+        height: 68px;
+    }
+
+    .thumbSub {
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* Snap on touch only; snapping fights the JS mouse drag. */
+@media (hover: none) {
+    .carouselInner {
+        scroll-snap-type: x proximity;
+    }
+
+    .thumb {
+        scroll-snap-align: center;
     }
 }
