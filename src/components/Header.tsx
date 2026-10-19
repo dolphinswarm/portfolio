@@ -8,12 +8,12 @@ import {
     faCode,
     faMusic,
     faImages,
-    faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import type { Page } from "@/utils/consts";
 import styles from "@/styles/Nav.module.scss";
 import Image from "next/image";
 import Link from "next/link";
+import { SITE_ROLE } from "@/utils/site";
 
 type NavItem = {
     page: Page;
@@ -28,7 +28,6 @@ const NAV_ITEMS: NavItem[] = [
     { page: "code", href: "/code", label: "Code", icon: faCode },
     { page: "visuals", href: "/visuals", label: "Visuals", icon: faImages },
     { page: "music", href: "/music", label: "Music", icon: faMusic },
-    { page: "connect", href: "/connect", label: "Connect", icon: faPaperPlane },
 ];
 
 export const Header = () => {
@@ -83,20 +82,23 @@ export const Header = () => {
         <>
             <header className={styles.topHeader}>
                 <div className={styles.topInner}>
-                    <Link
-                        className={`${styles.brand} handwritten`}
-                        href="/"
-                        aria-label="Go to home"
-                        onClick={onNavClick("/")}
-                    >
-                        Brad Schmitz
-                        <Image
-                            src="/branding/img/me/logo.png"
-                            alt=""
-                            width={32}
-                            height={32}
-                        />
-                    </Link>
+                    <div className={styles.brandBlock}>
+                        <Link
+                            className={`${styles.brand} handwritten`}
+                            href="/"
+                            aria-label="Go to home"
+                            onClick={onNavClick("/")}
+                        >
+                            Brad Schmitz
+                            <Image
+                                src="/branding/img/me/logo.png"
+                                alt=""
+                                width={32}
+                                height={32}
+                            />
+                        </Link>
+                        <p className={styles.tagline}>{SITE_ROLE}</p>
+                    </div>
 
                     <nav className={styles.topNav} aria-label="Primary">
                         {NAV_ITEMS.map((item) => {

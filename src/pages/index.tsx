@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SEO } from "@/components/SEO";
 import {
     DEFAULT_OG_IMAGE,
@@ -6,7 +5,6 @@ import {
     SITE_URL,
     SOCIAL_PROFILES,
 } from "@/utils/site";
-import styles from "@/styles/Home.module.scss";
 
 const DESCRIPTION =
     "Brad Schmitz is a Denver-based creative technologist building projection-mapped installations, XR experiences, and audio-reactive visuals.";
@@ -62,24 +60,10 @@ const Home = () => {
                 path="/"
                 jsonLd={[PERSON_JSON_LD, WEBSITE_JSON_LD]}
             />
-            <section className={styles.hero} aria-labelledby="home-heading">
-                <h1 id="home-heading" className={styles.heading}>
-                    Creative technologist &amp; immersive experience designer
-                </h1>
-                <p className={styles.pitch}>
-                    I build projection-mapped installations, XR, and
-                    audio-reactive experiences that make light, sound, and space
-                    feel alive. Based in Denver, CO.
-                </p>
-                <div className={styles.ctas}>
-                    <Link href="/visuals" className={styles.primary}>
-                        See my work
-                    </Link>
-                    <Link href="/connect" className={styles.secondary}>
-                        Get in touch
-                    </Link>
-                </div>
-            </section>
+            <h1 className="visually-hidden">
+                Brad Schmitz, creative technologist and immersive experience
+                designer
+            </h1>
         </>
     );
 };

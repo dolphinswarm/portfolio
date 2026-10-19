@@ -5,7 +5,6 @@ export const pages = [
     "code",
     "music",
     "visuals",
-    "connect",
     "bork",
 ] as const;
 

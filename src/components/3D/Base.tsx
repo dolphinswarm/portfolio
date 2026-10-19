@@ -9,6 +9,8 @@ import { PointAtCamera } from "./PointAtCamera";
 import type { SceneMedia, SceneProps } from "@/utils/types";
 import { Environment } from "@react-three/drei";
 import { BackgroundScreen } from "./BackgroundScreen";
+import { LowerThird } from "./LowerThird";
+import { SITE_NAME, SITE_ROLE } from "@/utils/site";
 import * as THREE from "three";
 import {
     ProceduralScreenMaterial,
@@ -292,6 +294,18 @@ export const Base3DScene = ({
                             media={resolvedMedia}
                             proceduralVariant={screenProceduralVariant}
                         />
+                        {isIndexRoute ? (
+                            // Bottom-left of the screen (a 4 x 2.25 plane centered
+                            // at [0, 1.1, -0.5]), just in front of it and behind
+                            // Brad (z = 1.5), who covers it where they overlap.
+                            <LowerThird
+                                title={SITE_NAME}
+                                logoSrc="/branding/img/me/logo.png"
+                                subtitle={SITE_ROLE}
+                                position={[-1.85, 0.15, -0.45]}
+                                width={1.6}
+                            />
+                        ) : null}
                         <BackdropRig
                             transitionRef={routeTransitionRef}
                             media={resolvedMedia}

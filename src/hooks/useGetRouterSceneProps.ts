@@ -42,13 +42,6 @@ const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
         shouldRender: true,
         shouldShowBrad: false,
     },
-    connect: {
-        media: undefined,
-        backgroundVariant: "connect",
-        shouldUseFreeCamera: false,
-        shouldRender: true,
-        shouldShowBrad: true,
-    },
     bork: {
         media: {
             sourceType: "video",

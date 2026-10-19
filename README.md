@@ -23,7 +23,7 @@ The whole site is a single 3D stage. Each page swaps what plays on the "screen":
 | [src/context/SceneVideoContext.tsx](src/context/SceneVideoContext.tsx)       | Lets a page override the screen's media, e.g. when you pick a project                                            |
 | [src/context/AudioSpectrumContext.tsx](src/context/AudioSpectrumContext.tsx) | Shares live frequency data from the music player with the screen shader                                          |
 | [src/components/Showcase/](src/components/Showcase/)                         | The project carousel and detail panel used by Code, Visuals, and Music; selection is deep-linked via `?project=` |
-| [src/components/ScreenOverlay/](src/components/ScreenOverlay/)               | Lays text out so it reads as if it's on the screen (About, Connect)                                              |
+| [src/components/ScreenOverlay/](src/components/ScreenOverlay/)               | Lays text out so it reads as if it's on the screen (About)                                              |
 | [src/components/SEO.tsx](src/components/SEO.tsx)                             | Per-page title, description, canonical URL, Open Graph tags, and JSON-LD                                         |
 
 The `<Canvas>` lives in the shared layout, so the scene stays mounted while you navigate and transitions between routes instead of reloading.

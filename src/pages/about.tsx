@@ -5,8 +5,6 @@ import {
     faToolbox,
     faGraduationCap,
     faShapes,
-    faLink,
-    faFilePdf,
     faVrCardboard,
     faMusic,
     faBrain,
@@ -16,6 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "@/styles/About.module.scss";
 import { SEO } from "@/components/SEO";
+import { ContactLinks } from "@/components/ContactLinks/ContactLinks";
 
 const About = () => {
     return (
@@ -23,7 +22,7 @@ const About = () => {
             <SEO
                 title="About Brad Schmitz, Creative Technologist in Denver"
                 fullTitle
-                description="Background, experience, and toolkit of Brad Schmitz: creative technologist, software engineer, and musician in Denver, CO, working with Unreal Engine, TouchDesigner, Unity, Three.js, and Ableton Live."
+                description="Background, experience, toolkit, and contact info for Brad Schmitz: creative technologist, software engineer, and musician in Denver, CO, working with Unreal Engine, TouchDesigner, Unity, Three.js, and Ableton Live."
                 path="/about"
             />
             <ScreenOverlay
@@ -49,6 +48,7 @@ const About = () => {
                             music intersect to create truly immersive and
                             engaging experiences.
                         </p>
+                        <ContactLinks />
                     </>
                 }
                 left={
@@ -148,27 +148,6 @@ const About = () => {
                                 clawhammer), bass, piano
                             </li>
                         </ul>
-                        <br />
-                        <h2>
-                            <span className={styles.sectionHeader}>
-                                <FontAwesomeIcon
-                                    className={styles.sectionIcon}
-                                    icon={faLink}
-                                />
-                                Links
-                            </span>
-                        </h2>
-                        <div className={styles.linkButtons}>
-                            <a
-                                className={styles.resumeButton}
-                                href="/resume.pdf"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                <FontAwesomeIcon icon={faFilePdf} fixedWidth />{" "}
-                                Resume (PDF)
-                            </a>
-                        </div>
                     </>
                 }
                 right={

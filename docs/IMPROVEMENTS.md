@@ -10,7 +10,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 ### Homepage and positioning
 
-- [x] **S** Add a visible hero over the 3D scene on the homepage: an `<h1>` with name, a one-line pitch (e.g. "Creative technologist building projection-mapped, XR and audio-reactive experiences. Denver, CO."), and two buttons: "Watch reel" and "See work". The homepage currently renders no text at all. ([index.tsx](../src/pages/index.tsx))
+- [x] **S** Add a visible hero over the 3D scene on the homepage: an `<h1>` with name, a one-line pitch (e.g. "Creative technologist building projection-mapped, XR and audio-reactive experiences. Denver, CO."), and two buttons: "Watch reel" and "See work". The homepage currently renders no text at all. ([index.tsx](../src/pages/index.tsx)) (Built, then removed: the visible card didn't fit the scene. The homepage keeps a screen-reader-only `<h1>`.)
 - [x] **S** Add one `<h1>` to every page. None exist today except `/bork`.
 
 ### SEO basics
@@ -35,7 +35,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 - [x] **S** Add `@use-gesture/react` to `package.json`. It's imported in [Showcase.tsx:11](../src/components/Showcase/Showcase.tsx#L11) but only installed transitively through drei.
 - [x] **S** Remove duplicate `viewport` and favicon tags from individual pages. They conflict with `_document` (they drop `viewport-fit=cover`).
 - [x] ~~Remove the duplicate font variable classes~~ Not actually duplicates: `next/font` only loads its CSS from app-bundle modules, so the classes in [Layout.tsx](../src/components/Layout.tsx) are what load the fonts. Left as is.
-- [x] **S** Delete unused `src/styles/Home.module.scss`. (Reused it for the homepage hero instead.)
+- [x] **S** Delete unused `src/styles/Home.module.scss`.
 
 ---
 
@@ -94,10 +94,11 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 - [ ] **S** Trim the awards block to one line.
 - [ ] **S** Replace `<br />` spacing with CSS.
 
-### Connect page
+### Contact (merged into About)
 
-- [ ] **S** Fill the empty right column (currently a `// TODO`, [connect.tsx:150](../src/pages/connect.tsx#L150)) with an availability note: types of projects you're open to, freelance vs. full-time, timezone.
-- [x] **S** Add the resume link here too, not just on About.
+- [x] **M** Merge Connect into About. Email, copy, resume, and social links now sit under the intro ([ContactLinks.tsx](../src/components/ContactLinks/ContactLinks.tsx)); `/connect` redirects to `/about`.
+- [ ] **S** Add an availability line under the contact links: types of projects you're open to, freelance vs. full-time, timezone/travel.
+- [ ] **S** The "connect" procedural screen look is no longer used by any route. Reuse it somewhere or remove it from the 3D code.
 
 ### Music page
 
