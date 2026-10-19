@@ -13,6 +13,7 @@ import {
 import type { Page } from "@/utils/consts";
 import styles from "@/styles/Nav.module.scss";
 import Image from "next/image";
+import Link from "next/link";
 
 type NavItem = {
     page: Page;
@@ -52,11 +53,13 @@ export const Header = () => {
         }
     }, []);
 
+    // <Link> handles client-side routing (and prefetching). If the History API is
+    // blocked, skip it and do a full page load instead.
     const onNavClick = React.useCallback(
-        (href: string) => async (e: React.MouseEvent<HTMLAnchorElement>) => {
-            // Let the browser handle new-tab / modified clicks.
+        (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+            // Leave new-tab / modified clicks to the browser.
             if (
-                e.defaultPrevented ||
+                canUseHistoryRef.current ||
                 e.button !== 0 ||
                 e.metaKey ||
                 e.ctrlKey ||
@@ -65,24 +68,10 @@ export const Header = () => {
             ) {
                 return;
             }
-
-            // External links: default browser behavior.
-            if (/^https?:\/\//i.test(href)) return;
-
-            // If History API is blocked, allow the browser to handle navigation.
-            if (!canUseHistoryRef.current) return;
-
             e.preventDefault();
-
-            try {
-                await router.push(href);
-            } catch {
-                // If client-side routing failed, fall back to normal anchor navigation
-                // next time. (We can't safely force navigation here in sandboxed contexts.)
-                canUseHistoryRef.current = false;
-            }
+            window.location.assign(href);
         },
-        [router],
+        [],
     );
 
     const isActiveHref = (href: string) => {
@@ -94,7 +83,7 @@ export const Header = () => {
         <>
             <header className={styles.topHeader}>
                 <div className={styles.topInner}>
-                    <a
+                    <Link
                         className={`${styles.brand} handwritten`}
                         href="/"
                         aria-label="Go to home"
@@ -107,7 +96,7 @@ export const Header = () => {
                             width={32}
                             height={32}
                         />
-                    </a>
+                    </Link>
 
                     <nav className={styles.topNav} aria-label="Primary">
                         {NAV_ITEMS.map((item) => {
@@ -117,7 +106,7 @@ export const Header = () => {
                                 : styles.topLink;
 
                             return (
-                                <a
+                                <Link
                                     key={item.page}
                                     href={item.href}
                                     className={className}
@@ -125,7 +114,7 @@ export const Header = () => {
                                     onClick={onNavClick(item.href)}
                                 >
                                     {item.label}
-                                </a>
+                                </Link>
                             );
                         })}
                     </nav>
@@ -140,7 +129,7 @@ export const Header = () => {
                         : styles.bottomItem;
 
                     return (
-                        <a
+                        <Link
                             key={item.page}
                             href={item.href}
                             className={className}
@@ -157,7 +146,7 @@ export const Header = () => {
                             <span className={styles.bottomLabel}>
                                 {item.label}
                             </span>
-                        </a>
+                        </Link>
                     );
                 })}
             </nav>

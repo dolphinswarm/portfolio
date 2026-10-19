@@ -5,6 +5,7 @@ import {
     faChevronRight,
     faCopy,
     faEnvelope,
+    faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 import {
     faGithub,
@@ -100,6 +101,35 @@ const Connect = () => {
                         <section aria-label="Links">
                             <h2>Links</h2>
                             <div className={styles.stack}>
+                                <a
+                                    className={styles.card}
+                                    href="/resume.pdf"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    <span className={styles.cardIcon}>
+                                        <FontAwesomeIcon icon={faFilePdf} />
+                                    </span>
+                                    <span className={styles.cardBody}>
+                                        <span className={styles.cardTopRow}>
+                                            <span className={styles.cardTitle}>
+                                                Resume
+                                            </span>
+                                            <span className={styles.cardMeta}>
+                                                PDF
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span
+                                        className={styles.cardChevron}
+                                        aria-hidden="true"
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faChevronRight}
+                                        />
+                                    </span>
+                                </a>
+
                                 <a
                                     className={styles.card}
                                     href="https://github.com/dolphinswarm"

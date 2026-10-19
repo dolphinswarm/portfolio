@@ -14,6 +14,17 @@ import {
     faFilm,
 } from "@fortawesome/free-solid-svg-icons";
 
+// Shared context for the three pieces from the Poet's Shack installation.
+const POETS_SHACK_INTRO = (
+    <p>
+        The <em>Gathering at the Poet's Shack</em> was an immersive interactive
+        installation held at Miami University's campus in Bishop Woods on
+        November 16th, 2020. The installation was a capstone project for the
+        Interactive Media Studies program, and was created by a team of students
+        in collaboration with faculty and other departments.
+    </p>
+);
+
 const VISUAL_ITEMS: ShowcaseItem[] = [
     {
         slug: "futerra",
@@ -46,7 +57,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/futerra-2.jpg",
+            src: "/branding/img/thumbs/futerra-2.webp",
         },
         body: (
             <>
@@ -106,7 +117,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/denver-night-lights.png",
+            src: "/branding/img/thumbs/denver-night-lights.webp",
         },
         body: (
             <>
@@ -179,18 +190,11 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/gathering-at-the-poets-shack-overview.jpg",
+            src: "/branding/img/thumbs/gathering-at-the-poets-shack-overview.webp",
         },
         body: (
             <>
-                <p>
-                    The <em>Gathering at the Poet's Shack</em> was an immersive
-                    interactive installation held at Miami University's campus
-                    in Bishop Woods on November 16th, 2020. The installation was
-                    a capstone project for the Interactive Media Studies
-                    program, and was created by a team of students in
-                    collaboration with faculty and other departments.
-                </p>
+                {POETS_SHACK_INTRO}
                 <p>
                     The centerpiece was the <em>Shack Video</em>, which was
                     projected onto a 10-foot high screen in the shape of a
@@ -224,18 +228,11 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/poem-visualizer.png",
+            src: "/branding/img/thumbs/poem-visualizer.webp",
         },
         body: (
             <>
-                <p>
-                    The <em>Gathering at the Poet's Shack</em> was an immersive
-                    interactive installation held at Miami University's campus
-                    in Bishop Woods on November 16th, 2020. The installation was
-                    a capstone project for the Interactive Media Studies
-                    program, and was created by a team of students in
-                    collaboration with faculty and other departments.
-                </p>
+                {POETS_SHACK_INTRO}
                 <p>
                     The <em>Poem Visualizer</em> was an accompanying projection
                     piece that displayed live poetry entered into the Poet's
@@ -272,18 +269,11 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/upham-arch.png",
+            src: "/branding/img/thumbs/upham-arch.webp",
         },
         body: (
             <>
-                <p>
-                    The <em>Gathering at the Poet's Shack</em> was an immersive
-                    interactive installation held at Miami University's campus
-                    in Bishop Woods on November 16th, 2020. The installation was
-                    a capstone project for the Interactive Media Studies
-                    program, and was created by a team of students in
-                    collaboration with faculty and other departments.
-                </p>
+                {POETS_SHACK_INTRO}
                 <p>
                     The <em>Upham Arch Interactive Projection</em> was an
                     accompanying projection piece, which transformed the
@@ -319,7 +309,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/trojan-horse.png",
+            src: "/branding/img/thumbs/trojan-horse.webp",
         },
         body: (
             <>
@@ -357,7 +347,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/fort-knox.png",
+            src: "/branding/img/thumbs/fort-knox.webp",
         },
         body: (
             <>
@@ -395,7 +385,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/letters-from-the-ocean.jpg",
+            src: "/branding/img/thumbs/letters-from-the-ocean.webp",
         },
         body: (
             <>
@@ -427,7 +417,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/steampunk-fort.png",
+            src: "/branding/img/thumbs/steampunk-fort.webp",
         },
         body: (
             <>
@@ -463,7 +453,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/visuals/miami-sundial.png",
+            src: "/branding/img/thumbs/miami-sundial.webp",
         },
         body: (
             <>

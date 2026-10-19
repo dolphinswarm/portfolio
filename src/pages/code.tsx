@@ -29,7 +29,7 @@ const CODE_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/code/parkinsons-vr.png",
+            src: "/branding/img/thumbs/parkinsons-vr.webp",
         },
         body: (
             <>
@@ -81,7 +81,7 @@ const CODE_ITEMS: ShowcaseItem[] = [
         screenSource: { kind: "image", src: "/branding/img/code/vrchery.png" },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/code/vrchery.png",
+            src: "/branding/img/thumbs/vrchery.webp",
         },
         body: (
             <>
@@ -119,7 +119,7 @@ const CODE_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/code/ar-looper.png",
+            src: "/branding/img/thumbs/ar-looper.webp",
         },
         body: (
             <>
@@ -155,7 +155,7 @@ const CODE_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/code/ninjas-vs-knights.png",
+            src: "/branding/img/thumbs/ninjas-vs-knights.webp",
         },
         body: (
             <>
@@ -215,7 +215,7 @@ const CODE_ITEMS: ShowcaseItem[] = [
         },
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/code/the-ultimate-drum-machine.png",
+            src: "/branding/img/thumbs/the-ultimate-drum-machine.webp",
         },
         body: (
             <>
@@ -261,7 +261,7 @@ const CODE_ITEMS: ShowcaseItem[] = [
         ],
         thumbnailSource: {
             kind: "image",
-            src: "/branding/img/code/this-website.png",
+            src: "/branding/img/thumbs/this-website.webp",
         },
         screenSource: {
             kind: "video",

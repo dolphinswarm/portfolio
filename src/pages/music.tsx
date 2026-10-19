@@ -327,6 +327,14 @@ const MusicPlayerBar = ({
     );
 };
 
+// Shared intro shown with each dolphinswarm song.
+const DOLPHINSWARM_INTRO = (
+    <p>
+        I write music under the name <em>dolphinswarm</em>, where I self-write,
+        record, and produce indie folk songs.
+    </p>
+);
+
 const MUSIC_ITEMS = [
     {
         slug: "bones",
@@ -349,10 +357,7 @@ const MUSIC_ITEMS = [
         previewAudioSrc: "/branding/audio/bones.mp3",
         body: (
             <>
-                <p>
-                    I write music under the name <em>dolphinswarm</em>, where I
-                    self-write, record, and produce indie folk songs.
-                </p>
+                {DOLPHINSWARM_INTRO}
                 <p>
                     <em>bones</em> is a clawhammer banjo song, which discusses
                     what I want to happen to my body after I die (in a
@@ -382,10 +387,7 @@ const MUSIC_ITEMS = [
         previewAudioSrc: "/branding/audio/astrogirl.mp3",
         body: (
             <>
-                <p>
-                    I write music under the name <em>dolphinswarm</em>, where I
-                    self-write, record, and produce indie folk songs.
-                </p>
+                {DOLPHINSWARM_INTRO}
                 <p>
                     <em>astrogirl</em> is a dreamy, spacey indie rock track
                     about a dying relationship and how it feels to drift apart
@@ -418,10 +420,7 @@ const MUSIC_ITEMS = [
         previewAudioSrc: "/branding/audio/movin-on.mp3",
         body: (
             <>
-                <p>
-                    I write music under the name <em>dolphinswarm</em>, where I
-                    self-write, record, and produce indie folk songs.
-                </p>
+                {DOLPHINSWARM_INTRO}
                 <p>
                     <em>movin' on</em> is an upbeat, happy folk track about the
                     desire and excitement of starting fresh and pursuing new
@@ -451,10 +450,7 @@ const MUSIC_ITEMS = [
         previewAudioSrc: "/branding/audio/homecoming.mp3",
         body: (
             <>
-                <p>
-                    I write music under the name <em>dolphinswarm</em>, where I
-                    self-write, record, and produce indie folk songs.
-                </p>
+                {DOLPHINSWARM_INTRO}
                 <p>
                     <em>homecoming</em> is an emo folk track about the season of
                     fall, and how I personally really dislike it. It's a play on
@@ -486,10 +482,7 @@ const MUSIC_ITEMS = [
         },
         body: (
             <>
-                <p>
-                    I write music under the name <em>dolphinswarm</em>, where I
-                    self-write, record, and produce indie folk songs.
-                </p>
+                {DOLPHINSWARM_INTRO}
                 <p>
                     <em>steller's jay</em> is an acoustic folk love song,
                     comparing a relationship to a Steller's Jay bird.
@@ -518,10 +511,7 @@ const MUSIC_ITEMS = [
         previewAudioSrc: "/branding/audio/what-i-thought-itd-be.mp3",
         body: (
             <>
-                <p>
-                    I write music under the name <em>dolphinswarm</em>, where I
-                    self-write, record, and produce indie folk songs.
-                </p>
+                {DOLPHINSWARM_INTRO}
                 <p>
                     <em>what i thought it'd be</em> is a slower, reflective
                     track about dreams and expectations disappointing when
@@ -551,10 +541,7 @@ const MUSIC_ITEMS = [
         },
         body: (
             <>
-                <p>
-                    I write music under the name <em>dolphinswarm</em>, where I
-                    self-write, record, and produce indie folk songs.
-                </p>
+                {DOLPHINSWARM_INTRO}
                 <p>
                     <em>screaming to the sky</em> is a spacey indie folk track
                     about frustrations with dating apps. It features a repeated

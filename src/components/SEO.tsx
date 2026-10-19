@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from "@/utils/site";
 
-type SeoProps = {
+type SEOProps = {
     /** Page title. Suffixed with the site name unless `fullTitle` is set. */
     title: string;
     description: string;
@@ -25,7 +25,7 @@ export const SEO = ({
     image = DEFAULT_OG_IMAGE,
     noindex = false,
     jsonLd,
-}: SeoProps) => {
+}: SEOProps) => {
     const pageTitle = fullTitle ? title : `${title} | ${SITE_NAME}`;
     const url = `${SITE_URL}${path === "/" ? "/" : path}`;
     const imageUrl = `${SITE_URL}${image}`;

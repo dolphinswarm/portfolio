@@ -22,8 +22,9 @@ const ThumbImage = ({
     title: string;
     objectPosition?: string;
 }) => {
-    // eslint-disable-next-line @next/next/no-img-element
     return (
+        // Plain <img>: thumbnails are pre-sized WebP files, so next/image adds nothing.
+        // eslint-disable-next-line @next/next/no-img-element
         <img
             src={src}
             alt={title}

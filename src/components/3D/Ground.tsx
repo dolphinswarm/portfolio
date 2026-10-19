@@ -1,6 +1,5 @@
 import React from "react";
-import { MeshReflectorMaterial, useTexture } from "@react-three/drei";
-import * as THREE from "three";
+import { MeshReflectorMaterial } from "@react-three/drei";
 
 /** The reflective ground for the various pages. */
 export const Ground = () => {

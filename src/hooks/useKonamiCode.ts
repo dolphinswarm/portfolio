@@ -19,21 +19,22 @@ export const useKonamiCode = (
     navigateTo: string = "/bork",
 ) => {
     const router = useRouter();
-    const [inputSequence, setInputSequence] = React.useState<string[]>([]);
+    // A ref, not state: nothing renders from it, and navigating from inside a
+    // state updater can fire twice in StrictMode.
+    const inputSequenceRef = React.useRef<string[]>([]);
 
     React.useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            setInputSequence((prevSequence) => {
-                const newSequence = [...prevSequence, event.key].slice(
-                    -KONAMI_CODE.length,
-                );
-                if (newSequence.join("") === KONAMI_CODE.join("")) {
-                    onComplete?.();
-                    void router.push(navigateTo);
-                    return [];
-                }
-                return newSequence;
-            });
+            const newSequence = [...inputSequenceRef.current, event.key].slice(
+                -KONAMI_CODE.length,
+            );
+            if (newSequence.join("") === KONAMI_CODE.join("")) {
+                inputSequenceRef.current = [];
+                onComplete?.();
+                void router.push(navigateTo);
+                return;
+            }
+            inputSequenceRef.current = newSequence;
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => {

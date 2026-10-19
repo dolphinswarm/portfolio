@@ -43,9 +43,9 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 - [ ] **M** Re-encode the homepage reel. `demo-reel.mp4` is 85 MB and loads with `preload="auto"` on first visit. Target 720p, about 8–15 MB, with `-movflags +faststart`.
 - [ ] **M** Re-encode the showcase clips (currently 40–80 MB each) to short loops of about 5–10 MB.
-- [ ] **S** Generate ~600 px WebP/AVIF thumbnails. `vrchery.png` is 4 MB and only used as a thumbnail.
-- [ ] **S** Switch the static effect to the 409 KB `public/videos/tv-static.mp4` instead of the 14 MB `branding/videos/tv-static.mp4`, if it looks the same.
-- [ ] **S** Delete unused assets (~140 MB):
+- [x] **S** Generate ~600 px WebP/AVIF thumbnails. `vrchery.png` is 4 MB and only used as a thumbnail. (Done for Code and Visuals at 480 px: 24.9 MB → 270 KB. Music thumbnails left full-size because they double as the screen image.)
+- [x] **S** Switch the static effect to the 409 KB `public/videos/tv-static.mp4` instead of the 14 MB `branding/videos/tv-static.mp4`, if it looks the same. (Not possible: that file was a different clip. Re-encoded the real one instead: 14 MB → 3.6 MB, 720p30, 1.2 s loop, no audio.)
+- [x] **S** Delete unused assets (~140 MB): (Done. Also removed duplicate `public/videos/tv-static.mp4` and `public/img/thumbs/placeholder.svg`. Full-size originals of converted thumbnails were kept as source material.)
     - `public/branding/img/visuals/me-poet-shack.jpg` (17 MB)
     - `public/branding/img/visuals/futerra.jpg` (12 MB)
     - `public/branding/img/visuals/shack-video.png`
@@ -97,11 +97,11 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 ### Connect page
 
 - [ ] **S** Fill the empty right column (currently a `// TODO`, [connect.tsx:150](../src/pages/connect.tsx#L150)) with an availability note: types of projects you're open to, freelance vs. full-time, timezone.
-- [ ] **S** Add the resume link here too, not just on About.
+- [x] **S** Add the resume link here too, not just on About.
 
 ### Music page
 
-- [ ] **S** Show the "I write music under the name dolphinswarm" intro once, not on all 7 songs.
+- [x] **S** Show the "I write music under the name dolphinswarm" intro once, not on all 7 songs. (Kept on each song, since only one shows at a time, but defined once as a shared constant. Same for the Poet's Shack intro.)
 - [ ] **S** Give songs distinct thumbnails (all 7 share `brad-guitar.jpg`).
 - [ ] **M** Move the 10 inline `style={{}}` blocks in `MusicPlayerBar` into an SCSS module like the rest of the site.
 
@@ -120,5 +120,5 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 ### Code refactors (when touching these files)
 
-- [ ] **S** Replace the hand-rolled `<a>` + `router.push` navigation in [Header.tsx](../src/components/Header.tsx#L55-L86) with `next/link` to get prefetching back.
+- [x] **S** Replace the hand-rolled `<a>` + `router.push` navigation in [Header.tsx](../src/components/Header.tsx#L55-L86) with `next/link` to get prefetching back.
 - [ ] **S** Pull the duplicated screen-sync setup in `code.tsx` and `visuals.tsx` into a shared hook or into Showcase itself.
