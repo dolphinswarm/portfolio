@@ -1,5 +1,5 @@
 import * as React from "react";
-import Head from "next/head";
+import { SEO } from "@/components/SEO";
 import {
     Showcase,
     type ShowcaseItem,
@@ -497,18 +497,14 @@ const Visuals = () => {
 
     return (
         <>
-            <Head>
-                <title>Visuals</title>
-                <meta
-                    name="description"
-                    content="Visual work: motion, lookdev, design studies."
-                />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <link rel="icon" href="/favicon/favicon.ico" />
-            </Head>
+            <SEO
+                title="Projection Mapping & Immersive Installations"
+                description="Projection mapping, immersive installations, and TouchDesigner and Unreal Engine visuals by Brad Schmitz, including FuTerra at BLINK 2024 and Night Lights Denver."
+                path="/visuals"
+            />
+            <h1 className="visually-hidden">
+                Projection mapping and immersive installations
+            </h1>
 
             <Showcase
                 pageTitle="Visuals"

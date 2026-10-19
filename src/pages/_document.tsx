@@ -5,11 +5,8 @@ export default function Document() {
     return (
         <Html lang="en" className={`${cabin.variable} ${indieFlower.variable}`}>
             <Head>
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1, viewport-fit=cover"
-                />
                 <meta name="darkreader-lock" />
+                <meta name="theme-color" content="#05060b" />
                 <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
                 <link rel="shortcut icon" href="/favicon/favicon.ico" />
                 <link

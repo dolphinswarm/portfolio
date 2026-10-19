@@ -1,5 +1,5 @@
 import * as React from "react";
-import Head from "next/head";
+import { SEO } from "@/components/SEO";
 import {
     Showcase,
     type ShowcaseItem,
@@ -1097,18 +1097,12 @@ const Music = () => {
 
     return (
         <>
-            <Head>
-                <title>Music</title>
-                <meta
-                    name="description"
-                    content="Music releases, scores, and sound design."
-                />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <link rel="icon" href="/favicon/favicon.ico" />
-            </Head>
+            <SEO
+                title="Music & Generative Sound"
+                description="Generative installation music, orchestral and chamber compositions, saxophone performance, and indie folk as dolphinswarm, by Brad Schmitz."
+                path="/music"
+            />
+            <h1 className="visually-hidden">Music and generative sound</h1>
 
             <Showcase
                 pageTitle="Music"

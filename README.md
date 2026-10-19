@@ -1,40 +1,44 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# bradschmitz.com
 
-## Getting Started
+Portfolio site for Brad Schmitz, a creative technologist working with projection mapping, XR, and audio-reactive visuals. Live at **[bradschmitz.com](https://bradschmitz.com)**.
 
-First, run the development server:
+![The site's 3D stage: a projection screen playing the demo reel, with a cutout of Brad standing in front of it](public/og-image.jpg)
+
+The whole site is a single 3D stage. Each page swaps what plays on the "screen": the demo reel, a project video, a procedural shader, or a spectrum visualizer that reacts to the track you're playing on the Music page.
+
+## Stack
+
+- [Next.js](https://nextjs.org/) (Pages Router) + React 19 + TypeScript
+- [React Three Fiber](https://r3f.docs.pmnd.rs/) and [drei](https://drei.docs.pmnd.rs/) for the 3D scene, with custom GLSL materials
+- Web Audio API (`AnalyserNode`) for the audio-reactive screen
+- Sass modules for styling
+- Deployed on Vercel
+
+## How it fits together
+
+| Path                                                                         | What it does                                                                                                     |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [src/components/3D/](src/components/3D/)                                     | The persistent scene: backdrop, screen, pillars, ground reflections, camera rig, and the shader materials        |
+| [src/hooks/useGetRouterSceneProps.ts](src/hooks/useGetRouterSceneProps.ts)   | Maps each route to what the scene shows (media, background variant, camera mode)                                 |
+| [src/context/SceneVideoContext.tsx](src/context/SceneVideoContext.tsx)       | Lets a page override the screen's media, e.g. when you pick a project                                            |
+| [src/context/AudioSpectrumContext.tsx](src/context/AudioSpectrumContext.tsx) | Shares live frequency data from the music player with the screen shader                                          |
+| [src/components/Showcase/](src/components/Showcase/)                         | The project carousel and detail panel used by Code, Visuals, and Music; selection is deep-linked via `?project=` |
+| [src/components/ScreenOverlay/](src/components/ScreenOverlay/)               | Lays text out so it reads as if it's on the screen (About, Connect)                                              |
+| [src/components/SEO.tsx](src/components/SEO.tsx)                             | Per-page title, description, canonical URL, Open Graph tags, and JSON-LD                                         |
+
+The `<Canvas>` lives in the shared layout, so the scene stays mounted while you navigate and transitions between routes instead of reloading.
+
+## Running locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Media
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Videos, audio, and images live under `public/branding/`. Large files are served directly from there, so keep new videos compressed (H.264 with `-movflags +faststart`).

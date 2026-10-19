@@ -1,5 +1,5 @@
 import * as React from "react";
-import Head from "next/head";
+import { SEO } from "@/components/SEO";
 import {
     Showcase,
     type ShowcaseItem,
@@ -48,7 +48,7 @@ const CODE_ITEMS: ShowcaseItem[] = [
                     checking vitals, and more. The user would interact with the
                     virtual environment using VR controllers, being able to move
                     around and perform tasks as if they were in a real clinical
-                    setting. Throughout the simulation, there is also various
+                    setting. Throughout the simulation, there are also various
                     questions and prompts to assess the user's understanding and
                     decision-making skills, which are then (optionally) recorded
                     to a report card.
@@ -299,18 +299,12 @@ const Code = () => {
 
     return (
         <>
-            <Head>
-                <title>Code</title>
-                <meta
-                    name="description"
-                    content="Code projects and experiments."
-                />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <link rel="icon" href="/favicon/favicon.ico" />
-            </Head>
+            <SEO
+                title="Code & XR Projects"
+                description="VR, AR, game, and web audio projects by Brad Schmitz, built with Unity, C#, React, TypeScript, Three.js, and Tone.js."
+                path="/code"
+            />
+            <h1 className="visually-hidden">Code and XR projects</h1>
             <Showcase
                 pageTitle="Code"
                 items={CODE_ITEMS}

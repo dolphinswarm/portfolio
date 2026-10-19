@@ -4,6 +4,8 @@ import { useGetRouterSceneProps } from "@/hooks/useGetRouterSceneProps";
 import { useSceneVideo } from "@/context/SceneVideoContext";
 import { useKonamiCode } from "@/hooks/useKonamiCode";
 import styles from "@/styles/Layout.module.scss";
+// next/font only injects its CSS from modules in the app bundle (not _document),
+// so these classes are what actually load the fonts.
 import { cabin, indieFlower } from "@/styles/fonts";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
