@@ -120,6 +120,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 - [ ] **S** Put the site URL in your GitHub, LinkedIn, YouTube, SoundCloud and Instagram bios.
 
 ### Code refactors (when touching these files)
+- [ ] **M** Refactor the effects flagged by `react-hooks/set-state-in-effect` (Base, BackgroundScreen, Screen, Showcase) and `preserve-manual-memoization` (ProceduralScreenMaterial), then set both rules back to errors in `eslint.config.mjs`. Downgraded to warnings when `eslint-config-next` 16.4 made them errors.
 
 - [x] **S** Replace the hand-rolled `<a>` + `router.push` navigation in [Header.tsx](../src/components/Header.tsx#L55-L86) with `next/link` to get prefetching back.
 - [ ] **S** Pull the duplicated screen-sync setup in `code.tsx` and `visuals.tsx` into a shared hook or into Showcase itself.
