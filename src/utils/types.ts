@@ -1,5 +1,6 @@
 export type SceneMedia = {
-    sourceType: "video" | "image";
+    /** "none" means no signal: the screen stays on static. */
+    sourceType: "video" | "image" | "none";
     source: string;
     /** Optional audio controls when the sourceType is "video". */
     audio?: {

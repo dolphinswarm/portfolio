@@ -87,15 +87,18 @@ export const Screen = ({
     onVideoReady,
     media,
     proceduralVariant,
+    readyRef,
 }: {
     video?: HTMLVideoElement;
     onVideoReady?: (video: HTMLVideoElement) => void;
     media: {
-        sourceType: "video" | "image";
+        sourceType: "video" | "image" | "none";
         source: string;
         audio?: { enabled: boolean; volume?: number };
     };
     proceduralVariant?: ProceduralScreenVariant;
+    /** Set every frame to whether the current picture can be shown yet. */
+    readyRef?: React.MutableRefObject<boolean>;
 }) => {
     const { texture: spectrumTexture, size: spectrumSize } = useAudioSpectrum();
     const { screenStyleOverride } = useSceneVideo();
@@ -132,6 +135,32 @@ export const Screen = ({
         media.sourceType === "image" ? media.source : undefined,
         { flipY: true },
     );
+
+    // Element `src` properties are absolute, so compare against the resolved URL.
+    const absoluteSource = React.useMemo(
+        () => new URL(media.source, window.location.href).href,
+        [media.source],
+    );
+
+    // Negative priority runs this before other frame callbacks (without taking
+    // over rendering), so the channel static always reads a fresh value.
+    useFrame(() => {
+        if (!readyRef) return;
+        if (proceduralVariant) {
+            readyRef.current = true;
+        } else if (media.sourceType === "none") {
+            // No signal: keep the channel static up.
+            readyRef.current = false;
+        } else if (media.sourceType === "video") {
+            readyRef.current =
+                activeVideo != null &&
+                activeVideo.src === absoluteSource &&
+                activeVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+        } else {
+            const image = imageTexture?.image as HTMLImageElement | undefined;
+            readyRef.current = image?.src === absoluteSource;
+        }
+    }, -1);
 
     const imageBaseUvRef = React.useRef<{
         repeatX: number;

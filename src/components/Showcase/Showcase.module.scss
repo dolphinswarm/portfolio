@@ -7,6 +7,24 @@
     margin: 0 auto;
     padding: 32px 20px 24px;
     color: rgba(255, 255, 255, 0.92);
+
+    /* Arrive under the screen's channel-change static, not a frame ahead of it. */
+    animation: showcaseIn 260ms ease-out 80ms both;
+}
+
+@keyframes showcaseIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrap {
+        animation: none;
+    }
 }
 
 .chromeToggle {

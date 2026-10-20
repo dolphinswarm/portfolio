@@ -783,7 +783,6 @@ const MUSIC_ITEMS = [
             kind: "image",
             src: "/branding/img/audio/composition.png",
         },
-        screenSource: { kind: "video", src: "/branding/videos/tv-static.mp4" },
         body: (
             <p>
                 <em>Heist</em> is a string quartet piece inspired by classic spy

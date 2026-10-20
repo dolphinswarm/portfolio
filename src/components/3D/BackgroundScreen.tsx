@@ -35,7 +35,7 @@ type GLTFScreenResult = {
 
 export type BackgroundScreenProps = {
     media: {
-        sourceType: "video" | "image";
+        sourceType: "video" | "image" | "none";
         source: string;
         audio?: { enabled: boolean; volume?: number };
     };

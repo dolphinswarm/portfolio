@@ -16,6 +16,24 @@
 
   border-radius: 16px;
   overflow: hidden;
+
+  /* Arrive under the screen's channel-change static, not a frame ahead of it. */
+  animation: screenContentIn 260ms ease-out 80ms both;
+}
+
+@keyframes screenContentIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    animation: none;
+  }
 }
 
 .viewport {

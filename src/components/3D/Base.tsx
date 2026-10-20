@@ -10,11 +10,11 @@ import type { SceneMedia, SceneProps } from "@/utils/types";
 import { Environment } from "@react-three/drei";
 import { BackgroundScreen } from "./BackgroundScreen";
 import { LowerThird } from "./LowerThird";
+import { ChannelStatic } from "./ChannelStatic";
 import { SITE_NAME, SITE_ROLE } from "@/utils/site";
 import * as THREE from "three";
 import type { ProceduralScreenVariant } from "./ProceduralScreenMaterial";
 
-const DEFAULT_STATIC_VIDEO_SRC = "/branding/videos/tv-static.mp4";
 
 const RouteTransition = ({
     isIndexRoute,
@@ -60,12 +60,38 @@ const BradVisibilityTransition = ({
 
 /**
  * Compiles every material in the scene once it has mounted, including hidden
- * ones (the inactive procedural/media screens), so later route changes only
- * toggle visibility and never wait on a shader compile.
+ * ones (the inactive procedural/media screens, the channel static), so later
+ * route changes only toggle visibility and never wait on a shader compile.
  */
 const ShaderWarmup = () => {
     const { gl, scene, camera } = useThree();
     const didCompileRef = React.useRef(false);
+
+    // The media screens use one MeshBasicMaterial whose program depends on
+    // its map (video, image, or none while loading), but only one is attached
+    // at a time. Hidden stand-ins with the same settings compile every variant.
+    const mediaStandIns = React.useMemo(() => {
+        const video = new THREE.VideoTexture(document.createElement("video"));
+        const image = new THREE.Texture();
+        return [video, image, null].map((map) => {
+            if (map) map.colorSpace = THREE.SRGBColorSpace;
+            return new THREE.MeshBasicMaterial({
+                map,
+                color: "#ffffff",
+                toneMapped: false,
+            });
+        });
+    }, []);
+
+    React.useEffect(
+        () => () => {
+            for (const material of mediaStandIns) {
+                material.map?.dispose();
+                material.dispose();
+            }
+        },
+        [mediaStandIns],
+    );
 
     React.useEffect(() => {
         // rAF ensures the scene's meshes have been committed before compiling.
@@ -73,10 +99,21 @@ const ShaderWarmup = () => {
             if (didCompileRef.current) return;
             didCompileRef.current = true;
             // Async compile avoids blocking the main thread where the browser
-            // supports parallel shader compilation.
-            gl.compileAsync(scene, camera).catch(() => {
-                // Compiling lazily on first render is the fallback.
-            });
+            // supports parallel shader compilation. Compiling lazily on first
+            // render is the fallback if it fails.
+            gl.compileAsync(scene, camera).catch(() => undefined);
+
+            // The reflective floor re-renders the scene into a render target,
+            // and three.js builds separate programs for that (linear output),
+            // so compile those variants too. compileAsync reads the bound
+            // target synchronously, so it can be restored right away.
+            const target = new THREE.WebGLRenderTarget(1, 1);
+            const previous = gl.getRenderTarget();
+            gl.setRenderTarget(target);
+            gl.compileAsync(scene, camera)
+                .catch(() => undefined)
+                .finally(() => target.dispose());
+            gl.setRenderTarget(previous);
         });
 
         return () => {
@@ -84,7 +121,15 @@ const ShaderWarmup = () => {
         };
     }, [gl, scene, camera]);
 
-    return null;
+    return (
+        <group visible={false}>
+            {mediaStandIns.map((material) => (
+                <mesh key={material.uuid} material={material}>
+                    <planeGeometry args={[0.01, 0.01]} />
+                </mesh>
+            ))}
+        </group>
+    );
 };
 
 const BackdropRig = ({
@@ -144,6 +189,12 @@ export const Base3DScene = ({
     shouldShowBrad,
 }: SceneProps) => {
     const [videoEl, setVideoEl] = React.useState<HTMLVideoElement | null>(null);
+    // Written by the Screen each frame, read by the channel static. Starts
+    // false so the static covers the screen until its first picture loads.
+    const screenReadyRef = React.useRef(false);
+    // Written by the channel static each frame; the lower third waits on it,
+    // since a broadcast graphic shouldn't show over "no signal".
+    const staticActiveRef = React.useRef(true);
     const routeTransitionRef = React.useRef(isIndexRoute ? 1 : 0);
     const bradVisibilityRef = React.useRef(
         isIndexRoute || shouldShowBrad ? 1 : 0,
@@ -177,11 +228,8 @@ export const Base3DScene = ({
             };
         }
 
-        return {
-            sourceType: "video",
-            source: DEFAULT_STATIC_VIDEO_SRC,
-            audio: { enabled: false },
-        };
+        // Nothing to show: no signal, so the channel static covers the screen.
+        return { sourceType: "none", source: "", audio: { enabled: false } };
     }, [media]);
 
     const proceduralVariant = React.useMemo<
@@ -202,8 +250,8 @@ export const Base3DScene = ({
     }, [backgroundVariant]);
 
     React.useEffect(() => {
-        // Clear previously created video element when switching to image.
-        if (resolvedMedia.sourceType === "image") setVideoEl(null);
+        // Clear the previous video element when there's no video to show.
+        if (resolvedMedia.sourceType !== "video") setVideoEl(null);
     }, [resolvedMedia.sourceType]);
 
     return shouldRender ? (
@@ -234,19 +282,35 @@ export const Base3DScene = ({
                             video={videoEl ?? undefined}
                             media={resolvedMedia}
                             proceduralVariant={screenProceduralVariant}
+                            readyRef={screenReadyRef}
                         />
-                        {isIndexRoute ? (
-                            // Bottom-left of the screen (a 4 x 2.25 plane centered
-                            // at [0, 1.1, -0.5]), just in front of it and behind
-                            // Brad (z = 1.5), who covers it where they overlap.
-                            <LowerThird
-                                title={SITE_NAME}
-                                logoSrc="/branding/img/me/logo.png"
-                                subtitle={SITE_ROLE}
-                                position={[-1.85, 0.15, -0.45]}
-                                width={1.6}
-                            />
-                        ) : null}
+                        {/* Static whenever what's on the screen changes, held until the
+                            new picture is ready. Sits just in front of the screen
+                            plane (z = -0.5). */}
+                        <ChannelStatic
+                            channelKey={
+                                screenProceduralVariant ??
+                                (resolvedMedia.source || "no-signal")
+                            }
+                            isReadyRef={screenReadyRef}
+                            activeRef={staticActiveRef}
+                            position={[0, 1.1, -0.49]}
+                            width={4}
+                            height={2.25}
+                        />
+                        {/* Bottom-left of the screen (a 4 x 2.25 plane centered at
+                            [0, 1.1, -0.5]), just in front of it and behind Brad
+                            (z = 1.5). Always mounted so its shader stays compiled;
+                            it only shows on the homepage. */}
+                        <LowerThird
+                            visible={isIndexRoute}
+                            holdRef={staticActiveRef}
+                            title={SITE_NAME}
+                            logoSrc="/branding/img/me/logo.png"
+                            subtitle={SITE_ROLE}
+                            position={[-1.85, 0.15, -0.45]}
+                            width={1.6}
+                        />
                         <BackdropRig
                             transitionRef={routeTransitionRef}
                             media={resolvedMedia}

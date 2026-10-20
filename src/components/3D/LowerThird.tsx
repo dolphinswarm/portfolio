@@ -27,6 +27,10 @@ const REVEAL_DELAY_S = 0.6;
 const REVEAL_DURATION_S = 0.7;
 
 type LowerThirdProps = {
+    /** Whether the strap is shown; it wipes in again each time this turns on. */
+    visible?: boolean;
+    /** While true, the strap stays hidden (e.g. the screen is on static). */
+    holdRef?: React.MutableRefObject<boolean>;
     /** Top line, e.g. a person's or project's name. Shown uppercase. */
     title: string;
     /** Optional square image drawn right after the title (e.g. a logo). */
@@ -118,6 +122,8 @@ const paintStrap = (
  * (like Brad) correctly cover it. Wipes in from the left when mounted.
  */
 export const LowerThird = ({
+    visible = true,
+    holdRef,
     title,
     logoSrc,
     subtitle,
@@ -208,6 +214,12 @@ export const LowerThird = ({
     useFrame((_, delta) => {
         const mesh = meshRef.current;
         if (!mesh) return;
+        if (!visible || holdRef?.current) {
+            // Hidden: reset so the wipe replays next time it's shown.
+            elapsedRef.current = 0;
+            mesh.visible = false;
+            return;
+        }
         elapsedRef.current += delta;
         const t = prefersReducedMotion
             ? 1

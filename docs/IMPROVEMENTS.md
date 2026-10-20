@@ -44,7 +44,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 - [ ] **M** Re-encode the homepage reel. `demo-reel.mp4` is 85 MB and loads with `preload="auto"` on first visit. Target 720p, about 8–15 MB, with `-movflags +faststart`.
 - [ ] **M** Re-encode the showcase clips (currently 40–80 MB each) to short loops of about 5–10 MB.
 - [x] **S** Generate ~600 px WebP/AVIF thumbnails. `vrchery.png` is 4 MB and only used as a thumbnail. (Done for Code and Visuals at 480 px: 24.9 MB → 270 KB. Music thumbnails left full-size because they double as the screen image.)
-- [x] **S** Switch the static effect to the 409 KB `public/videos/tv-static.mp4` instead of the 14 MB `branding/videos/tv-static.mp4`, if it looks the same. (Not possible: that file was a different clip. Re-encoded the real one instead: 14 MB → 3.6 MB, 720p30, 1.2 s loop, no audio.)
+- [x] **S** Switch the static effect to the 409 KB `public/videos/tv-static.mp4` instead of the 14 MB `branding/videos/tv-static.mp4`, if it looks the same. (Not possible: that file was a different clip. Re-encoded the real one instead: 14 MB → 3.6 MB, 720p30, 1.2 s loop, no audio. Later replaced entirely by the channel-static shader; the video was deleted.)
 - [x] **S** Delete unused assets (~140 MB): (Done. Also removed duplicate `public/videos/tv-static.mp4` and `public/img/thumbs/placeholder.svg`. Full-size originals of converted thumbnails were kept as source material.)
     - `public/branding/img/visuals/me-poet-shack.jpg` (17 MB)
     - `public/branding/img/visuals/futerra.jpg` (12 MB)
