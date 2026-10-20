@@ -21,7 +21,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 - [x] **S** Make a 1200×630 Open Graph image (a still from the 3D scene works well). This controls how links look on LinkedIn and Slack.
 - [x] **S** Add `Person` JSON-LD to the homepage: `name`, `alternateName: "Bradley Schmitz"`, `jobTitle`, Denver address, `alumniOf` Miami University, and `sameAs` with GitHub, LinkedIn, YouTube, SoundCloud and Instagram.
 - [x] **S** Add `robots.txt` and `sitemap.xml`. Mark `/bork` as `noindex`.
-- [ ] **S** Verify the site in Google Search Console and submit the sitemap.
+- [x] **S** Verify the site in Google Search Console and submit the sitemap. (Sitemap status: Success, 2026-10-20.)
 - [x] **S** Fix [site.webmanifest](../public/favicon/site.webmanifest): fill in `name`/`short_name`, fix icon paths (missing `/favicon/`), and change `theme_color`/`background_color` from white to the site's dark color.
 
 ### Copy fixes
@@ -41,8 +41,8 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 ## Phase 2: Performance and assets
 
-- [ ] **M** Re-encode the homepage reel. `demo-reel.mp4` is 85 MB and loads with `preload="auto"` on first visit. Target 720p, about 8–15 MB, with `-movflags +faststart`.
-- [ ] **M** Re-encode the showcase clips (currently 40–80 MB each) to short loops of about 5–10 MB.
+- [ ] **M** Re-encode the homepage reel. `demo-reel.mp4` is 85 MB and loads with `preload="auto"` on first visit. Target 720p, about 8–15 MB, with `-movflags +faststart`. Use [scripts/encode-videos.sh](../scripts/encode-videos.sh).
+- [ ] **M** Re-encode the showcase clips (currently 40–80 MB each) to about 5–10 MB with the same script. Audio is kept because the scene has an audio toggle. Clips stay full length for now; trimming them to shorter loops is a separate content decision.
 - [x] **S** Generate ~600 px WebP/AVIF thumbnails. `vrchery.png` is 4 MB and only used as a thumbnail. (Done for Code and Visuals at 480 px: 24.9 MB → 270 KB. Music thumbnails left full-size because they double as the screen image.)
 - [x] **S** Switch the static effect to the 409 KB `public/videos/tv-static.mp4` instead of the 14 MB `branding/videos/tv-static.mp4`, if it looks the same. (Not possible: that file was a different clip. Re-encoded the real one instead: 14 MB → 3.6 MB, 720p30, 1.2 s loop, no audio. Later replaced entirely by the channel-static shader; the video was deleted.)
 - [x] **S** Delete unused assets (~140 MB): (Done. Also removed duplicate `public/videos/tv-static.mp4` and `public/img/thumbs/placeholder.svg`. Full-size originals of converted thumbnails were kept as source material.)
@@ -57,7 +57,8 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
     - `public/threejs/portfolio_backdrop_screen.glb`
     - `public/threejs/Poliigon_StoneQuartzite_8060.mtlx` and `_Displacement.tiff`
 - [ ] **S** Self-host the HDR used by `<Environment preset="city">` ([Base.tsx:320](../src/components/3D/Base.tsx#L320)). It currently downloads from a third-party CDN at runtime.
-- [ ] **L** Move video out of git. The repo holds ~980 MB of media with no LFS, and GitHub rejects files over 100 MB. Options: a media CDN (Cloudflare Stream/R2, Mux, Bunny) or Git LFS. Shrinking existing history requires a history rewrite; decide separately.
+- [x] ~~**L** Move video out of git.~~ Decided against a CDN (2026-10-20). After re-encoding, the ~670 MB of video should drop to roughly 100 MB with every file well under GitHub's 100 MB limit, which the static host can serve fine. Full-length videos go on YouTube/Vimeo instead (see Video hosting in Phase 3), so the site only hosts short clips.
+- [ ] **S** (Optional, later) Shrink `.git` (~980 MB) by purging the old video blobs with `git filter-repo`. This only affects clone size, and it requires a force-push, so only do it if it becomes a problem.
 
 ---
 
