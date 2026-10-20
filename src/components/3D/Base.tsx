@@ -12,10 +12,7 @@ import { BackgroundScreen } from "./BackgroundScreen";
 import { LowerThird } from "./LowerThird";
 import { SITE_NAME, SITE_ROLE } from "@/utils/site";
 import * as THREE from "three";
-import {
-    ProceduralScreenMaterial,
-    type ProceduralScreenVariant,
-} from "./ProceduralScreenMaterial";
+import type { ProceduralScreenVariant } from "./ProceduralScreenMaterial";
 
 const DEFAULT_STATIC_VIDEO_SRC = "/branding/videos/tv-static.mp4";
 
@@ -61,22 +58,25 @@ const BradVisibilityTransition = ({
     return null;
 };
 
-const ProceduralShaderWarmup = () => {
+/**
+ * Compiles every material in the scene once it has mounted, including hidden
+ * ones (the inactive procedural/media screens), so later route changes only
+ * toggle visibility and never wait on a shader compile.
+ */
+const ShaderWarmup = () => {
     const { gl, scene, camera } = useThree();
     const didCompileRef = React.useRef(false);
 
     React.useEffect(() => {
-        if (didCompileRef.current) return;
-        didCompileRef.current = true;
-
-        // Compile shaders once early so route transitions don't hitch.
-        // rAF ensures the warmup meshes have been committed to the scene.
+        // rAF ensures the scene's meshes have been committed before compiling.
         const id = window.requestAnimationFrame(() => {
-            try {
-                gl.compile(scene, camera);
-            } catch {
-                // no-op
-            }
+            if (didCompileRef.current) return;
+            didCompileRef.current = true;
+            // Async compile avoids blocking the main thread where the browser
+            // supports parallel shader compilation.
+            gl.compileAsync(scene, camera).catch(() => {
+                // Compiling lazily on first render is the fallback.
+            });
         });
 
         return () => {
@@ -84,66 +84,7 @@ const ProceduralShaderWarmup = () => {
         };
     }, [gl, scene, camera]);
 
-    // Keep these tiny, always-rendered, and non-writing.
-    return (
-        <group>
-            <mesh
-                frustumCulled={false}
-                position={[0, 0, 99]}
-                renderOrder={-1000}
-            >
-                <planeGeometry args={[0.02, 0.02]} />
-                <ProceduralScreenMaterial
-                    variant="about"
-                    intensity={1}
-                    speed={1}
-                    seed={101}
-                    transparent={true}
-                    opacity={0}
-                    depthWrite={false}
-                    depthTest={false}
-                    colorWrite={false}
-                />
-            </mesh>
-            <mesh
-                frustumCulled={false}
-                position={[0.05, 0, 99]}
-                renderOrder={-1000}
-            >
-                <planeGeometry args={[0.02, 0.02]} />
-                <ProceduralScreenMaterial
-                    variant="connect"
-                    intensity={1}
-                    speed={1}
-                    seed={202}
-                    transparent={true}
-                    opacity={0}
-                    depthWrite={false}
-                    depthTest={false}
-                    colorWrite={false}
-                />
-            </mesh>
-
-            <mesh
-                frustumCulled={false}
-                position={[0.1, 0, 99]}
-                renderOrder={-1000}
-            >
-                <planeGeometry args={[0.02, 0.02]} />
-                <ProceduralScreenMaterial
-                    variant="music"
-                    intensity={1}
-                    speed={1}
-                    seed={303}
-                    transparent={true}
-                    opacity={0}
-                    depthWrite={false}
-                    depthTest={false}
-                    colorWrite={false}
-                />
-            </mesh>
-        </group>
-    );
+    return null;
 };
 
 const BackdropRig = ({
@@ -276,7 +217,7 @@ export const Base3DScene = ({
                 <color attach="background" args={["#05060b"]} />
                 <fog attach="fog" args={["#05060b", 18, 36]} />
                 <Suspense fallback={null}>
-                    <ProceduralShaderWarmup />
+                    <ShaderWarmup />
                     <RouteTransition
                         isIndexRoute={isIndexRoute}
                         transitionRef={routeTransitionRef}

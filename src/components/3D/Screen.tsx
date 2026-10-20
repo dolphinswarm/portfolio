@@ -278,63 +278,71 @@ export const Screen = ({
         };
     }, [video, media.sourceType, media.source, onVideoReady, cleanupVideo]);
 
+    // The procedural mesh stays mounted while hidden; keep its variant defined.
+    const activeVariant = proceduralVariant ?? "about";
+
     return (
         <>
             <mesh rotation={[0, 0, 0]} position={[0, 1.025, -0.63]}>
                 <boxGeometry args={[4, 2.4, 0.25]} />
                 <meshPhongMaterial color={[0.2, 0.2, 0.2]} />
             </mesh>
-            <mesh rotation={[0, 0, 0]} position={[0, 1.1, -0.5]}>
+            {/* Both materials stay mounted and only visibility toggles: swapping them
+                would dispose one and force a shader recompile (a visible hitch) on
+                every switch between procedural and media routes. */}
+            <mesh position={[0, 1.1, -0.5]} visible={proceduralVariant != null}>
                 <planeGeometry args={[4, 2.25]} />
-                {proceduralVariant ? (
-                    <ProceduralScreenMaterial
-                        variant={proceduralVariant}
-                        intensity={
-                            proceduralVariant === "about" ||
-                            proceduralVariant === "connect"
-                                ? 1.55
-                                : 1
-                        }
-                        speed={
-                            proceduralVariant === "about"
-                                ? 0.95
-                                : proceduralVariant === "music"
-                                  ? 1.1
-                                  : 0.85
-                        }
-                        seed={
-                            proceduralVariant === "connect"
-                                ? 9
-                                : proceduralVariant === "music"
-                                  ? 5
-                                  : 3
-                        }
-                        spectrumTexture={
-                            proceduralVariant === "music"
-                                ? spectrumTexture
-                                : undefined
-                        }
-                        spectrumSize={
-                            proceduralVariant === "music"
-                                ? spectrumSize
-                                : undefined
-                        }
-                        spectrumStrength={
-                            proceduralVariant === "music" ? 1.25 : undefined
-                        }
-                        overrideColors={
-                            proceduralVariant === "music"
-                                ? {
-                                      colorA: screenStyleOverride?.music
-                                          ?.colorA,
-                                      colorB: screenStyleOverride?.music
-                                          ?.colorB,
-                                      base: screenStyleOverride?.music?.base,
-                                  }
-                                : undefined
-                        }
-                    />
-                ) : videoTexture != null ? (
+                <ProceduralScreenMaterial
+                    variant={activeVariant}
+                    intensity={
+                        activeVariant === "about" ||
+                        activeVariant === "connect"
+                            ? 1.55
+                            : 1
+                    }
+                    speed={
+                        activeVariant === "about"
+                            ? 0.95
+                            : activeVariant === "music"
+                              ? 1.1
+                              : 0.85
+                    }
+                    seed={
+                        activeVariant === "connect"
+                            ? 9
+                            : activeVariant === "music"
+                              ? 5
+                              : 3
+                    }
+                    spectrumTexture={
+                        activeVariant === "music"
+                            ? spectrumTexture
+                            : undefined
+                    }
+                    spectrumSize={
+                        activeVariant === "music"
+                            ? spectrumSize
+                            : undefined
+                    }
+                    spectrumStrength={
+                        activeVariant === "music" ? 1.25 : undefined
+                    }
+                    overrideColors={
+                        activeVariant === "music"
+                            ? {
+                                  colorA: screenStyleOverride?.music
+                                      ?.colorA,
+                                  colorB: screenStyleOverride?.music
+                                      ?.colorB,
+                                  base: screenStyleOverride?.music?.base,
+                              }
+                            : undefined
+                    }
+                />
+            </mesh>
+            <mesh position={[0, 1.1, -0.5]} visible={proceduralVariant == null}>
+                <planeGeometry args={[4, 2.25]} />
+                {videoTexture != null ? (
                     // Explicit white: R3F reuses this material instance across branches and
                     // resets a dropped `color` prop to black, which multiplies the map to black.
                     <meshBasicMaterial toneMapped={false} color="#ffffff" map={videoTexture} />

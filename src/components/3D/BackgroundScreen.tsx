@@ -464,31 +464,44 @@ export const BackgroundScreen = ({
     const accentA = proceduralColors?.colorA ?? palette.average;
     const accentB = proceduralColors?.colorB ?? palette.vibrant;
 
+    // The procedural mesh stays mounted while hidden; keep its variant defined.
+    const activeVariant = proceduralVariant ?? "about";
+
     const s1 = screen1.nodes.Cylinder;
     const s2 = screen2.nodes.Cylinder;
 
     return (
         <group {...groupProps}>
             <group position={screenPosition} scale={scale}>
+                {/* Both materials stay mounted and only visibility toggles, so route
+                    changes never dispose one and force a shader recompile. */}
                 <mesh
                     geometry={s1.geometry}
                     position={s1.position}
                     rotation={s1.rotation}
                     scale={s1.scale}
+                    visible={proceduralVariant != null}
                 >
-                    {proceduralVariant ? (
-                        <ProceduralScreenMaterial
-                            variant={proceduralVariant}
-                            intensity={
-                                proceduralVariant === "about" ||
-                                proceduralVariant === "connect"
-                                    ? 1.45
-                                    : 1.05
-                            }
-                            speed={proceduralVariant === "about" ? 0.85 : 0.75}
-                            seed={proceduralVariant === "connect" ? 11 : 4}
-                        />
-                    ) : videoTexture ? (
+                    <ProceduralScreenMaterial
+                        variant={activeVariant}
+                        intensity={
+                            activeVariant === "about" ||
+                            activeVariant === "connect"
+                                ? 1.45
+                                : 1.05
+                        }
+                        speed={activeVariant === "about" ? 0.85 : 0.75}
+                        seed={activeVariant === "connect" ? 11 : 4}
+                    />
+                </mesh>
+                <mesh
+                    geometry={s1.geometry}
+                    position={s1.position}
+                    rotation={s1.rotation}
+                    scale={s1.scale}
+                    visible={proceduralVariant == null}
+                >
+                    {videoTexture ? (
                         // Explicit white: R3F reuses this material instance across branches and
                         // resets a dropped `color` prop to black, which multiplies the map to black.
                         <meshBasicMaterial toneMapped={false} color="#ffffff" map={videoTexture} />
