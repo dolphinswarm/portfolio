@@ -6,6 +6,7 @@ import {
     type ShowcaseScreenMedia,
 } from "@/components/Showcase/Showcase";
 import { useSceneVideo } from "@/context/SceneVideoContext";
+import Link from "next/link";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 
@@ -132,6 +133,50 @@ const CODE_ITEMS: ShowcaseItem[] = [
                     the marker. You can then interact with the interface to
                     create loops of different drum sounds, adjusting the tempo
                     and pattern as you like.
+                </p>
+            </>
+        ),
+    },
+    {
+        slug: "poets-shack-web-app",
+        title: "Poet's Shack Web App",
+        subtitle:
+            "Gathering at the Poet's Shack Installation @ Miami University",
+        year: "2020",
+        tags: ["Node.js", "Express.js", "AR.js"],
+        links: [
+            {
+                label: "GitHub",
+                href: "https://github.com/ToxicBananaParty/PoetShack",
+                icon: faGithub,
+            },
+        ],
+        screenSource: {
+            kind: "image",
+            src: "/branding/img/code/poets-shack-website.png",
+        },
+        thumbnailSource: {
+            kind: "image",
+            src: "/branding/img/thumbs/poets-shack-website.webp",
+        },
+        body: (
+            <>
+                <p>
+                    The <em>Poet's Shack Web App</em> was the companion website
+                    for the 2020 Gathering at the Poet's Shack, an immersive
+                    installation held in Miami University's Bishop Woods.
+                    Visitors used it to submit and read poems, which then
+                    appeared live on the{" "}
+                    <Link href="/visuals?project=poem-visualizer">
+                        Poem Visualizer
+                    </Link>{" "}
+                    projection.
+                </p>
+                <p>
+                    The site also featured a QR code scanner that played
+                    interactive art in augmented reality when visitors scanned
+                    pictures around the installation. It was built with Node.js,
+                    Express.js, and AR.js, and is no longer running.
                 </p>
             </>
         ),
