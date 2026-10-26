@@ -56,7 +56,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
     - `public/branding/videos/code.mp4` (9 MB)
     - `public/threejs/portfolio_backdrop_screen.glb`
     - `public/threejs/Poliigon_StoneQuartzite_8060.mtlx` and `_Displacement.tiff`
-- [ ] **S** Self-host the HDR used by `<Environment preset="city">` ([Base.tsx:320](../src/components/3D/Base.tsx#L320)). It currently downloads from a third-party CDN at runtime.
+- [x] **S** Self-host the HDR used by `<Environment preset="city">` ([Base.tsx:339](../src/components/3D/Base.tsx#L339)). It currently downloads from a third-party CDN at runtime. (Done: `public/threejs/potsdamer_platz_1k.hdr`, 1.5 MB, same file the preset loads.)
 - [x] ~~**L** Move video out of git.~~ Decided against a CDN (2026-10-20). After re-encoding, the ~670 MB of video should drop to roughly 100 MB with every file well under GitHub's 100 MB limit, which the static host can serve fine. Full-length videos go on YouTube/Vimeo instead (see Video hosting in Phase 3), so the site only hosts short clips.
 - [ ] **S** (Optional, later) Shrink `.git` (~980 MB) by purging the old video blobs with `git filter-repo`. This only affects clone size, and it requires a force-push, so only do it if it becomes a problem.
 
@@ -71,7 +71,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
     - **Lab** or **Archive**: student projects and experiments.
     - **Music**: lead with the FuTerra generative system and the With/in score, then the dolphinswarm songs.
 - [ ] **L** Give each project its own URL (`/work/[slug]` with static generation) instead of `?project=slug`. Today the server always renders the first project, so every link preview and crawl sees the same title and text. Keep the same TV-screen UI by passing the initial slug from the route.
-- [ ] **M** Move project data out of page files into `src/data/*.ts` (needed for the step above).
+- [x] **M** Move project data out of page files into `src/data/*.ts` (needed for the step above). (Done: `src/data/code.tsx`, `visuals.tsx`, `music.tsx`; `.tsx` because the bodies are JSX. Music palettes and lookup helpers moved too; `MusicPlayerBar` stays in the page.)
 
 ### Case studies (top 2–3 projects)
 

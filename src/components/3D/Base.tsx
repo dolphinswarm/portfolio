@@ -336,7 +336,7 @@ export const Base3DScene = ({
                         }
                     />
                 </Suspense>
-                <Environment preset="city" />
+                <Environment files="/threejs/potsdamer_platz_1k.hdr" />
             </Canvas>
         </div>
     ) : null;
