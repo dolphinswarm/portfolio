@@ -103,7 +103,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
     - process shots: Unreal scenes, projection mapping, on-site setup
     - photos of people experiencing it
 - [ ] **M** Same treatment for With/in (Night Lights Denver). **(Brad: gather material)**
-- [ ] **M** Merge the three Poet's Shack items into one case study, or at least stop repeating the same intro paragraph three times (`POETS_SHACK_INTRO` in [installations.tsx](../src/data/installations.tsx)).
+- [ ] **M** Merge the three Poet's Shack items into one case study, or at least stop repeating the same intro paragraph three times (`POETS_SHACK_INTRO` in [installations.tsx](../src/data/installations.tsx)). **On hold (2026-11-03):** combining would make one Installations case study (overview + Shack Video, Poem Visualizer and web app as one pipeline, Upham Arch) with a media switcher and redirects from the old URLs, and Apps would need Marble Clock or Reverb to stay at 3. The lighter option is to keep the entries and cross-link them.
 
 ### Code page
 
