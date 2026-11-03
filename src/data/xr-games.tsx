@@ -7,6 +7,8 @@ export const XR_GAMES_ITEMS: ShowcaseItem[] = [
         title: "VR Basketball Shootout",
         subtitle: "Godot VR arcade game for ATLS 5660",
         year: "2026",
+        description:
+            "An arcade VR basketball game I built in Godot and C#: hit the big red button and sink as many threes as you can in 60 seconds.",
         tags: ["Godot", "C#", "VR", "OpenXR"],
         links: [
             {
@@ -59,6 +61,8 @@ export const XR_GAMES_ITEMS: ShowcaseItem[] = [
         title: "Parkinson's VR Training",
         subtitle: "Virtual reality training sim",
         year: "2021",
+        description:
+            "A VR training sim for nurses caring for a Parkinson's patient, built in Unity for a nursing study at Malone University. I was the lead developer.",
         tags: ["Unity", "C#", "VR"],
         links: [
             {
@@ -114,6 +118,8 @@ export const XR_GAMES_ITEMS: ShowcaseItem[] = [
         title: "VRchery",
         subtitle: "Virtual reality archery game",
         year: "2019",
+        description:
+            "A VR archery game in Unity: pull back the bow with your controllers and shoot at a target in a medieval town, with haptics and bullseye scoring.",
         tags: ["Unity", "C#", "VR"],
         links: [
             {
@@ -149,6 +155,8 @@ export const XR_GAMES_ITEMS: ShowcaseItem[] = [
         title: "AR Looper",
         subtitle: "Augmented Reality music looper",
         year: "2019",
+        description:
+            "An AR drum looper in Unity: point your phone at a printed marker and a looper pops up on top of it, ready for you to build drum loops.",
         tags: ["Unity", "C#", "AR"],
         links: [
             {
@@ -185,6 +193,8 @@ export const XR_GAMES_ITEMS: ShowcaseItem[] = [
         title: "Ninjas vs. Knights",
         subtitle: "Unity capture-the-flag game for CSE 389",
         year: "2021",
+        description:
+            "A third-person capture-the-flag shooter in Unity: you and your AI ninjas race to steal the knights' flag before they steal yours.",
         tags: ["Unity", "C#", "Game Development"],
         links: [
             {

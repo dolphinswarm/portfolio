@@ -10,6 +10,8 @@ export const APPS_ITEMS: ShowcaseItem[] = [
         subtitle:
             "Gathering at the Poet's Shack Installation @ Miami University",
         year: "2020",
+        description:
+            "The web app for the Poet's Shack installation: visitors submitted poems that showed up live on the projection, and scanned QR codes for AR art.",
         tags: ["Node.js", "Express.js", "AR.js"],
         links: [
             {
@@ -53,6 +55,8 @@ export const APPS_ITEMS: ShowcaseItem[] = [
         title: "The Ultimate Drum Machine",
         subtitle: "Browser-based 16-step drum sequencer",
         year: "2022",
+        description:
+            "A 16-step drum sequencer that runs in your browser, built with React, TypeScript, and Tone.js. Program a beat, swap instruments, and export patterns.",
         tags: ["React", "TypeScript", "Tone.js", "Audio"],
         links: [
             {
@@ -109,6 +113,8 @@ export const APPS_ITEMS: ShowcaseItem[] = [
         title: "3D Portfolio",
         subtitle: "Next.js + R3F",
         year: "2026",
+        description:
+            "This very website! Built with Next.js and React Three Fiber, with my projects playing on a TV inside a 3D scene.",
         tags: ["Next.js", "TypeScript", "Three.js"],
         links: [
             {

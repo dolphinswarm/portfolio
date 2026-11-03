@@ -132,6 +132,8 @@ export const MUSIC_ITEMS = [
         title: "bones",
         subtitle: "dolphinswarm",
         year: "2025",
+        description:
+            "A clawhammer banjo song about what I want done with my body after I die (it's lighthearted, I promise!). Indie folk as dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -162,6 +164,8 @@ export const MUSIC_ITEMS = [
         title: "astrogirl",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "A dreamy, spacey indie rock song about drifting apart from someone, drenched in reverb and vocal processing (a la Space Oddity). As dolphinswarm.",
         tags: ["Space Rock", "Indie"],
         links: [
             {
@@ -195,6 +199,8 @@ export const MUSIC_ITEMS = [
         title: "movin' on",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "An upbeat, happy folk song about the excitement of starting fresh and chasing new opportunities. As dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -225,6 +231,8 @@ export const MUSIC_ITEMS = [
         title: "homecoming",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "An emo folk song about fall, and how much I personally dislike it. A play on school homecoming and just wanting to go home. As dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -257,6 +265,8 @@ export const MUSIC_ITEMS = [
         title: "steller's jay",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "An acoustic folk love song comparing a relationship to a Steller's Jay. As dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -286,6 +296,8 @@ export const MUSIC_ITEMS = [
         title: "what i thought it'd be",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "A slower, reflective song about what happens when reality doesn't line up with your dreams and expectations. Indie folk as dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -316,6 +328,8 @@ export const MUSIC_ITEMS = [
         title: "screaming to the sky",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "A spacey indie folk song about dating app frustrations, with a repeating open G guitar riff and lots of crunchy jazz chords. As dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -347,6 +361,8 @@ export const MUSIC_ITEMS = [
         title: "FuTerra | I Was The Earth",
         subtitle: "Generative Music for BLINK 2024 Installation",
         year: "2024",
+        description:
+            "The generative soundscape I made in Ableton Live for the FuTerra installation at BLINK 2024, using randomization, algorithmic composition, and field recordings.",
         tags: ["Ableton Live", "Generative Music"],
         links: [
             {
@@ -366,12 +382,12 @@ export const MUSIC_ITEMS = [
                 <em>FuTerra | I Was The Earth</em> is the generative music
                 soundscape I created for the BLINK 2024 video installation of
                 the same name (see the piece on the{" "}
-                <Link href="/installations/futerra">Installations</Link> page). The music is
-                meant to evoke a sense of awe, wonder, evolution, and the
-                passage of time, reflecting the themes of the installation. It
-                was created using Ableton Live with various generative
-                techniques, including randomization, algorithmic composition,
-                and live processing of field recordings.
+                <Link href="/installations/futerra">Installations</Link> page).
+                The music is meant to evoke a sense of awe, wonder, evolution,
+                and the passage of time, reflecting the themes of the
+                installation. It was created using Ableton Live with various
+                generative techniques, including randomization, algorithmic
+                composition, and live processing of field recordings.
             </p>
         ),
     },
@@ -380,6 +396,8 @@ export const MUSIC_ITEMS = [
         title: "Improvisation 1",
         subtitle: "Ryo Noda",
         year: "2020",
+        description:
+            "My junior recital performance of Ryo Noda's Improvisation 1 for solo alto sax. Lots of extended techniques (and lots of symbols in the notation!).",
         tags: ["Saxophone Solo", "Alto Saxophone"],
         previewAudioSrc: "/branding/audio/improvisation-i.mp3",
         thumbnailSource: {
@@ -403,6 +421,8 @@ export const MUSIC_ITEMS = [
         title: "Movement I - With Vigor",
         subtitle: "Paul Creston",
         year: "2020",
+        description:
+            "My junior recital performance of With Vigor from Paul Creston's Alto Saxophone Sonata: fast, syncopated, and full of energy.",
         tags: ["Saxophone Solo", "Alto Saxophone"],
         previewAudioSrc: "/branding/audio/creston-i.mp3",
         thumbnailSource: {
@@ -431,6 +451,8 @@ export const MUSIC_ITEMS = [
         title: "Movement II - With Tranquility",
         subtitle: "Paul Creston",
         year: "2020",
+        description:
+            "My junior recital performance of With Tranquility from Paul Creston's Alto Saxophone Sonata: a lyrical slow movement that's all about the vibrato.",
         tags: ["Saxophone Solo", "Alto Saxophone"],
         previewAudioSrc: "/branding/audio/creston-ii.mp3",
         thumbnailSource: {
@@ -459,6 +481,8 @@ export const MUSIC_ITEMS = [
         title: "Fantasia - Mvts. II & III",
         subtitle: "Heitor Villa-Lobos",
         year: "2020",
+        description:
+            "From my junior recital: movements II and III of Villa-Lobos's Fantasia for soprano sax. The third is fast, rhythmic, and very touchy on tone!",
         tags: ["Saxophone Solo", "Soprano Saxophone"],
         previewAudioSrc: "/branding/audio/fantasia-ii-iii.mp3",
         thumbnailSource: {
@@ -491,6 +515,8 @@ export const MUSIC_ITEMS = [
         title: "Forge",
         subtitle: "Composition for Orchestra",
         year: "2020",
+        description:
+            "A cinematic orchestral piece about an evil, daunting factory: heavy brass, low strings, industrial percussion, and lots of dissonance.",
         tags: ["Orchestra", "Composition"],
         links: [
             {
@@ -524,6 +550,8 @@ export const MUSIC_ITEMS = [
         title: "Landward Ho!",
         subtitle: "Composition for Orchestra",
         year: "2017",
+        description:
+            "A cinematic orchestral piece about the spirit of adventure and discovering new lands. Landward ho!",
         tags: ["Orchestra", "Composition"],
         links: [
             {
@@ -555,6 +583,8 @@ export const MUSIC_ITEMS = [
         title: "Heist",
         subtitle: "Composition for String Quartet",
         year: "2021",
+        description:
+            "A string quartet inspired by spy and heist movies, all about the tension of pulling off a robbery. Bonus: it's mostly in 7/8!",
         tags: ["String Quartet", "Composition"],
         links: [
             {
@@ -588,6 +618,8 @@ export const MUSIC_ITEMS = [
         title: "With/in: The Dance Between Being & Becoming",
         subtitle: "Composition for Denver Night Lights Video Installation",
         year: "2026",
+        description:
+            "The music I composed for With/in at Night Lights Denver: a whimsical, carnival-esque waltz (think a merry-go-round) that's nostalgic, joyful, and bittersweet.",
         tags: ["Soundtrack", "Classical"],
         previewAudioSrc: "/branding/audio/within.mp3",
         thumbnailSource: {
@@ -596,13 +628,13 @@ export const MUSIC_ITEMS = [
         },
         body: (
             <p>
-                <em>With/in: The Dance Between Being & Becoming</em> is the piece I
-                composed as the accompanying music for the Denver Night Lights
-                video installation of the same name (see the piece on the{" "}
-                <Link href="/installations/within">Installations</Link> page). The piece is
-                a whimsical, carnival-esque waltz (think a merry-go-round) that
-                is meant to evoke feelings of nostalgia, joy, and
-                bittersweetness.
+                <em>With/in: The Dance Between Being & Becoming</em> is the
+                piece I composed as the accompanying music for the Denver Night
+                Lights video installation of the same name (see the piece on the{" "}
+                <Link href="/installations/within">Installations</Link> page).
+                The piece is a whimsical, carnival-esque waltz (think a
+                merry-go-round) that is meant to evoke feelings of nostalgia,
+                joy, and bittersweetness.
             </p>
         ),
     },
