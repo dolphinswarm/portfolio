@@ -137,7 +137,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 ## Phase 4: Ongoing SEO and outreach
 
-- [ ] **M** Add `VideoObject` JSON-LD to project pages (needs `thumbnailUrl`, `uploadDate`, `contentUrl`). Project pages now exist, so `ShowcasePage` can pass it to `<SEO jsonLd>`.
+- [x] ~~**M** Add `VideoObject` JSON-LD to project pages (needs `thumbnailUrl`, `uploadDate`, `contentUrl`). Project pages now exist, so `ShowcasePage` can pass it to `<SEO jsonLd>`.~~ Decided against (2026-11-03): Google needs an exact upload date per video and the projects only have years; once the full videos are on YouTube, YouTube covers video search.
 - [ ] **S** Work target phrases into visible text: "creative technologist Denver", "projection mapping", "immersive installation".
 - [x] ~~**S** Ask &FRIENDS Studio, the Denver Theatre District artist page, and BLINK to link to your site.~~ Decided against (2026-11-03).
 - [ ] **S** Put the site URL in your GitHub, LinkedIn, YouTube, SoundCloud and Instagram bios. Checked 2026-11-03: GitHub has it; the Instagram bio links only to SoundCloud; YouTube, SoundCloud, and LinkedIn need a manual look. **(Brad)**
