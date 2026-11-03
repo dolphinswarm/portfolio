@@ -5,15 +5,17 @@ import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
     faHouse,
     faUser,
-    faCode,
+    faLaptopCode,
     faMusic,
-    faImages,
+    faPanorama,
+    faVrCardboard,
 } from "@fortawesome/free-solid-svg-icons";
 import type { Page } from "@/utils/consts";
 import styles from "@/styles/Nav.module.scss";
 import Image from "next/image";
 import Link from "next/link";
 import { SITE_ROLE } from "@/utils/site";
+import { SECTIONS, SECTION_ORDER, type SectionId } from "@/data/sections";
 
 type NavItem = {
     page: Page;
@@ -22,12 +24,22 @@ type NavItem = {
     icon: IconDefinition;
 };
 
+const SECTION_ICONS: Record<SectionId, IconDefinition> = {
+    installations: faPanorama,
+    "xr-games": faVrCardboard,
+    apps: faLaptopCode,
+    music: faMusic,
+};
+
 const NAV_ITEMS: NavItem[] = [
     { page: "home", href: "/", label: "Home", icon: faHouse },
+    ...SECTION_ORDER.map((id) => ({
+        page: id,
+        href: SECTIONS[id].path,
+        label: SECTIONS[id].label,
+        icon: SECTION_ICONS[id],
+    })),
     { page: "about", href: "/about", label: "About", icon: faUser },
-    { page: "code", href: "/code", label: "Code", icon: faCode },
-    { page: "visuals", href: "/visuals", label: "Visuals", icon: faImages },
-    { page: "music", href: "/music", label: "Music", icon: faMusic },
 ];
 
 export const Header = () => {
@@ -75,7 +87,10 @@ export const Header = () => {
 
     const isActiveHref = (href: string) => {
         if (href === "/") return router.pathname === "/";
-        return router.pathname === href;
+        // Section pages live at e.g. "/installations/[[...slug]]".
+        return (
+            router.pathname === href || router.pathname.startsWith(`${href}/`)
+        );
     };
 
     return (

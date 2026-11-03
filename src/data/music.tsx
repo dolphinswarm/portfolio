@@ -366,7 +366,7 @@ export const MUSIC_ITEMS = [
                 <em>FuTerra | I Was The Earth</em> is the generative music
                 soundscape I created for the BLINK 2024 video installation of
                 the same name (see the piece on the{" "}
-                <Link href="/visuals#futerra">Visuals</Link> page). The music is
+                <Link href="/installations/futerra">Installations</Link> page). The music is
                 meant to evoke a sense of awe, wonder, evolution, and the
                 passage of time, reflecting the themes of the installation. It
                 was created using Ableton Live with various generative
@@ -596,10 +596,10 @@ export const MUSIC_ITEMS = [
         },
         body: (
             <p>
-                <em>With/in: The Dance Between Being & Becoming</em> is the I
+                <em>With/in: The Dance Between Being & Becoming</em> is the piece I
                 composed as the accompanying music for the Denver Night Lights
                 video installation of the same name (see the piece on the{" "}
-                <Link href="/visuals#within">Visuals</Link> page). The piece is
+                <Link href="/installations/within">Installations</Link> page). The piece is
                 a whimsical, carnival-esque waltz (think a merry-go-round) that
                 is meant to evoke feelings of nostalgia, joy, and
                 bittersweetness.

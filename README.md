@@ -22,11 +22,15 @@ The whole site is a single 3D stage. Each page swaps what plays on the "screen":
 | [src/hooks/useGetRouterSceneProps.ts](src/hooks/useGetRouterSceneProps.ts)   | Maps each route to what the scene shows (media, background variant, camera mode)                                 |
 | [src/context/SceneVideoContext.tsx](src/context/SceneVideoContext.tsx)       | Lets a page override the screen's media, e.g. when you pick a project                                            |
 | [src/context/AudioSpectrumContext.tsx](src/context/AudioSpectrumContext.tsx) | Shares live frequency data from the music player with the screen shader                                          |
-| [src/components/Showcase/](src/components/Showcase/)                         | The project carousel and detail panel used by Code, Visuals, and Music; selection is deep-linked via `?project=` |
+| [src/components/Showcase/](src/components/Showcase/)                         | The project carousel and detail panel used by every section page; `ShowcasePage` adds SEO and the static paths    |
+| [src/data/](src/data/)                                                       | Project data per section, plus [sections.ts](src/data/sections.ts) (nav labels, paths, section SEO)              |
+| [src/pages/sitemap.xml.tsx](src/pages/sitemap.xml.tsx)                       | Sitemap generated from the project data                                                                          |
 | [src/components/ScreenOverlay/](src/components/ScreenOverlay/)               | Lays text out so it reads as if it's on the screen (About)                                              |
 | [src/components/SEO.tsx](src/components/SEO.tsx)                             | Per-page title, description, canonical URL, Open Graph tags, and JSON-LD                                         |
 
 The `<Canvas>` lives in the shared layout, so the scene stays mounted while you navigate and transitions between routes instead of reloading.
+
+Each section (Installations, XR & Games, Apps, Music) is one optional catch-all page, e.g. `src/pages/installations/[[...slug]].tsx`. It's statically built at `/installations` and at `/installations/<slug>` for every project, so each project has its own title, description, and canonical URL. Picking a project does a shallow `router.replace` to its URL, so the page doesn't remount. To add a section, add it to `sections.ts`, create its data file and page, and add it to the sitemap.
 
 ## Running locally
 

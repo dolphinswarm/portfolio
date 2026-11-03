@@ -201,6 +201,8 @@ export type ShowcaseItem = {
     slug: string;
     title: string;
     subtitle?: string;
+    /** Meta description for the item's page. Built from subtitle, year, and tags when missing. */
+    description?: string;
     year?: string;
     tags?: string[];
 
@@ -214,31 +216,34 @@ export type ShowcaseItem = {
     body?: React.ReactNode;
 };
 
-export const Showcase = ({
-    pageTitle,
-    items,
-    queryKey,
-    onScreenMediaChange,
-    renderBodyPrefix,
-    onSelectedItemChange,
-}: {
+export type ShowcaseProps = {
     pageTitle: string;
     items: ShowcaseItem[];
-    queryKey: string;
+    /** Section path, e.g. "/installations". Selecting an item moves the URL to `${basePath}/${slug}`. */
+    basePath: string;
+    /** Slug from the route; falls back to the first item when missing or unknown. */
+    initialSlug?: string | null;
     onScreenMediaChange?: (media: ShowcaseScreenMedia | null) => void;
     /** Optional UI to render above the selected item's body (inside the description area). */
     renderBodyPrefix?: (item: ShowcaseItem) => React.ReactNode;
     /** Optional callback when the selected item changes. */
     onSelectedItemChange?: (item: ShowcaseItem | null) => void;
-}) => {
+};
+
+export const Showcase = ({
+    pageTitle,
+    items,
+    basePath,
+    initialSlug,
+    onScreenMediaChange,
+    renderBodyPrefix,
+    onSelectedItemChange,
+}: ShowcaseProps) => {
     const router = useRouter();
 
     const dockId = React.useId();
 
-    const chromeStorageKey = React.useMemo(
-        () => `showcase:${queryKey}:${pageTitle}:chromeVisible`,
-        [queryKey, pageTitle],
-    );
+    const chromeStorageKey = `showcase:${pageTitle}:chromeVisible`;
     const [isChromeVisible, setIsChromeVisible] = React.useState(true);
 
     React.useEffect(() => {
@@ -286,35 +291,27 @@ export const Showcase = ({
     const lastPreviewRef = React.useRef<ShowcaseScreenMedia | null>(null);
     const lastSelectedSlugRef = React.useRef<string | null>(null);
 
-    const getInitialSlug = React.useCallback(() => {
-        const q = router.query?.[queryKey];
-        const requested = Array.isArray(q) ? q[0] : q;
-        if (
-            typeof requested === "string" &&
-            items.some((i) => i.slug === requested)
-        ) {
-            return requested;
-        }
-        return items[0]?.slug ?? "";
-    }, [router.query, queryKey, items]);
+    const resolveSlug = (slug?: string | null) =>
+        slug && items.some((i) => i.slug === slug)
+            ? slug
+            : (items[0]?.slug ?? "");
 
-    const [selectedSlug, setSelectedSlug] = React.useState<string>(() =>
-        items[0]?.slug ? items[0].slug : "",
+    const [selectedSlug, setSelectedSlug] = React.useState(() =>
+        resolveSlug(initialSlug),
     );
+
+    // Taps update the URL with a shallow replace, which leaves the route props
+    // alone, so `initialSlug` only changes on a real navigation (e.g. a <Link>
+    // to another project in this section). Follow it when it does.
+    const [prevInitialSlug, setPrevInitialSlug] = React.useState(initialSlug);
+    if (initialSlug !== prevInitialSlug) {
+        setPrevInitialSlug(initialSlug);
+        setSelectedSlug(resolveSlug(initialSlug));
+    }
 
     const [isAltScreenSourceActive, setIsAltScreenSourceActive] =
         React.useState(false);
     const [isAudioEnabled, setIsAudioEnabled] = React.useState(false);
-
-    // Read the selection from the URL once. After that, local state is the
-    // source of truth: re-reading the query would let a still-pending
-    // router.replace() from an earlier tap override a newer selection.
-    const hasReadUrlRef = React.useRef(false);
-    React.useEffect(() => {
-        if (!router.isReady || hasReadUrlRef.current) return;
-        hasReadUrlRef.current = true;
-        setSelectedSlug(getInitialSlug());
-    }, [router.isReady, getInitialSlug]);
 
     const selectedItem = React.useMemo(() => {
         return items.find((i) => i.slug === selectedSlug) ?? items[0];
@@ -347,39 +344,11 @@ export const Showcase = ({
     }, [activeScreenAsset]);
 
     React.useEffect(() => {
-        if (!router.isReady) return;
         if (!selectedItem) return;
 
         if (lastSelectedSlugRef.current !== selectedItem.slug) {
             lastSelectedSlugRef.current = selectedItem.slug;
             onSelectedItemChange?.(selectedItem);
-        }
-
-        // Sync selection to the URL (deep-linking). Some embedded browsers / sandboxed
-        // contexts can throw a SecurityError when touching the History API.
-        const currentQ = router.query?.[queryKey];
-        const currentSlug = Array.isArray(currentQ) ? currentQ[0] : currentQ;
-        const shouldSyncUrl =
-            typeof currentSlug !== "string" ||
-            currentSlug !== selectedItem.slug;
-
-        if (shouldSyncUrl) {
-            const nextQuery = {
-                ...router.query,
-                [queryKey]: selectedItem.slug,
-            };
-            void router
-                .replace(
-                    { pathname: router.pathname, query: nextQuery },
-                    undefined,
-                    {
-                        shallow: true,
-                        scroll: false,
-                    },
-                )
-                .catch(() => {
-                    // no-op (selection still works; URL just won't update)
-                });
         }
 
         const preferred = activeScreenAsset;
@@ -410,15 +379,11 @@ export const Showcase = ({
             lastPreviewRef.current = null;
         };
     }, [
-        router,
-        router.isReady,
-        router.pathname,
         selectedItem,
         isAltScreenSourceActive,
         activeScreenAsset,
         isAudioEnabled,
         isAudioToggleAvailable,
-        queryKey,
         onScreenMediaChange,
         onSelectedItemChange,
         arePreviewEqual,
@@ -443,22 +408,39 @@ export const Showcase = ({
         ? primaryScreenAsset?.icon
         : secondaryScreenAsset?.icon;
 
-    const onSelect = React.useCallback((slug: string) => {
-        setSelectedSlug(slug);
+    const onSelect = React.useCallback(
+        (slug: string) => {
+            setSelectedSlug(slug);
 
-        // Keep the selected thumb centered when possible.
-        const el = document.querySelector(`[data-showcase-thumb='${slug}']`);
-        if (el instanceof HTMLElement) {
-            const prefersReduced = window.matchMedia?.(
-                "(prefers-reduced-motion: reduce)",
-            ).matches;
-            el.scrollIntoView({
-                behavior: prefersReduced ? "auto" : "smooth",
-                block: "nearest",
-                inline: "center",
-            });
-        }
-    }, []);
+            // Deep-link the selection. Shallow, so the page doesn't re-run its
+            // data fetching or remount. Some embedded browsers / sandboxed
+            // contexts throw a SecurityError when touching the History API.
+            void router
+                .replace(`${basePath}/${slug}`, undefined, {
+                    shallow: true,
+                    scroll: false,
+                })
+                .catch(() => {
+                    // no-op (selection still works; URL just won't update)
+                });
+
+            // Keep the selected thumb centered when possible.
+            const el = document.querySelector(
+                `[data-showcase-thumb='${slug}']`,
+            );
+            if (el instanceof HTMLElement) {
+                const prefersReduced = window.matchMedia?.(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+                el.scrollIntoView({
+                    behavior: prefersReduced ? "auto" : "smooth",
+                    block: "nearest",
+                    inline: "center",
+                });
+            }
+        },
+        [router, basePath],
+    );
 
     const onCarouselKeyDown = React.useCallback(
         (e: React.KeyboardEvent) => {

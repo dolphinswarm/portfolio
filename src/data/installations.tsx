@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-    faArrowUpRightFromSquare,
     faBook,
     faClapperboard,
     faFilm,
@@ -18,7 +17,7 @@ const POETS_SHACK_INTRO = (
     </p>
 );
 
-export const VISUAL_ITEMS: ShowcaseItem[] = [
+export const INSTALLATION_ITEMS: ShowcaseItem[] = [
     {
         slug: "futerra",
         title: "FuTerra | I Was The Earth",
@@ -76,7 +75,7 @@ export const VISUAL_ITEMS: ShowcaseItem[] = [
                     artist, where I created a generative music system to
                     "infinitely" play with the installation (more details can be
                     found on the{" "}
-                    <Link href="music?project=futerra">music page</Link>
+                    <Link href="/music/futerra">music page</Link>
                     ). I also helped with projection mapping, media server
                     programming, Unreal Engine scene development, and overall
                     technical direction.
@@ -391,71 +390,6 @@ export const VISUAL_ITEMS: ShowcaseItem[] = [
                     production, which featured projections of water that
                     accompanies dancers, music, and spoken word to create an
                     immersive experience for the audience.
-                </p>
-            </>
-        ),
-    },
-    {
-        slug: "steampunk-mobile-fortress",
-        title: "Steampunk Mobile Fortress",
-        subtitle:
-            "3D Model and Animation Final Project for IMS 319 @ Miami University",
-        year: "2020",
-        tags: ["3D Modeling", "Animation", "AutoDesk Maya"],
-        screenSource: {
-            primary: {
-                kind: "video",
-                src: "/branding/videos/visuals/steampunk-fort.mp4",
-            },
-        },
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/steampunk-fort.webp",
-        },
-        body: (
-            <>
-                <p>
-                    <em>Steampunk Mobile Fortress</em> was a 3D model and
-                    animation final project created for IMS 319 at Miami
-                    University. The project involved designing and animating a
-                    steampunk-inspired mobile fortress, showcasing skills in 3D
-                    modeling, texturing, and animation within AutoDesk Maya.
-                </p>
-            </>
-        ),
-    },
-    {
-        slug: "tri-delta-sundial",
-        title: "Tri-Delta Sundial",
-        subtitle: "Project for IMS 319 @ Miami University",
-        year: "2020",
-        tags: ["3D Modeling", "AutoDesk Maya"],
-        links: [
-            {
-                label: "Image of IRL Sundial",
-                href: "/branding/img/visuals/tridelt-sundial-irl.jpg",
-                icon: faArrowUpRightFromSquare,
-                openInNewWindow: true,
-            },
-        ],
-        screenSource: {
-            primary: {
-                kind: "image",
-                src: "/branding/img/visuals/miami-sundial.png",
-            },
-        },
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/miami-sundial.webp",
-        },
-        body: (
-            <>
-                <p>
-                    <em>Tri-Delta Sundial</em> is a 3D model of the Tri-Delta
-                    sundial located on Miami University's campus. This model was
-                    created as part of IMS 319 at Miami University, which
-                    required creating a detailed and accurate representation of
-                    a building or structure on campus using AutoDesk Maya.
                 </p>
             </>
         ),

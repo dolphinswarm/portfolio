@@ -1,9 +1,59 @@
-import Link from "next/link";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import type { ShowcaseItem } from "@/components/Showcase/Showcase";
 
-export const CODE_ITEMS: ShowcaseItem[] = [
+export const XR_GAMES_ITEMS: ShowcaseItem[] = [
+    {
+        slug: "vr-basketball",
+        title: "VR Basketball Shootout",
+        subtitle: "Godot VR arcade game for ATLS 5660",
+        year: "2026",
+        tags: ["Godot", "C#", "VR", "OpenXR"],
+        links: [
+            {
+                label: "GitHub",
+                href: "https://github.com/dolphinswarm/alts-5660-creative-code/tree/main/week-8-3d",
+                icon: faGithub,
+            },
+        ],
+        screenSource: {
+            kind: "video",
+            src: "/branding/videos/code/vr-basketball.mp4",
+            audio: { toggleable: true, defaultEnabled: false, volume: 1 },
+        },
+        thumbnailSource: {
+            kind: "image",
+            src: "/branding/img/thumbs/vr-basketball.webp",
+        },
+        body: (
+            <>
+                <p>
+                    <em>VR Basketball Shootout</em> is an arcade-style virtual
+                    reality basketball game built in Godot with C# and Godot XR
+                    Tools, made for ATLS 5660 (Creative Code) at CU Boulder.
+                    Press the big red button, then sink as many shots as you can
+                    in 60 seconds. Every basket is worth three, shots still in
+                    the air at the buzzer count, and your high score is saved
+                    between sessions.
+                </p>
+                <p>
+                    Scoring watches each ball's center cross the plane of the
+                    rim instead of using a trigger area, since trigger areas
+                    reported too late on fast shots. A ball that goes up through
+                    the net doesn't count on its way back down, and the rim is
+                    1.5× regulation size so scoring in VR is actually doable.
+                    The net has no collision, so made shots are slowed down to
+                    look like the net caught them.
+                </p>
+                <p>
+                    Sound and touch carry a lot of the feel: dribbles, backboard
+                    hits and rim clanks are picked by what the ball hit and
+                    scaled by how hard it hit, a clock ticks through the last 10
+                    seconds before the buzzer, and the controllers pulse when
+                    you pick up a ball or press the start button.
+                </p>
+            </>
+        ),
+    },
     {
         slug: "parkinsons-vr",
         title: "Parkinson's VR Training",
@@ -131,50 +181,6 @@ export const CODE_ITEMS: ShowcaseItem[] = [
         ),
     },
     {
-        slug: "poets-shack-web-app",
-        title: "Poet's Shack Web App",
-        subtitle:
-            "Gathering at the Poet's Shack Installation @ Miami University",
-        year: "2020",
-        tags: ["Node.js", "Express.js", "AR.js"],
-        links: [
-            {
-                label: "GitHub",
-                href: "https://github.com/ToxicBananaParty/PoetShack",
-                icon: faGithub,
-            },
-        ],
-        screenSource: {
-            kind: "image",
-            src: "/branding/img/code/poets-shack-website.png",
-        },
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/poets-shack-website.webp",
-        },
-        body: (
-            <>
-                <p>
-                    The <em>Poet's Shack Web App</em> was the companion website
-                    for the 2020 Gathering at the Poet's Shack, an immersive
-                    installation held in Miami University's Bishop Woods.
-                    Visitors used it to submit and read poems, which then
-                    appeared live on the{" "}
-                    <Link href="/visuals?project=poem-visualizer">
-                        Poem Visualizer
-                    </Link>{" "}
-                    projection.
-                </p>
-                <p>
-                    The site also featured a QR code scanner that played
-                    interactive art in augmented reality when visitors scanned
-                    pictures around the installation. It was built with Node.js,
-                    Express.js, and AR.js, and is no longer running.
-                </p>
-            </>
-        ),
-    },
-    {
         slug: "ninjas-vs-knights",
         title: "Ninjas vs. Knights",
         subtitle: "Unity capture-the-flag game for CSE 389",
@@ -224,95 +230,6 @@ export const CODE_ITEMS: ShowcaseItem[] = [
                     (engage/backpedal/aim/shoot when close, recover/return
                     dropped flags, otherwise route via midpoints), plus a small
                     random path choice to avoid always beelining.
-                </p>
-            </>
-        ),
-    },
-    {
-        slug: "the-ultimate-drum-machine",
-        title: "The Ultimate Drum Machine",
-        subtitle: "Browser-based 16-step drum sequencer",
-        year: "2022",
-        tags: ["React", "TypeScript", "Tone.js", "Audio"],
-        links: [
-            {
-                label: "GitHub",
-                href: "https://github.com/dolphinswarm/the-ultimate-drum-machine",
-                icon: faGithub,
-            },
-            {
-                label: "Live Demo",
-                href: "https://dolphinswarm.github.io/the-ultimate-drum-machine/",
-                icon: faArrowUpRightFromSquare,
-            },
-        ],
-        screenSource: {
-            kind: "video",
-            src: "/branding/videos/code/the-ultimate-drum-machine.mp4",
-            audio: { toggleable: true, defaultEnabled: false, volume: 1 },
-        },
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/the-ultimate-drum-machine.webp",
-        },
-        body: (
-            <>
-                <p>
-                    The <em>Ultimate Drum Machine</em> is a browser-based,
-                    16-step drum sequencer built with React + TypeScript and
-                    powered by Tone.js. It's designed for quick beat sketching:
-                    add tracks by instrument category (kick, snare, hi-hat,
-                    clap, FX, crash, ride, tom, accessory), program a pattern,
-                    and hit play. This was also made as part of my exploration
-                    into React, web audio and music programming.
-                </p>
-                <p>
-                    Each track has per-track volume, a dropdown to swap
-                    instruments without rebuilding the pattern, and
-                    drag-and-drop reordering to keep your mixer layout tidy.
-                    Tempo is adjustable from 30-240 BPM, and playback starts
-                    reliably after a user gesture (the Play button resumes the
-                    browser audio context when needed).
-                </p>
-                <p>
-                    Patterns can be exported/imported as a small JSON text file,
-                    so you can share grooves or pick up where you left off
-                    later. The project is deployed to GitHub Pages and uses
-                    react-beautiful-dnd for track ordering and Tone.js for
-                    sample playback + scheduling.
-                </p>
-            </>
-        ),
-    },
-    {
-        slug: "r3f-portfolio",
-        title: "3D Portfolio",
-        subtitle: "Next.js + R3F",
-        year: "2026",
-        tags: ["Next.js", "TypeScript", "Three.js"],
-        links: [
-            {
-                label: "GitHub",
-                href: "https://github.com/dolphinswarm/portfolio",
-                icon: faGithub,
-            },
-        ],
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/this-website.webp",
-        },
-        screenSource: {
-            kind: "video",
-            src: "/branding/videos/demo-reel.mp4",
-        },
-        body: (
-            <>
-                <p>This portfolio website!</p>
-                <p>
-                    Built with Next.js and React Three Fiber (R3F), this site
-                    showcases my projects and skills in a 3D, engaging, and
-                    interactive "TV screen" format. The site is also built for
-                    responsiveness with mobile phones.
                 </p>
             </>
         ),

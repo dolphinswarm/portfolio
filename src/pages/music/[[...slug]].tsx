@@ -1,10 +1,12 @@
 import * as React from "react";
-import { SEO } from "@/components/SEO";
+import type { ShowcaseItem } from "@/components/Showcase/Showcase";
 import {
-    Showcase,
-    type ShowcaseItem,
-    type ShowcaseScreenMedia,
-} from "@/components/Showcase/Showcase";
+    ShowcasePage,
+    getShowcaseStaticPaths,
+    getShowcaseStaticProps,
+    type ShowcasePageProps,
+} from "@/components/Showcase/ShowcasePage";
+import { SECTIONS } from "@/data/sections";
 import { useSceneVideo } from "@/context/SceneVideoContext";
 import { useAudioSpectrum } from "@/context/AudioSpectrumContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -212,13 +214,9 @@ const MusicPlayerBar = ({
     );
 };
 
-const Music = () => {
-    const {
-        setMediaOverride,
-        clearMediaOverride,
-        setScreenStyleOverride,
-        clearScreenStyleOverride,
-    } = useSceneVideo();
+const Music = ({ slug }: ShowcasePageProps) => {
+    const { setScreenStyleOverride, clearScreenStyleOverride } =
+        useSceneVideo();
     const { attachMediaElement, resume, detach } = useAudioSpectrum();
     const audioRef = React.useRef<HTMLAudioElement | null>(null);
     const timelineRef = React.useRef<HTMLInputElement>(null);
@@ -233,19 +231,11 @@ const Music = () => {
         MUSIC_ITEMS[0]?.slug ?? "",
     );
 
-    const onScreenMediaChange = React.useCallback(
-        (media: ShowcaseScreenMedia | null) => {
-            setMediaOverride(media);
-        },
-        [setMediaOverride],
-    );
-
     React.useEffect(() => {
         return () => {
-            clearMediaOverride();
             clearScreenStyleOverride();
         };
-    }, [clearMediaOverride, clearScreenStyleOverride]);
+    }, [clearScreenStyleOverride]);
 
     const onSelectedItemChange = React.useCallback(
         (item: ShowcaseItem | null) => {
@@ -477,21 +467,13 @@ const Music = () => {
     );
 
     return (
-        <>
-            <SEO
-                title="Music & Generative Sound"
-                description="Generative installation music, orchestral and chamber compositions, saxophone performance, and indie folk as dolphinswarm, by Brad Schmitz."
-                path="/music"
-            />
-            <h1 className="visually-hidden">Music and generative sound</h1>
-
-            <Showcase
-                pageTitle="Music"
-                items={MUSIC_ITEMS}
-                queryKey="project"
-                onScreenMediaChange={onScreenMediaChange}
-                onSelectedItemChange={onSelectedItemChange}
-                renderBodyPrefix={(item) => (
+        <ShowcasePage
+            section={SECTIONS.music}
+            items={MUSIC_ITEMS}
+            slug={slug}
+            showcaseProps={{
+                onSelectedItemChange,
+                renderBodyPrefix: (item) => (
                     <MusicPlayerBar
                         item={item}
                         isPlaying={isPlaying}
@@ -506,9 +488,9 @@ const Music = () => {
                         onSeekEnd={onSeekEnd}
                         onEnsurePreviewSource={ensurePreviewSourceForItem}
                     />
-                )}
-            />
-
+                ),
+            }}
+        >
             {/* Keep the audio element mounted once to avoid playback interruption when the UI rerenders. */}
             <audio
                 ref={audioRef}
@@ -517,8 +499,11 @@ const Music = () => {
                 loop
                 style={{ display: "none" }}
             />
-        </>
+        </ShowcasePage>
     );
 };
+
+export const getStaticPaths = getShowcaseStaticPaths(MUSIC_ITEMS);
+export const getStaticProps = getShowcaseStaticProps;
 
 export default Music;
