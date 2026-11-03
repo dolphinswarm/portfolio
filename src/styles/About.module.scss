@@ -1,3 +1,18 @@
+/* A blank line between the intro paragraphs. */
+.introParagraph + .introParagraph {
+  margin-top: 1lh;
+}
+
+/* Each column section. flow-root keeps the list and heading margins inside
+   the group, so the gap between sections is those margins plus a blank line. */
+.group {
+  display: flow-root;
+}
+
+.group + .group {
+  margin-top: 1lh;
+}
+
 .sectionHeader {
   display: inline-flex;
   align-items: center;
@@ -87,6 +102,10 @@
   opacity: 0.98;
   font-weight: 600;
   margin: 0;
+}
+
+.entryImpact {
+  margin-top: 4px;
 }
 
 .muted {
