@@ -13,6 +13,18 @@ import styles from "./Showcase.module.scss";
 
 const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
 
+const CHROME_STORAGE_KEY = "showcase:chromeVisible";
+
+// Each section is its own page, so changing sections mounts a new Showcase.
+// Next swaps pages in one commit: while the new one renders, the old one is
+// still mounted, which is how a section change is told apart from arriving
+// from Home or About.
+let mountedShowcaseCount = 0;
+
+// The Hide UI state, carried to the next section's Showcase so it starts in
+// the same state instead of flashing while localStorage is read.
+let lastChromeVisible: boolean | null = null;
+
 const ThumbImage = ({
     src,
     title,
@@ -243,29 +255,45 @@ export const Showcase = ({
 
     const dockId = React.useId();
 
-    const chromeStorageKey = `showcase:${pageTitle}:chromeVisible`;
-    const [isChromeVisible, setIsChromeVisible] = React.useState(true);
+    // Fade in when arriving from a page without a Showcase, but not when
+    // switching sections, where the panel should look like it stayed put.
+    const [shouldFadeIn] = React.useState(() => mountedShowcaseCount === 0);
 
     React.useEffect(() => {
+        mountedShowcaseCount += 1;
+        return () => {
+            mountedShowcaseCount -= 1;
+        };
+    }, []);
+
+    const [isChromeVisible, setIsChromeVisible] = React.useState(
+        () => lastChromeVisible ?? true,
+    );
+
+    React.useEffect(() => {
+        // Only on the first Showcase of the visit; after that the module
+        // value is current and already used as the initial state.
+        if (lastChromeVisible !== null) return;
         try {
-            const stored = window.localStorage.getItem(chromeStorageKey);
+            const stored = window.localStorage.getItem(CHROME_STORAGE_KEY);
             if (stored === null) return;
             setIsChromeVisible(stored === "true");
         } catch {
             // no-op
         }
-    }, [chromeStorageKey]);
+    }, []);
 
     React.useEffect(() => {
+        lastChromeVisible = isChromeVisible;
         try {
             window.localStorage.setItem(
-                chromeStorageKey,
+                CHROME_STORAGE_KEY,
                 String(isChromeVisible),
             );
         } catch {
             // no-op
         }
-    }, [chromeStorageKey, isChromeVisible]);
+    }, [isChromeVisible]);
 
     const arePreviewEqual = React.useCallback(
         (a: ShowcaseScreenMedia | null, b: ShowcaseScreenMedia | null) => {
@@ -511,7 +539,13 @@ export const Showcase = ({
     if (!items.length) return null;
 
     return (
-        <div className={styles.wrap}>
+        <div
+            className={
+                shouldFadeIn
+                    ? `${styles.wrap} ${styles.wrapFadeIn}`
+                    : styles.wrap
+            }
+        >
             <button
                 type="button"
                 className={styles.chromeToggle}
