@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { SEO } from "@/components/SEO";
 import { useSceneVideo } from "@/context/SceneVideoContext";
+import OG_IMAGES from "@/data/og-images.json";
 import type { Section } from "@/data/sections";
 import {
     Showcase,
@@ -47,6 +48,12 @@ const describeItem = (item: ShowcaseItem) =>
     ]
         .filter(Boolean)
         .join(" ");
+
+/** The item's link-preview image from scripts/make-og-images.mjs, if it has one. */
+const getItemImage = (section: Section, item: ShowcaseItem) => {
+    const key = `${section.id}/${item.slug}`;
+    return OG_IMAGES.includes(key) ? `/og/${key}.jpg` : undefined;
+};
 
 /** A section page: SEO, the hidden heading, and a Showcase wired to the 3D screen. */
 export const ShowcasePage = ({
@@ -98,6 +105,7 @@ export const ShowcasePage = ({
                     title={item.title}
                     description={describeItem(item)}
                     path={`${section.path}/${item.slug}`}
+                    image={getItemImage(section, item)}
                 />
             ) : (
                 <SEO

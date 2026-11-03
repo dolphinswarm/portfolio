@@ -32,6 +32,8 @@ The `<Canvas>` lives in the shared layout, so the scene stays mounted while you 
 
 Each section (Installations, XR & Games, Apps, Music) is one optional catch-all page, e.g. `src/pages/installations/[[...slug]].tsx`. It's statically built at `/installations` and at `/installations/<slug>` for every project, so each project has its own title, description, and canonical URL. Picking a project does a shallow `router.replace` to its URL, so the page doesn't remount. To add a section, add it to `sections.ts`, create its data file and page, and add it to the sitemap.
 
+After adding or changing a project, run `node scripts/make-og-images.mjs` (needs ffmpeg) to make its 1200×630 link-preview image. Pages without one use the site-wide `og-image.jpg`.
+
 ## Running locally
 
 ```bash

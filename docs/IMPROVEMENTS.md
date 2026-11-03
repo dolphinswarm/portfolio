@@ -91,7 +91,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 - [ ] ATLS 5430 final project: possible first piece for a future Design section.
 - [x] **L** Give each project its own URL (`/installations/<slug>`, `/xr-games/<slug>`, `/apps/<slug>`, `/music/<slug>`) instead of `?project=slug`. Each section is one optional catch-all page built statically for every project, so link previews and crawlers get that project's title, description, and canonical URL. Picking a project does a shallow URL replace; the Showcase doesn't remount. The sitemap is now generated from the project data.
     - [x] **M** Write a real `description` for each project (the field exists on `ShowcaseItem`). Until then it's built from subtitle, year, and tags, which reads flat for some items (e.g. music: "dolphinswarm (2025). Folk, Indie."). (Done 2026-11-03, in the site's first-person voice.)
-    - [ ] **M** Per-project Open Graph images (1200×630). Every project page still shares the site-wide `og-image.jpg`.
+    - [x] **M** Per-project Open Graph images (1200×630). Every project page still shares the site-wide `og-image.jpg`. (Done 2026-11-03: `scripts/make-og-images.mjs` writes `public/og/<section>/<slug>.jpg` from each project's video frame or image. Rerun it after adding a project.)
 - [x] **M** Move project data out of page files into `src/data/*.ts` (needed for the step above). (Done: `src/data/code.tsx`, `visuals.tsx`, `music.tsx`; `.tsx` because the bodies are JSX. Music palettes and lookup helpers moved too; `MusicPlayerBar` stays in the page.)
 
 ### Case studies (top 2–3 projects)
