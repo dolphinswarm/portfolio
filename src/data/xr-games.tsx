@@ -136,11 +136,11 @@ export const XR_GAMES_ITEMS: ShowcaseItem[] = [
         body: (
             <>
                 <p>
-                    <em>VRchery</em> is a simple virtual reality archery game
-                    built in Unity using the Oculus VR stack. It was created as
-                    a first VR project / learning demo: you spawn in a
-                    medieval-style town with a target ~25m away, and you shoot a
-                    limited number of arrows to score points.
+                    <em>VRchery</em> is a virtual reality archery game built in
+                    Unity using the Oculus VR stack, made as an Honors course
+                    extension. You spawn in a medieval-style town with a target
+                    ~25m away, and you shoot a limited number of arrows to score
+                    points.
                 </p>
                 <p>
                     Features include a VR UI, bow-and-arrow pullback + release
@@ -177,13 +177,12 @@ export const XR_GAMES_ITEMS: ShowcaseItem[] = [
             <>
                 <p>
                     <em>AR Looper</em> is an augmented reality music looper
-                    built in Unity using the Vuforia AR stack. It was created as
-                    a first AR project / learning demo: you point your phone at
-                    a printed piece of paper (shown) with a specific marker on
-                    it, and a virtual music looper interface appears on top of
-                    the marker. You can then interact with the interface to
-                    create loops of different drum sounds, adjusting the tempo
-                    and pattern as you like.
+                    built in Unity using the Vuforia AR stack. You point your
+                    phone at a printed piece of paper (shown) with a specific
+                    marker on it, and a virtual music looper interface appears
+                    on top of the marker. You can then interact with the
+                    interface to create loops of different drum sounds,
+                    adjusting the tempo and pattern as you like.
                 </p>
             </>
         ),

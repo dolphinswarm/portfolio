@@ -236,7 +236,6 @@ export const Base3DScene = ({
         ProceduralScreenVariant | undefined
     >(() => {
         if (backgroundVariant === "about") return "about";
-        if (backgroundVariant === "connect") return "connect";
         return undefined;
     }, [backgroundVariant]);
 
@@ -244,7 +243,6 @@ export const Base3DScene = ({
         ProceduralScreenVariant | undefined
     >(() => {
         if (backgroundVariant === "about") return "about";
-        if (backgroundVariant === "connect") return "connect";
         if (backgroundVariant === "music") return "music";
         return undefined;
     }, [backgroundVariant]);

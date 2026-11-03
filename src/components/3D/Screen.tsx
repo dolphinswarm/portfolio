@@ -323,12 +323,7 @@ export const Screen = ({
                 <planeGeometry args={[4, 2.25]} />
                 <ProceduralScreenMaterial
                     variant={activeVariant}
-                    intensity={
-                        activeVariant === "about" ||
-                        activeVariant === "connect"
-                            ? 1.55
-                            : 1
-                    }
+                    intensity={activeVariant === "about" ? 1.55 : 1}
                     speed={
                         activeVariant === "about"
                             ? 0.95
@@ -336,13 +331,7 @@ export const Screen = ({
                               ? 1.1
                               : 0.85
                     }
-                    seed={
-                        activeVariant === "connect"
-                            ? 9
-                            : activeVariant === "music"
-                              ? 5
-                              : 3
-                    }
+                    seed={activeVariant === "music" ? 5 : 3}
                     spectrumTexture={
                         activeVariant === "music"
                             ? spectrumTexture

@@ -484,14 +484,9 @@ export const BackgroundScreen = ({
                 >
                     <ProceduralScreenMaterial
                         variant={activeVariant}
-                        intensity={
-                            activeVariant === "about" ||
-                            activeVariant === "connect"
-                                ? 1.45
-                                : 1.05
-                        }
+                        intensity={activeVariant === "about" ? 1.45 : 1.05}
                         speed={activeVariant === "about" ? 0.85 : 0.75}
-                        seed={activeVariant === "connect" ? 11 : 4}
+                        seed={4}
                     />
                 </mesh>
                 <mesh

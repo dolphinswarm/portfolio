@@ -10,6 +10,7 @@ import { SECTIONS } from "@/data/sections";
 import { useSceneVideo } from "@/context/SceneVideoContext";
 import { useAudioSpectrum } from "@/context/AudioSpectrumContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styles from "@/styles/MusicPlayer.module.scss";
 import { faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
 import {
     DEMO_AUDIO_SRC,
@@ -60,33 +61,11 @@ const MusicPlayerBar = ({
     }, [item.slug]);
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 14,
-                alignItems: "center",
-                padding: "10px 12px",
-                marginBottom: 10,
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                borderRadius: 10,
-            }}
-        >
+        <div className={styles.bar}>
             <button
                 type="button"
                 onClick={onTogglePlayback}
-                style={{
-                    width: 38,
-                    height: 38,
-                    display: "grid",
-                    placeItems: "center",
-                    borderRadius: 999,
-                    border: "1px solid rgba(255,255,255,0.14)",
-                    background: "rgba(255,255,255,0.06)",
-                    color: "white",
-                    cursor: "pointer",
-                }}
+                className={styles.playButton}
                 aria-label={isPlaying ? "Pause preview" : "Play preview"}
                 title={isPlaying ? "Pause" : "Play"}
             >
@@ -96,16 +75,7 @@ const MusicPlayerBar = ({
                 />
             </button>
 
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 6,
-                    minWidth: 240,
-                    flex: 1,
-                    paddingRight: 12,
-                }}
-            >
+            <div className={styles.timeline}>
                 <input
                     ref={timelineRef}
                     type="range"
@@ -137,46 +107,19 @@ const MusicPlayerBar = ({
                         const v = Number((e.target as HTMLInputElement).value);
                         onSeek(v);
                     }}
-                    style={{ width: "100%" }}
+                    className={styles.timelineInput}
                     aria-label="Timeline"
                 />
 
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        color: "rgba(255,255,255,0.70)",
-                        fontSize: 12,
-                        fontVariantNumeric: "tabular-nums",
-                    }}
-                >
+                <div className={styles.time}>
                     <span>
                         {formatTime(currentTime)} / {formatTime(duration)}
                     </span>
                 </div>
             </div>
 
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                    minWidth: 200,
-                    maxWidth: 260,
-                    marginLeft: "auto",
-                    paddingLeft: 12,
-                }}
-            >
-                <label
-                    style={{
-                        display: "flex",
-                        gap: 8,
-                        alignItems: "center",
-                        color: "rgba(255,255,255,0.85)",
-                        fontSize: 14,
-                        whiteSpace: "nowrap",
-                    }}
-                >
+            <div className={styles.volume}>
+                <label className={styles.volumeLabel}>
                     Volume
                     <input
                         type="range"
@@ -196,19 +139,11 @@ const MusicPlayerBar = ({
                             );
                             onSetVolume(v);
                         }}
-                        style={{ flex: 1 }}
+                        className={styles.volumeInput}
                     />
                 </label>
 
-                <div
-                    style={{
-                        color: "rgba(255,255,255,0.60)",
-                        fontSize: 12,
-                        lineHeight: 1.1,
-                    }}
-                >
-                    Screen reacts to this audio
-                </div>
+                <div className={styles.hint}>Screen reacts to this audio</div>
             </div>
         </div>
     );
@@ -227,9 +162,6 @@ const Music = ({ slug }: ShowcasePageProps) => {
     const [volume, setVolume] = React.useState(0.9);
     const [duration, setDuration] = React.useState(0);
     const [currentTime, setCurrentTime] = React.useState(0);
-    const [activeSlug, setActiveSlug] = React.useState<string>(
-        MUSIC_ITEMS[0]?.slug ?? "",
-    );
 
     React.useEffect(() => {
         return () => {
@@ -425,10 +357,7 @@ const Music = ({ slug }: ShowcasePageProps) => {
             const currentSrc = (el.currentSrc || el.src || "").trim();
             const isSameSrc =
                 currentSrc.length > 0 && currentSrc.endsWith(nextSrc);
-            if (isSameSrc) {
-                setActiveSlug(slug);
-                return;
-            }
+            if (isSameSrc) return;
 
             const shouldKeepPlaying = !el.paused;
             try {
@@ -444,8 +373,6 @@ const Music = ({ slug }: ShowcasePageProps) => {
                 // no-op
             }
 
-            setActiveSlug(slug);
-
             if (shouldKeepPlaying) {
                 attachMediaElement(el);
                 await resume();
@@ -456,7 +383,7 @@ const Music = ({ slug }: ShowcasePageProps) => {
                 }
             }
         },
-        [activeSlug, attachMediaElement, resume],
+        [attachMediaElement, resume],
     );
 
     const ensurePreviewSourceForItem = React.useCallback(

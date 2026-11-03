@@ -96,21 +96,22 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 ### Case studies (top 2–3 projects)
 
-- [ ] **L** Expand FuTerra into a full case study:
+- [ ] **L** Expand FuTerra into a full case study **(Brad: gather material)**:
     - your role and team size
     - constraints: venue, scale, run length, audience numbers
     - a diagram of the generative music system and media server setup
     - process shots: Unreal scenes, projection mapping, on-site setup
     - photos of people experiencing it
-- [ ] **M** Same treatment for With/in (Night Lights Denver).
+- [ ] **M** Same treatment for With/in (Night Lights Denver). **(Brad: gather material)**
 - [ ] **M** Merge the three Poet's Shack items into one case study, or at least stop repeating the same intro paragraph three times (`POETS_SHACK_INTRO` in [installations.tsx](../src/data/installations.tsx)).
 
 ### Code page
 
-- [ ] **M** Cut, archive, or reframe the 2019–2021 coursework. Remove the "first project / learning demo" wording (VRchery and AR Looper in [xr-games.tsx](../src/data/xr-games.tsx)). Steampunk Fort and Tri-Delta Sundial were cut on 2026-11-03..
+- [x] **M** Cut, archive, or reframe the 2019–2021 coursework. Remove the "first project / learning demo" wording (VRchery and AR Looper in [xr-games.tsx](../src/data/xr-games.tsx)). Steampunk Fort and Tri-Delta Sundial were cut on 2026-11-03.. (Done 2026-11-03: removed the "first project / learning demo" wording; VRchery is now described as an Honors course extension.)
 
 ### About page
 
+- [ ] **S** Replace `public/resume.pdf` with a PDF of the regular resume once it has the CU Boulder line. The current PDF has no grad school. **(Brad)**
 - [x] **M** Add a project or description for the XR Studios Creative Technologist role, your most relevant job. If it's under NDA, describe the kind of work rather than specific shows. (Done 2026-11-03 from the Extended Resume. Also added the missing ETBD Research Assistant / VR Developer role and CU Boulder ATLAS grad school.)
 - [x] **S** Give each role one or two lines on impact.
 - [x] **S** Trim the awards block to one line. (Summa cum laude, University Honors w/ Distinction, Outstanding Senior in Emerging Technology.)
@@ -119,18 +120,18 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 ### Contact (merged into About)
 
 - [x] **M** Merge Connect into About. Email, copy, resume, and social links now sit under the intro ([ContactLinks.tsx](../src/components/ContactLinks/ContactLinks.tsx)); `/connect` redirects to `/about`.
-- [ ] **S** Add an availability line under the contact links: types of projects you're open to, freelance vs. full-time, timezone/travel.
-- [ ] **S** The "connect" procedural screen look is no longer used by any route. Reuse it somewhere or remove it from the 3D code.
+- [x] ~~**S** Add an availability line under the contact links: types of projects you're open to, freelance vs. full-time, timezone/travel.~~ Decided against (2026-11-03): working full-time, and the "Want to work with me?" line already invites contract installation work.
+- [x] **S** The "connect" procedural screen look is no longer used by any route. Reuse it somewhere or remove it from the 3D code. (Removed 2026-11-03, including its shader branch.)
 
 ### Music page
 
 - [x] **S** Show the "I write music under the name dolphinswarm" intro once, not on all 7 songs. (Kept on each song, since only one shows at a time, but defined once as a shared constant. Same for the Poet's Shack intro.)
 - [ ] **S** Give songs distinct thumbnails (all 7 share `brad-guitar.jpg`).
-- [ ] **M** Move the 10 inline `style={{}}` blocks in `MusicPlayerBar` into an SCSS module like the rest of the site.
+- [x] **M** Move the 10 inline `style={{}}` blocks in `MusicPlayerBar` into an SCSS module like the rest of the site. (Done 2026-11-03: `src/styles/MusicPlayer.module.scss`.)
 
 ### Video hosting
 
-- [ ] **M** Move "View Full Video" links from Google Drive to Vimeo or YouTube. Drive previews are clunky and sometimes blocked by permissions; video platforms also help discovery.
+- [ ] **M** Move "View Full Video" links from Google Drive to Vimeo or YouTube. Drive previews are clunky and sometimes blocked by permissions; video platforms also help discovery. **(Brad: upload the videos; then swap the links)**
 
 ---
 
@@ -139,10 +140,10 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 - [ ] **M** Add `VideoObject` JSON-LD to project pages (needs `thumbnailUrl`, `uploadDate`, `contentUrl`). Project pages now exist, so `ShowcasePage` can pass it to `<SEO jsonLd>`.
 - [ ] **S** Work target phrases into visible text: "creative technologist Denver", "projection mapping", "immersive installation".
 - [ ] **S** Ask &FRIENDS Studio, the Denver Theatre District artist page, and BLINK to link to your site.
-- [ ] **S** Put the site URL in your GitHub, LinkedIn, YouTube, SoundCloud and Instagram bios.
+- [ ] **S** Put the site URL in your GitHub, LinkedIn, YouTube, SoundCloud and Instagram bios. GitHub already has it (checked 2026-11-03); LinkedIn, YouTube, SoundCloud, and Instagram not checked. **(Brad)**
 
 ### Code refactors (when touching these files)
-- [ ] **M** Refactor the effects flagged by `react-hooks/set-state-in-effect` (Base, BackgroundScreen, Screen, Showcase) and `preserve-manual-memoization` (ProceduralScreenMaterial), then set both rules back to errors in `eslint.config.mjs`. Downgraded to warnings when `eslint-config-next` 16.4 made them errors.
+- [ ] **M** Refactor the effects flagged by `react-hooks/set-state-in-effect` (Base, BackgroundScreen, Screen, Showcase) and `preserve-manual-memoization` (ProceduralScreenMaterial), then set both rules back to errors in `eslint.config.mjs`. Downgraded to warnings when `eslint-config-next` 16.4 made them errors. The music page warning is fixed (dead `activeSlug` state). The rest are texture/video loaders in the 3D scene and the Showcase; refactor them while watching the screen, since a mistake shows up as a blank or flickering TV.
 
 - [x] **S** Replace the hand-rolled `<a>` + `router.push` navigation in [Header.tsx](../src/components/Header.tsx#L55-L86) with `next/link` to get prefetching back.
 - [x] **S** Pull the duplicated screen-sync setup in `code.tsx` and `visuals.tsx` into a shared hook or into Showcase itself. (Done: [ShowcasePage.tsx](../src/components/Showcase/ShowcasePage.tsx) handles it for every section, Music included.)
