@@ -139,8 +139,8 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 - [ ] **M** Add `VideoObject` JSON-LD to project pages (needs `thumbnailUrl`, `uploadDate`, `contentUrl`). Project pages now exist, so `ShowcasePage` can pass it to `<SEO jsonLd>`.
 - [ ] **S** Work target phrases into visible text: "creative technologist Denver", "projection mapping", "immersive installation".
-- [ ] **S** Ask &FRIENDS Studio, the Denver Theatre District artist page, and BLINK to link to your site.
-- [ ] **S** Put the site URL in your GitHub, LinkedIn, YouTube, SoundCloud and Instagram bios. GitHub already has it (checked 2026-11-03); LinkedIn, YouTube, SoundCloud, and Instagram not checked. **(Brad)**
+- [x] ~~**S** Ask &FRIENDS Studio, the Denver Theatre District artist page, and BLINK to link to your site.~~ Decided against (2026-11-03).
+- [ ] **S** Put the site URL in your GitHub, LinkedIn, YouTube, SoundCloud and Instagram bios. Checked 2026-11-03: GitHub has it; the Instagram bio links only to SoundCloud; YouTube, SoundCloud, and LinkedIn need a manual look. **(Brad)**
 
 ### Code refactors (when touching these files)
 - [ ] **M** Refactor the effects flagged by `react-hooks/set-state-in-effect` (Base, BackgroundScreen, Screen, Showcase) and `preserve-manual-memoization` (ProceduralScreenMaterial), then set both rules back to errors in `eslint.config.mjs`. Downgraded to warnings when `eslint-config-next` 16.4 made them errors. The music page warning is fixed (dead `activeSlug` state). The rest are texture/video loaders in the 3D scene and the Showcase; refactor them while watching the screen, since a mistake shows up as a blank or flickering TV.
