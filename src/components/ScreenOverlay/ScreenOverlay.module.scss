@@ -147,6 +147,24 @@
     height: calc(100dvh - 140px);
     max-height: none;
   }
+
+  /* One column is too narrow to keep text beside Brad here, so it runs over
+     the scene; a dim backdrop keeps it readable. */
+  .viewport {
+    background: rgba(6, 7, 12, 0.62);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .grid {
+    display: block;
+  }
+
+  .left,
+  .right {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 @media (max-width: 768px) {
@@ -161,9 +179,11 @@
     border-radius: 0;
   }
 
+  /* Clear the fixed header and bottom nav, which sit over this full-screen overlay. */
   .viewport {
     padding: 22px 18px;
-    padding-top: calc(22px + 54px + env(safe-area-inset-top));
+    padding-top: calc(16px + var(--header-height) + env(safe-area-inset-top));
+    padding-bottom: calc(22px + var(--mobile-nav-height) + env(safe-area-inset-bottom));
   }
 
   .title {
@@ -172,16 +192,6 @@
 
   .body {
     font-size: 16px;
-  }
-
-  .grid {
-    display: block;
-  }
-
-  .left,
-  .right {
-    padding-left: 0;
-    padding-right: 0;
   }
 }
 
@@ -195,5 +205,10 @@
     max-height: 100dvh;
     aspect-ratio: auto;
     border-radius: 0;
+  }
+
+  /* Full-screen here too, so clear the header (it sits over the overlay). */
+  .viewport {
+    padding-top: calc(16px + var(--header-height) + env(safe-area-inset-top));
   }
 }

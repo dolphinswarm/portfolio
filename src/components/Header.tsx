@@ -101,7 +101,6 @@ export const Header = () => {
                         <Link
                             className={`${styles.brand} handwritten`}
                             href="/"
-                            aria-label="Go to home"
                             onClick={onNavClick("/")}
                         >
                             Brad Schmitz

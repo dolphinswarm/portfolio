@@ -27,24 +27,48 @@ let lastChromeVisible: boolean | null = null;
 
 const ThumbImage = ({
     src,
-    title,
     objectPosition,
 }: {
     src: string;
-    title: string;
     objectPosition?: string;
 }) => {
     return (
         // Plain <img>: thumbnails are pre-sized WebP files, so next/image adds nothing.
+        // Decorative: the thumb's visible title already names it, and an alt
+        // would make screen readers say the title twice.
         // eslint-disable-next-line @next/next/no-img-element
         <img
             src={src}
-            alt={title}
+            alt=""
             className={styles.thumbImg}
             loading="lazy"
             style={objectPosition ? { objectPosition } : undefined}
         />
     );
+};
+
+/**
+ * Scroll the carousel so the thumb for `slug` is centered when possible.
+ * Scrolls only the carousel (scrollIntoView can also scroll the page).
+ */
+const centerThumb = (
+    carousel: HTMLElement | null,
+    slug: string,
+    behavior: ScrollBehavior,
+) => {
+    const thumb = carousel?.querySelector<HTMLElement>(
+        `[data-showcase-thumb='${slug}']`,
+    );
+    if (!carousel || !thumb) return;
+    const carouselRect = carousel.getBoundingClientRect();
+    const thumbRect = thumb.getBoundingClientRect();
+    carousel.scrollTo({
+        left:
+            carousel.scrollLeft +
+            (thumbRect.left - carouselRect.left) -
+            (carouselRect.width - thumbRect.width) / 2,
+        behavior,
+    });
 };
 
 const clamp = (value: number, min: number, max: number) =>
@@ -101,7 +125,6 @@ const ShowcaseThumb = ({
             <div className={styles.thumbMedia}>
                 <ThumbImage
                     src={thumbSrc}
-                    title={item.title}
                     objectPosition={thumbObjectPosition}
                 />
             </div>
@@ -109,7 +132,11 @@ const ShowcaseThumb = ({
             <div className={styles.thumbLabel}>
                 <div className={styles.thumbTitle}>{item.title}</div>
                 {item.subtitle ? (
-                    <div className={styles.thumbSub}>{item.subtitle}</div>
+                    <div className={styles.thumbSub}>
+                        {/* Otherwise screen readers run the title into the subtitle. */}
+                        <span className="visually-hidden">, </span>
+                        {item.subtitle}
+                    </div>
                 ) : null}
             </div>
         </button>
@@ -436,6 +463,8 @@ export const Showcase = ({
         ? primaryScreenAsset?.icon
         : secondaryScreenAsset?.icon;
 
+    const carouselRef = React.useRef<HTMLDivElement>(null);
+
     const onSelect = React.useCallback(
         (slug: string) => {
             setSelectedSlug(slug);
@@ -452,23 +481,24 @@ export const Showcase = ({
                     // no-op (selection still works; URL just won't update)
                 });
 
-            // Keep the selected thumb centered when possible.
-            const el = document.querySelector(
-                `[data-showcase-thumb='${slug}']`,
+            const prefersReduced = window.matchMedia?.(
+                "(prefers-reduced-motion: reduce)",
+            ).matches;
+            centerThumb(
+                carouselRef.current,
+                slug,
+                prefersReduced ? "auto" : "smooth",
             );
-            if (el instanceof HTMLElement) {
-                const prefersReduced = window.matchMedia?.(
-                    "(prefers-reduced-motion: reduce)",
-                ).matches;
-                el.scrollIntoView({
-                    behavior: prefersReduced ? "auto" : "smooth",
-                    block: "nearest",
-                    inline: "center",
-                });
-            }
         },
         [router, basePath],
     );
+
+    // A deep link can select an item that starts scrolled out of the carousel
+    // (e.g. /music/heist), so bring it into view on load and whenever a real
+    // navigation changes the selection.
+    React.useEffect(() => {
+        if (initialSlug) centerThumb(carouselRef.current, initialSlug, "auto");
+    }, [initialSlug]);
 
     const onCarouselKeyDown = React.useCallback(
         (e: React.KeyboardEvent) => {
@@ -489,7 +519,6 @@ export const Showcase = ({
         [items, selectedItem, onSelect],
     );
 
-    const carouselRef = React.useRef<HTMLDivElement>(null);
     const isDraggingRef = React.useRef(false);
 
     const bindCarouselDrag = useDrag(

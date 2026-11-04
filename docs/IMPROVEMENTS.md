@@ -135,6 +135,24 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 ---
 
+### Responsive layout and accessibility (swept 2026-11-03)
+
+Checked every sitemap page plus `/bork` (39 pages) in headless Edge at phone (390×844), phone held sideways (844×390), tablet (820×1180), and desktop (1440×900): screenshots, horizontal overflow, page errors, an axe-core audit (phone and desktop), and a keyboard tab-through. After the fixes: 0 axe violations, no overflow, no errors.
+
+- [x] **S** About on phones/tablets: one column below 1024px over a dim backdrop; clears the header and bottom nav on phones.
+- [x] **S** About: Interests list showed a bullet *and* an icon.
+- [x] **S** Phone bottom nav: "XR & Games" wrapped to two lines.
+- [x] **S** Homepage name banner was cut off on narrow screens; it now stays in view and moves in front of Brad when it can't fit beside him.
+- [x] **M** Sideways phones / screens under 500px tall: the project panel grew up under the header. Text-only thumbs and a capped panel there; About clears the header on short screens too.
+- [x] **S** Deep links (e.g. `/music/heist`) now scroll the carousel to the selected project.
+- [x] **S** Logo link announced "Go to home" instead of its visible "Brad Schmitz" (axe: serious).
+- [x] **S** Project thumbs read title and subtitle run together, and said the title twice (image alt).
+- [x] **S** Added a "Skip to content" link.
+- [x] **S** With reduced motion on, the camera no longer follows the pointer and cuts between views instead of gliding.
+- [ ] **M** Check on real phones (iOS Safari, Android Chrome): safe areas, the URL bar resizing `dvh`, touch scrolling in the panel. **(Brad)**
+- [ ] **M** Screen reader pass with NVDA (free on Windows) on Home, About, and a project page.
+- [ ] **S** Contrast of text over the 3D scene can't be measured automatically; check by eye, especially project panels over bright videos.
+
 ## Phase 4: Ongoing SEO and outreach
 
 - [x] ~~**M** Add `VideoObject` JSON-LD to project pages (needs `thumbnailUrl`, `uploadDate`, `contentUrl`). Project pages now exist, so `ShowcasePage` can pass it to `<SEO jsonLd>`.~~ Decided against (2026-11-03): Google needs an exact upload date per video and the projects only have years; once the full videos are on YouTube, YouTube covers video search.

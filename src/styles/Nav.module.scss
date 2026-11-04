@@ -178,6 +178,8 @@
     .bottomLabel {
         font-size: 11px;
         line-height: 1;
+        /* "XR & Games" wrapped onto two lines; unwrapped, all six labels fit at 320px. */
+        white-space: nowrap;
         opacity: 0.85;
         letter-spacing: 0.02em;
     }

@@ -13,6 +13,11 @@
   margin-top: 1lh;
 }
 
+/* Each item has its own icon, so drop the bullet dot. */
+.iconList {
+  list-style: none;
+}
+
 .sectionHeader {
   display: inline-flex;
   align-items: center;

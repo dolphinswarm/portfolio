@@ -26,6 +26,9 @@ const LAYOUT = {
 const REVEAL_DELAY_S = 0.6;
 const REVEAL_DURATION_S = 0.7;
 
+/** Gap kept between the strap and the edge of the view, in scene units. */
+const EDGE_MARGIN = 0.08;
+
 type LowerThirdProps = {
     /** Whether the strap is shown; it wipes in again each time this turns on. */
     visible?: boolean;
@@ -41,6 +44,12 @@ type LowerThirdProps = {
     position: [number, number, number];
     /** Strap width in scene units. */
     width?: number;
+    /**
+     * Depth to use when the view is too narrow and the strap has to move in
+     * from the left, so it sits in front of nearer objects (like Brad) instead
+     * of half-hidden behind them.
+     */
+    frontZ?: number;
 };
 
 const readCssVar = (name: string, fallback: string) => {
@@ -129,6 +138,7 @@ export const LowerThird = ({
     subtitle,
     position,
     width = 1.6,
+    frontZ,
 }: LowerThirdProps) => {
     const gl = useThree((state) => state.gl);
     const height = getDesignHeight(Boolean(subtitle)) / DESIGN_PX_PER_UNIT;
@@ -185,7 +195,9 @@ export const LowerThird = ({
         paint();
         void Promise.allSettled([
             document.fonts.load(`${LAYOUT.titleSize}px ${fonts.title}`),
-            document.fonts.load(`600 ${LAYOUT.subtitleSize}px ${fonts.subtitle}`),
+            document.fonts.load(
+                `600 ${LAYOUT.subtitleSize}px ${fonts.subtitle}`,
+            ),
             loadLogo(),
         ]).then(paint);
 
@@ -202,8 +214,10 @@ export const LowerThird = ({
         [texture, geometry],
     );
 
+    const groupRef = React.useRef<THREE.Group>(null);
     const meshRef = React.useRef<THREE.Mesh>(null);
     const elapsedRef = React.useRef(0);
+    const anchorRef = React.useRef(new THREE.Vector3());
     const prefersReducedMotion = React.useMemo(
         () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
         [],
@@ -211,9 +225,30 @@ export const LowerThird = ({
 
     // Wipe in: grow the plane from its left edge while revealing the same
     // fraction of the texture, so nothing stretches.
-    useFrame((_, delta) => {
+    useFrame((state, delta) => {
         const mesh = meshRef.current;
-        if (!mesh) return;
+        const group = groupRef.current;
+        if (!mesh || !group) return;
+
+        // On narrow (portrait) screens the left edge of the TV is out of view,
+        // which cut the strap off. Keep it inside the view, shrinking it if the
+        // view is narrower than the strap.
+        const anchor = anchorRef.current.set(...position);
+        const viewWidth = state.viewport.getCurrentViewport(
+            state.camera,
+            anchor,
+        ).width;
+        const minX = state.camera.position.x - viewWidth / 2 + EDGE_MARGIN;
+        const isShifted = minX > position[0];
+        group.position.set(
+            Math.max(position[0], minX),
+            position[1],
+            isShifted && frontZ != null ? frontZ : position[2],
+        );
+        group.scale.setScalar(
+            Math.min(1, (viewWidth - 2 * EDGE_MARGIN) / width),
+        );
+
         if (!visible || holdRef?.current) {
             // Hidden: reset so the wipe replays next time it's shown.
             elapsedRef.current = 0;
@@ -236,13 +271,16 @@ export const LowerThird = ({
     });
 
     return (
-        <mesh ref={meshRef} position={position} geometry={geometry}>
-            <meshBasicMaterial
-                map={texture}
-                transparent
-                depthWrite={false}
-                toneMapped={false}
-            />
-        </mesh>
+        // The group is positioned and scaled each frame to keep the strap in view.
+        <group ref={groupRef} position={position}>
+            <mesh ref={meshRef} geometry={geometry}>
+                <meshBasicMaterial
+                    map={texture}
+                    transparent
+                    depthWrite={false}
+                    toneMapped={false}
+                />
+            </mesh>
+        </group>
     );
 };

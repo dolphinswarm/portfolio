@@ -2,15 +2,25 @@
     --background: #ffffff;
     --foreground: #171717;
     --mobile-nav-height: 0px;
+    /* Height of the sticky top header; matches the breakpoints in Nav.module.scss. */
+    --header-height: 73px;
     --accent: #f7941e;
     --accent-rgb: 247 148 30;
     --font-body: var(--font-cabin);
     --font-handwritten: var(--font-indie);
 }
 
+/* The tagline stacks under the name. */
+@media (max-width: 1000px) {
+    :root {
+        --header-height: 88px;
+    }
+}
+
 @media (max-width: 768px) {
     :root {
         --mobile-nav-height: 72px;
+        --header-height: 84px;
     }
 }
 
@@ -77,6 +87,32 @@ a {
 }
 
 /* Hidden visually but still read by screen readers and crawlers. */
+/* Hidden until focused with the keyboard, then shown over the header. */
+.skip-link {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 1000;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #0a0a0a;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-200%);
+}
+
+.skip-link:focus {
+    transform: none;
+}
+
+/* The skip link focuses <main> so the next Tab continues from there; it has no
+   visible focus target of its own. */
+main:focus {
+    outline: none;
+}
+
 .visually-hidden {
     position: absolute;
     width: 1px;

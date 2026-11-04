@@ -65,7 +65,7 @@ const About = () => {
                                     Interests
                                 </span>
                             </h2>
-                            <ul>
+                            <ul className={styles.iconList}>
                                 <li>
                                     <FontAwesomeIcon
                                         className={styles.sectionIcon}

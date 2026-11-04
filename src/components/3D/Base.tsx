@@ -15,7 +15,6 @@ import { SITE_NAME, SITE_ROLE } from "@/utils/site";
 import * as THREE from "three";
 import type { ProceduralScreenVariant } from "./ProceduralScreenMaterial";
 
-
 const RouteTransition = ({
     isIndexRoute,
     transitionRef,
@@ -298,8 +297,10 @@ export const Base3DScene = ({
                         />
                         {/* Bottom-left of the screen (a 4 x 2.25 plane centered at
                             [0, 1.1, -0.5]), just in front of it and behind Brad
-                            (z = 1.5). Always mounted so its shader stays compiled;
-                            it only shows on the homepage. */}
+                            (z = 1.5). On narrow screens it moves in front of
+                            Brad, like a broadcast lower third. Always mounted so
+                            its shader stays compiled; it only shows on the
+                            homepage. */}
                         <LowerThird
                             visible={isIndexRoute}
                             holdRef={staticActiveRef}
@@ -308,6 +309,7 @@ export const Base3DScene = ({
                             subtitle={SITE_ROLE}
                             position={[-1.85, 0.15, -0.45]}
                             width={1.6}
+                            frontZ={1.6}
                         />
                         <BackdropRig
                             transitionRef={routeTransitionRef}

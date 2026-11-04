@@ -16,8 +16,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div
             className={`${styles.shell} ${cabin.className} ${cabin.variable} ${indieFlower.variable}`}
         >
+            {/* First tab stop: lets keyboard users jump past the header links. */}
+            <a href="#main-content" className="skip-link">
+                Skip to content
+            </a>
             <Header />
-            <main className={styles.main}>
+            <main id="main-content" tabIndex={-1} className={styles.main}>
                 {children}
                 <Base3DScene
                     {...sceneProps}
