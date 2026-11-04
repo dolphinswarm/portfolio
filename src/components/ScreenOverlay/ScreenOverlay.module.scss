@@ -1,20 +1,35 @@
+/* Lines up with the TV in the 3D scene. On this page the camera is locked
+   (PointAtCamera: z 9.75, 15° field of view) and centered on the 4 x 2.25 TV,
+   which leaves 2.704 scene units of view height at the TV's distance. So the
+   TV is always 2.25 / 2.704 of the window height tall and 4 / 2.704 of it
+   wide. The canvas is 100vh tall, so these use vh too. Update them if the
+   camera or the TV changes. */
 .root {
+  --tv-height: 83.2vh;
+  --tv-width: 147.9vh;
+  --tv-inset: calc(50vh - var(--tv-height) / 2);
+  --edge: 8px;
+
   position: fixed;
   left: 50%;
-  top: 56%;
-  transform: translate(-50%, -50%);
-
-  /* Bigger by default: this is the "screen" size on the page. */
-  width: min(1700px, 98vw);
-  aspect-ratio: 4 / 2.25;
-  /* Keep it from colliding with the header/nav. */
-  max-height: calc(100dvh - 170px);
+  transform: translateX(-50%);
+  /* Narrow windows only show the middle of the TV: use the window's width. */
+  width: min(var(--tv-width), 100vw - 2 * var(--edge));
+  /* The TV's top and bottom edges, unless the header or the phone nav covers them. */
+  top: max(
+    var(--tv-inset),
+    calc(var(--header-height) + env(safe-area-inset-top) + var(--edge))
+  );
+  bottom: max(
+    var(--tv-inset),
+    calc(var(--mobile-nav-height) + var(--safe-area-bottom) + var(--edge))
+  );
 
   z-index: 20;
   /* Let the scene remain interactive unless the user interacts with content. */
   pointer-events: none;
 
-  border-radius: 16px;
+  border-radius: 6px;
   overflow: hidden;
 
   /* Arrive under the screen's channel-change static, not a frame ahead of it. */
@@ -46,8 +61,12 @@
   /* Re-enable interaction only inside the screen. */
   pointer-events: auto;
 
-  padding: 40px 40px;
+  padding: clamp(20px, 4vh, 40px) 40px;
   overflow: auto;
+  /* Centers the text when it's shorter than the screen. Auto margins (not
+     justify-content) keep the top reachable when it scrolls. */
+  display: flex;
+  flex-direction: column;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 
@@ -111,10 +130,16 @@
   color: rgba(255, 255, 255, 0.95);
 }
 
-/* Two-column layout with a hard center gap (keeps text off Brad). */
+.body,
+.grid {
+  margin-block: auto;
+}
+
+/* Two-column layout with a hard center gap (keeps text off Brad). Brad's size
+   on screen follows the window height, so the gap does too. */
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(260px, 30vw, 460px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) clamp(220px, 26vh, 400px) minmax(0, 1fr);
   column-gap: 0;
   row-gap: 18px;
   align-items: start;
@@ -139,17 +164,10 @@
   padding-left: 22px;
 }
 
+/* Phones and tablets: one column, scrolling inside the TV area. */
 @media (max-width: 1024px) {
-  .root {
-    top: 110px;
-    transform: translateX(-50%);
-    aspect-ratio: auto;
-    height: calc(100dvh - 140px);
-    max-height: none;
-  }
-
   /* One column is too narrow to keep text beside Brad here, so it runs over
-     the scene; a dim backdrop keeps it readable. */
+     him; a dim backdrop keeps it readable. */
   .viewport {
     background: rgba(6, 7, 12, 0.62);
     backdrop-filter: blur(4px);
@@ -168,22 +186,8 @@
 }
 
 @media (max-width: 768px) {
-  .root {
-    left: 0;
-    top: 0;
-    transform: none;
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    aspect-ratio: auto;
-    border-radius: 0;
-  }
-
-  /* Clear the fixed header and bottom nav, which sit over this full-screen overlay. */
   .viewport {
-    padding: 22px 18px;
-    padding-top: calc(16px + var(--header-height) + env(safe-area-inset-top));
-    padding-bottom: calc(22px + var(--mobile-nav-height) + var(--safe-area-bottom));
+    padding: 20px 16px;
   }
 
   .title {
@@ -195,20 +199,13 @@
   }
 }
 
-@media (max-height: 720px) {
+/* Sideways phones: every pixel of height counts. */
+@media (max-height: 500px) {
   .root {
-    left: 0;
-    top: 0;
-    transform: none;
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    aspect-ratio: auto;
-    border-radius: 0;
+    --edge: 6px;
   }
 
-  /* Full-screen here too, so clear the header (it sits over the overlay). */
   .viewport {
-    padding-top: calc(16px + var(--header-height) + env(safe-area-inset-top));
+    padding: 14px 18px;
   }
 }
