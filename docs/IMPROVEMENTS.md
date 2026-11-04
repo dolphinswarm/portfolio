@@ -142,7 +142,8 @@ Checked every sitemap page plus `/bork` (39 pages) in headless Edge at phone (39
 - [x] **S** About on phones/tablets: one column below 1024px over a dim backdrop; clears the header and bottom nav on phones.
 - [x] **S** About: Interests list showed a bullet *and* an icon.
 - [x] **S** Phone bottom nav: "XR & Games" wrapped to two lines.
-- [x] **S** Homepage name banner was cut off on narrow screens; it now stays in view and moves in front of Brad when it can't fit beside him.
+- [x] **S** Homepage name banner was cut off on narrow screens. Moving it in front of Brad covered his legs and clipped on tablets, so it now only shows when the TV corner it sits on is in view; the header already shows the name and role on portrait screens.
+- [x] **S** Firefox for Android: empty band under the bottom nav (it reports a bottom inset but already keeps the page clear of it). Bottom safe-area spacing now goes through `--safe-area-bottom`, zeroed for Firefox only so iPhones keep it.
 - [x] **M** Sideways phones / screens under 500px tall: the project panel grew up under the header. Text-only thumbs and a capped panel there; About clears the header on short screens too.
 - [x] **S** Deep links (e.g. `/music/heist`) now scroll the carousel to the selected project.
 - [x] **S** Logo link announced "Go to home" instead of its visible "Brad Schmitz" (axe: serious).

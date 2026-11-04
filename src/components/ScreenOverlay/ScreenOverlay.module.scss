@@ -183,7 +183,7 @@
   .viewport {
     padding: 22px 18px;
     padding-top: calc(16px + var(--header-height) + env(safe-area-inset-top));
-    padding-bottom: calc(22px + var(--mobile-nav-height) + env(safe-area-inset-bottom));
+    padding-bottom: calc(22px + var(--mobile-nav-height) + var(--safe-area-bottom));
   }
 
   .title {

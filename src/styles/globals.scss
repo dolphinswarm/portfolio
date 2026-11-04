@@ -8,6 +8,16 @@
     --accent-rgb: 247 148 30;
     --font-body: var(--font-cabin);
     --font-handwritten: var(--font-indie);
+    /* Space to keep clear at the bottom edge (iPhone home bar, etc.). */
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Firefox for Android reports a bottom inset but already keeps the page clear
+   of it, so using it there leaves an empty band under the bottom nav. */
+@supports (-moz-appearance: none) {
+    :root {
+        --safe-area-bottom: 0px;
+    }
 }
 
 /* The tagline stacks under the name. */

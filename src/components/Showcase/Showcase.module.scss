@@ -34,7 +34,7 @@
     position: fixed;
     right: 22px;
     bottom: calc(
-        env(safe-area-inset-bottom) + 18px + var(--mobile-nav-height, 0px)
+        var(--safe-area-bottom) + 18px + var(--mobile-nav-height, 0px)
     );
     z-index: 200;
 
@@ -538,7 +538,7 @@
         right: 0;
         transform: none;
         width: auto;
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+        bottom: calc(var(--mobile-nav-height) + var(--safe-area-bottom));
         gap: 10px;
     }
 
