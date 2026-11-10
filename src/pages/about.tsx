@@ -15,6 +15,7 @@ import {
 import styles from "@/styles/About.module.scss";
 import { SEO } from "@/components/SEO";
 import { ContactLinks } from "@/components/ContactLinks/ContactLinks";
+import { PROFILE_PAGE_JSON_LD } from "@/utils/structuredData";
 
 const About = () => {
     return (
@@ -24,6 +25,7 @@ const About = () => {
                 fullTitle
                 description="Background, experience, toolkit, and contact info for Brad Schmitz: creative technologist, software engineer, and musician in Denver, CO, working with Unreal Engine, TouchDesigner, Unity, Three.js, and Ableton Live."
                 path="/about"
+                jsonLd={PROFILE_PAGE_JSON_LD}
             />
             <ScreenOverlay
                 top={
