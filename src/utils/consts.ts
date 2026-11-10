@@ -2,9 +2,10 @@
 export const pages = [
     "home",
     "about",
-    "code",
+    "installations",
+    "xr-games",
+    "apps",
     "music",
-    "visuals",
     "bork",
 ] as const;
 

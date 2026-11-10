@@ -26,6 +26,9 @@ const LAYOUT = {
 const REVEAL_DELAY_S = 0.6;
 const REVEAL_DURATION_S = 0.7;
 
+/** Gap the strap needs between itself and the edge of the view, in scene units. */
+const EDGE_MARGIN = 0.08;
+
 type LowerThirdProps = {
     /** Whether the strap is shown; it wipes in again each time this turns on. */
     visible?: boolean;
@@ -185,7 +188,9 @@ export const LowerThird = ({
         paint();
         void Promise.allSettled([
             document.fonts.load(`${LAYOUT.titleSize}px ${fonts.title}`),
-            document.fonts.load(`600 ${LAYOUT.subtitleSize}px ${fonts.subtitle}`),
+            document.fonts.load(
+                `600 ${LAYOUT.subtitleSize}px ${fonts.subtitle}`,
+            ),
             loadLogo(),
         ]).then(paint);
 
@@ -204,6 +209,7 @@ export const LowerThird = ({
 
     const meshRef = React.useRef<THREE.Mesh>(null);
     const elapsedRef = React.useRef(0);
+    const anchorRef = React.useRef(new THREE.Vector3());
     const prefersReducedMotion = React.useMemo(
         () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
         [],
@@ -211,10 +217,22 @@ export const LowerThird = ({
 
     // Wipe in: grow the plane from its left edge while revealing the same
     // fraction of the texture, so nothing stretches.
-    useFrame((_, delta) => {
+    useFrame((state, delta) => {
         const mesh = meshRef.current;
         if (!mesh) return;
-        if (!visible || holdRef?.current) {
+
+        // On narrow (portrait) screens the corner of the TV it sits on is out
+        // of view. Skip it there: the header already shows the same name and
+        // role on those screens. Measured with the camera centered, so a tap
+        // that sways the camera doesn't make it blink in and out.
+        const anchor = anchorRef.current.set(...position);
+        const viewWidth = state.viewport.getCurrentViewport(
+            state.camera,
+            anchor,
+        ).width;
+        const fitsInView = viewWidth / 2 - EDGE_MARGIN >= -position[0];
+
+        if (!visible || !fitsInView || holdRef?.current) {
             // Hidden: reset so the wipe replays next time it's shown.
             elapsedRef.current = 0;
             mesh.visible = false;
@@ -236,7 +254,7 @@ export const LowerThird = ({
     });
 
     return (
-        <mesh ref={meshRef} position={position} geometry={geometry}>
+        <mesh ref={meshRef} geometry={geometry} position={position}>
             <meshBasicMaterial
                 map={texture}
                 transparent

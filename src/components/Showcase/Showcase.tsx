@@ -13,26 +13,62 @@ import styles from "./Showcase.module.scss";
 
 const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
 
+const CHROME_STORAGE_KEY = "showcase:chromeVisible";
+
+// Each section is its own page, so changing sections mounts a new Showcase.
+// Next swaps pages in one commit: while the new one renders, the old one is
+// still mounted, which is how a section change is told apart from arriving
+// from Home or About.
+let mountedShowcaseCount = 0;
+
+// The Hide UI state, carried to the next section's Showcase so it starts in
+// the same state instead of flashing while localStorage is read.
+let lastChromeVisible: boolean | null = null;
+
 const ThumbImage = ({
     src,
-    title,
     objectPosition,
 }: {
     src: string;
-    title: string;
     objectPosition?: string;
 }) => {
     return (
         // Plain <img>: thumbnails are pre-sized WebP files, so next/image adds nothing.
+        // Decorative: the thumb's visible title already names it, and an alt
+        // would make screen readers say the title twice.
         // eslint-disable-next-line @next/next/no-img-element
         <img
             src={src}
-            alt={title}
+            alt=""
             className={styles.thumbImg}
             loading="lazy"
             style={objectPosition ? { objectPosition } : undefined}
         />
     );
+};
+
+/**
+ * Scroll the carousel so the thumb for `slug` is centered when possible.
+ * Scrolls only the carousel (scrollIntoView can also scroll the page).
+ */
+const centerThumb = (
+    carousel: HTMLElement | null,
+    slug: string,
+    behavior: ScrollBehavior,
+) => {
+    const thumb = carousel?.querySelector<HTMLElement>(
+        `[data-showcase-thumb='${slug}']`,
+    );
+    if (!carousel || !thumb) return;
+    const carouselRect = carousel.getBoundingClientRect();
+    const thumbRect = thumb.getBoundingClientRect();
+    carousel.scrollTo({
+        left:
+            carousel.scrollLeft +
+            (thumbRect.left - carouselRect.left) -
+            (carouselRect.width - thumbRect.width) / 2,
+        behavior,
+    });
 };
 
 const clamp = (value: number, min: number, max: number) =>
@@ -89,7 +125,6 @@ const ShowcaseThumb = ({
             <div className={styles.thumbMedia}>
                 <ThumbImage
                     src={thumbSrc}
-                    title={item.title}
                     objectPosition={thumbObjectPosition}
                 />
             </div>
@@ -97,7 +132,11 @@ const ShowcaseThumb = ({
             <div className={styles.thumbLabel}>
                 <div className={styles.thumbTitle}>{item.title}</div>
                 {item.subtitle ? (
-                    <div className={styles.thumbSub}>{item.subtitle}</div>
+                    <div className={styles.thumbSub}>
+                        {/* Otherwise screen readers run the title into the subtitle. */}
+                        <span className="visually-hidden">, </span>
+                        {item.subtitle}
+                    </div>
                 ) : null}
             </div>
         </button>
@@ -201,6 +240,8 @@ export type ShowcaseItem = {
     slug: string;
     title: string;
     subtitle?: string;
+    /** Meta description for the item's page. Built from subtitle, year, and tags when missing. */
+    description?: string;
     year?: string;
     tags?: string[];
 
@@ -214,53 +255,72 @@ export type ShowcaseItem = {
     body?: React.ReactNode;
 };
 
-export const Showcase = ({
-    pageTitle,
-    items,
-    queryKey,
-    onScreenMediaChange,
-    renderBodyPrefix,
-    onSelectedItemChange,
-}: {
+export type ShowcaseProps = {
     pageTitle: string;
     items: ShowcaseItem[];
-    queryKey: string;
+    /** Section path, e.g. "/installations". Selecting an item moves the URL to `${basePath}/${slug}`. */
+    basePath: string;
+    /** Slug from the route; falls back to the first item when missing or unknown. */
+    initialSlug?: string | null;
     onScreenMediaChange?: (media: ShowcaseScreenMedia | null) => void;
     /** Optional UI to render above the selected item's body (inside the description area). */
     renderBodyPrefix?: (item: ShowcaseItem) => React.ReactNode;
     /** Optional callback when the selected item changes. */
     onSelectedItemChange?: (item: ShowcaseItem | null) => void;
-}) => {
+};
+
+export const Showcase = ({
+    pageTitle,
+    items,
+    basePath,
+    initialSlug,
+    onScreenMediaChange,
+    renderBodyPrefix,
+    onSelectedItemChange,
+}: ShowcaseProps) => {
     const router = useRouter();
 
     const dockId = React.useId();
 
-    const chromeStorageKey = React.useMemo(
-        () => `showcase:${queryKey}:${pageTitle}:chromeVisible`,
-        [queryKey, pageTitle],
-    );
-    const [isChromeVisible, setIsChromeVisible] = React.useState(true);
+    // Fade in when arriving from a page without a Showcase, but not when
+    // switching sections, where the panel should look like it stayed put.
+    const [shouldFadeIn] = React.useState(() => mountedShowcaseCount === 0);
 
     React.useEffect(() => {
+        mountedShowcaseCount += 1;
+        return () => {
+            mountedShowcaseCount -= 1;
+        };
+    }, []);
+
+    const [isChromeVisible, setIsChromeVisible] = React.useState(
+        () => lastChromeVisible ?? true,
+    );
+
+    React.useEffect(() => {
+        // Only on the first Showcase of the visit; after that the module
+        // value is current and already used as the initial state.
+        if (lastChromeVisible !== null) return;
         try {
-            const stored = window.localStorage.getItem(chromeStorageKey);
+            const stored = window.localStorage.getItem(CHROME_STORAGE_KEY);
             if (stored === null) return;
             setIsChromeVisible(stored === "true");
         } catch {
             // no-op
         }
-    }, [chromeStorageKey]);
+    }, []);
 
     React.useEffect(() => {
+        lastChromeVisible = isChromeVisible;
         try {
             window.localStorage.setItem(
-                chromeStorageKey,
+                CHROME_STORAGE_KEY,
                 String(isChromeVisible),
             );
         } catch {
             // no-op
         }
-    }, [chromeStorageKey, isChromeVisible]);
+    }, [isChromeVisible]);
 
     const arePreviewEqual = React.useCallback(
         (a: ShowcaseScreenMedia | null, b: ShowcaseScreenMedia | null) => {
@@ -286,35 +346,27 @@ export const Showcase = ({
     const lastPreviewRef = React.useRef<ShowcaseScreenMedia | null>(null);
     const lastSelectedSlugRef = React.useRef<string | null>(null);
 
-    const getInitialSlug = React.useCallback(() => {
-        const q = router.query?.[queryKey];
-        const requested = Array.isArray(q) ? q[0] : q;
-        if (
-            typeof requested === "string" &&
-            items.some((i) => i.slug === requested)
-        ) {
-            return requested;
-        }
-        return items[0]?.slug ?? "";
-    }, [router.query, queryKey, items]);
+    const resolveSlug = (slug?: string | null) =>
+        slug && items.some((i) => i.slug === slug)
+            ? slug
+            : (items[0]?.slug ?? "");
 
-    const [selectedSlug, setSelectedSlug] = React.useState<string>(() =>
-        items[0]?.slug ? items[0].slug : "",
+    const [selectedSlug, setSelectedSlug] = React.useState(() =>
+        resolveSlug(initialSlug),
     );
+
+    // Taps update the URL with a shallow replace, which leaves the route props
+    // alone, so `initialSlug` only changes on a real navigation (e.g. a <Link>
+    // to another project in this section). Follow it when it does.
+    const [prevInitialSlug, setPrevInitialSlug] = React.useState(initialSlug);
+    if (initialSlug !== prevInitialSlug) {
+        setPrevInitialSlug(initialSlug);
+        setSelectedSlug(resolveSlug(initialSlug));
+    }
 
     const [isAltScreenSourceActive, setIsAltScreenSourceActive] =
         React.useState(false);
     const [isAudioEnabled, setIsAudioEnabled] = React.useState(false);
-
-    // Read the selection from the URL once. After that, local state is the
-    // source of truth: re-reading the query would let a still-pending
-    // router.replace() from an earlier tap override a newer selection.
-    const hasReadUrlRef = React.useRef(false);
-    React.useEffect(() => {
-        if (!router.isReady || hasReadUrlRef.current) return;
-        hasReadUrlRef.current = true;
-        setSelectedSlug(getInitialSlug());
-    }, [router.isReady, getInitialSlug]);
 
     const selectedItem = React.useMemo(() => {
         return items.find((i) => i.slug === selectedSlug) ?? items[0];
@@ -347,39 +399,11 @@ export const Showcase = ({
     }, [activeScreenAsset]);
 
     React.useEffect(() => {
-        if (!router.isReady) return;
         if (!selectedItem) return;
 
         if (lastSelectedSlugRef.current !== selectedItem.slug) {
             lastSelectedSlugRef.current = selectedItem.slug;
             onSelectedItemChange?.(selectedItem);
-        }
-
-        // Sync selection to the URL (deep-linking). Some embedded browsers / sandboxed
-        // contexts can throw a SecurityError when touching the History API.
-        const currentQ = router.query?.[queryKey];
-        const currentSlug = Array.isArray(currentQ) ? currentQ[0] : currentQ;
-        const shouldSyncUrl =
-            typeof currentSlug !== "string" ||
-            currentSlug !== selectedItem.slug;
-
-        if (shouldSyncUrl) {
-            const nextQuery = {
-                ...router.query,
-                [queryKey]: selectedItem.slug,
-            };
-            void router
-                .replace(
-                    { pathname: router.pathname, query: nextQuery },
-                    undefined,
-                    {
-                        shallow: true,
-                        scroll: false,
-                    },
-                )
-                .catch(() => {
-                    // no-op (selection still works; URL just won't update)
-                });
         }
 
         const preferred = activeScreenAsset;
@@ -410,15 +434,11 @@ export const Showcase = ({
             lastPreviewRef.current = null;
         };
     }, [
-        router,
-        router.isReady,
-        router.pathname,
         selectedItem,
         isAltScreenSourceActive,
         activeScreenAsset,
         isAudioEnabled,
         isAudioToggleAvailable,
-        queryKey,
         onScreenMediaChange,
         onSelectedItemChange,
         arePreviewEqual,
@@ -443,22 +463,42 @@ export const Showcase = ({
         ? primaryScreenAsset?.icon
         : secondaryScreenAsset?.icon;
 
-    const onSelect = React.useCallback((slug: string) => {
-        setSelectedSlug(slug);
+    const carouselRef = React.useRef<HTMLDivElement>(null);
 
-        // Keep the selected thumb centered when possible.
-        const el = document.querySelector(`[data-showcase-thumb='${slug}']`);
-        if (el instanceof HTMLElement) {
+    const onSelect = React.useCallback(
+        (slug: string) => {
+            setSelectedSlug(slug);
+
+            // Deep-link the selection. Shallow, so the page doesn't re-run its
+            // data fetching or remount. Some embedded browsers / sandboxed
+            // contexts throw a SecurityError when touching the History API.
+            void router
+                .replace(`${basePath}/${slug}`, undefined, {
+                    shallow: true,
+                    scroll: false,
+                })
+                .catch(() => {
+                    // no-op (selection still works; URL just won't update)
+                });
+
             const prefersReduced = window.matchMedia?.(
                 "(prefers-reduced-motion: reduce)",
             ).matches;
-            el.scrollIntoView({
-                behavior: prefersReduced ? "auto" : "smooth",
-                block: "nearest",
-                inline: "center",
-            });
-        }
-    }, []);
+            centerThumb(
+                carouselRef.current,
+                slug,
+                prefersReduced ? "auto" : "smooth",
+            );
+        },
+        [router, basePath],
+    );
+
+    // A deep link can select an item that starts scrolled out of the carousel
+    // (e.g. /music/heist), so bring it into view on load and whenever a real
+    // navigation changes the selection.
+    React.useEffect(() => {
+        if (initialSlug) centerThumb(carouselRef.current, initialSlug, "auto");
+    }, [initialSlug]);
 
     const onCarouselKeyDown = React.useCallback(
         (e: React.KeyboardEvent) => {
@@ -479,7 +519,6 @@ export const Showcase = ({
         [items, selectedItem, onSelect],
     );
 
-    const carouselRef = React.useRef<HTMLDivElement>(null);
     const isDraggingRef = React.useRef(false);
 
     const bindCarouselDrag = useDrag(
@@ -529,7 +568,13 @@ export const Showcase = ({
     if (!items.length) return null;
 
     return (
-        <div className={styles.wrap}>
+        <div
+            className={
+                shouldFadeIn
+                    ? `${styles.wrap} ${styles.wrapFadeIn}`
+                    : styles.wrap
+            }
+        >
             <button
                 type="button"
                 className={styles.chromeToggle}

@@ -1,25 +1,11 @@
-import * as React from "react";
-import { SEO } from "@/components/SEO";
-import {
-    Showcase,
-    type ShowcaseItem,
-    type ShowcaseScreenMedia,
-} from "@/components/Showcase/Showcase";
-import { useSceneVideo } from "@/context/SceneVideoContext";
-import { useAudioSpectrum } from "@/context/AudioSpectrumContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faFilm,
-    faMusic,
-    faPause,
-    faPlay,
-} from "@fortawesome/free-solid-svg-icons";
-import { faSoundcloud } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
+import { faFilm, faMusic } from "@fortawesome/free-solid-svg-icons";
+import { faSoundcloud } from "@fortawesome/free-brands-svg-icons";
+import type { ShowcaseItem } from "@/components/Showcase/Showcase";
 
-const DEMO_AUDIO_SRC = "/branding/audio/show-demo.mp3";
+export const DEMO_AUDIO_SRC = "/branding/audio/show-demo.mp3";
 
-type MusicItem = ShowcaseItem & {
+export type MusicItem = ShowcaseItem & {
     previewAudioSrc?: string;
     spectrumBars?: { colorA?: string; colorB?: string };
     screenBase?: string;
@@ -106,7 +92,7 @@ const MUSIC_SCREEN_PALETTE_BY_SLUG: Record<string, MusicScreenPalette> = {
     },
 };
 
-const getMusicScreenPaletteForItem = (item: ShowcaseItem) => {
+export const getMusicScreenPaletteForItem = (item: ShowcaseItem) => {
     const bySlug = MUSIC_SCREEN_PALETTE_BY_SLUG[item.slug];
     if (bySlug) return bySlug;
 
@@ -128,203 +114,8 @@ const getMusicScreenPaletteForItem = (item: ShowcaseItem) => {
     return undefined;
 };
 
-const getPreviewAudioSrcForItem = (item: MusicItem) => {
+export const getPreviewAudioSrcForItem = (item: MusicItem) => {
     return item.previewAudioSrc || DEMO_AUDIO_SRC;
-};
-
-const formatTime = (t: number) => {
-    if (!Number.isFinite(t) || t < 0) return "0:00";
-    const m = Math.floor(t / 60);
-    const s = Math.floor(t % 60);
-    return `${m}:${String(s).padStart(2, "0")}`;
-};
-
-const MusicPlayerBar = ({
-    item,
-    isPlaying,
-    initialVolume,
-    currentTime,
-    duration,
-    timelineRef,
-    onTogglePlayback,
-    onSetVolume,
-    onSeekStart,
-    onSeek,
-    onSeekEnd,
-    onEnsurePreviewSource,
-}: {
-    item: ShowcaseItem;
-    isPlaying: boolean;
-    initialVolume: number;
-    currentTime: number;
-    duration: number;
-    timelineRef: React.RefObject<HTMLInputElement | null>;
-    onTogglePlayback: () => void;
-    onSetVolume: (volume: number) => void;
-    onSeekStart: () => void;
-    onSeek: (t: number) => void;
-    onSeekEnd: (t: number) => void;
-    onEnsurePreviewSource: (item: ShowcaseItem) => void;
-}) => {
-    React.useEffect(() => {
-        onEnsurePreviewSource(item);
-        // Intentionally only when selection changes.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [item.slug]);
-
-    return (
-        <div
-            style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 14,
-                alignItems: "center",
-                padding: "10px 12px",
-                marginBottom: 10,
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                borderRadius: 10,
-            }}
-        >
-            <button
-                type="button"
-                onClick={onTogglePlayback}
-                style={{
-                    width: 38,
-                    height: 38,
-                    display: "grid",
-                    placeItems: "center",
-                    borderRadius: 999,
-                    border: "1px solid rgba(255,255,255,0.14)",
-                    background: "rgba(255,255,255,0.06)",
-                    color: "white",
-                    cursor: "pointer",
-                }}
-                aria-label={isPlaying ? "Pause preview" : "Play preview"}
-                title={isPlaying ? "Pause" : "Play"}
-            >
-                <FontAwesomeIcon
-                    icon={isPlaying ? faPause : faPlay}
-                    fixedWidth
-                />
-            </button>
-
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 6,
-                    minWidth: 240,
-                    flex: 1,
-                    paddingRight: 12,
-                }}
-            >
-                <input
-                    ref={timelineRef}
-                    type="range"
-                    min={0}
-                    max={Math.max(0, duration) || 0}
-                    step={0.01}
-                    defaultValue={0}
-                    onPointerDown={onSeekStart}
-                    onPointerUp={(e) => {
-                        const v = Number(
-                            (e.currentTarget as HTMLInputElement).value,
-                        );
-                        onSeekEnd(v);
-                    }}
-                    onKeyDown={(e) => {
-                        // Keep the label responsive during keyboard seeking.
-                        if (e.key !== "ArrowLeft" && e.key !== "ArrowRight")
-                            return;
-                        const v = Number(
-                            (e.currentTarget as HTMLInputElement).value,
-                        );
-                        onSeek(v);
-                    }}
-                    onInput={(e) => {
-                        const v = Number((e.target as HTMLInputElement).value);
-                        onSeek(v);
-                    }}
-                    onChange={(e) => {
-                        const v = Number((e.target as HTMLInputElement).value);
-                        onSeek(v);
-                    }}
-                    style={{ width: "100%" }}
-                    aria-label="Timeline"
-                />
-
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        color: "rgba(255,255,255,0.70)",
-                        fontSize: 12,
-                        fontVariantNumeric: "tabular-nums",
-                    }}
-                >
-                    <span>
-                        {formatTime(currentTime)} / {formatTime(duration)}
-                    </span>
-                </div>
-            </div>
-
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                    minWidth: 200,
-                    maxWidth: 260,
-                    marginLeft: "auto",
-                    paddingLeft: 12,
-                }}
-            >
-                <label
-                    style={{
-                        display: "flex",
-                        gap: 8,
-                        alignItems: "center",
-                        color: "rgba(255,255,255,0.85)",
-                        fontSize: 14,
-                        whiteSpace: "nowrap",
-                    }}
-                >
-                    Volume
-                    <input
-                        type="range"
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        defaultValue={initialVolume}
-                        onInput={(e) => {
-                            const v = Number(
-                                (e.target as HTMLInputElement).value,
-                            );
-                            onSetVolume(v);
-                        }}
-                        onChange={(e) => {
-                            const v = Number(
-                                (e.target as HTMLInputElement).value,
-                            );
-                            onSetVolume(v);
-                        }}
-                        style={{ flex: 1 }}
-                    />
-                </label>
-
-                <div
-                    style={{
-                        color: "rgba(255,255,255,0.60)",
-                        fontSize: 12,
-                        lineHeight: 1.1,
-                    }}
-                >
-                    Screen reacts to this audio
-                </div>
-            </div>
-        </div>
-    );
 };
 
 // Shared intro shown with each dolphinswarm song.
@@ -335,12 +126,14 @@ const DOLPHINSWARM_INTRO = (
     </p>
 );
 
-const MUSIC_ITEMS = [
+export const MUSIC_ITEMS = [
     {
         slug: "bones",
         title: "bones",
         subtitle: "dolphinswarm",
         year: "2025",
+        description:
+            "A clawhammer banjo song about what I want done with my body after I die (it's lighthearted, I promise!). Indie folk as dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -371,6 +164,8 @@ const MUSIC_ITEMS = [
         title: "astrogirl",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "A dreamy, spacey indie rock song about drifting apart from someone, drenched in reverb and vocal processing (a la Space Oddity). As dolphinswarm.",
         tags: ["Space Rock", "Indie"],
         links: [
             {
@@ -404,6 +199,8 @@ const MUSIC_ITEMS = [
         title: "movin' on",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "An upbeat, happy folk song about the excitement of starting fresh and chasing new opportunities. As dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -434,6 +231,8 @@ const MUSIC_ITEMS = [
         title: "homecoming",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "An emo folk song about fall, and how much I personally dislike it. A play on school homecoming and just wanting to go home. As dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -466,6 +265,8 @@ const MUSIC_ITEMS = [
         title: "steller's jay",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "An acoustic folk love song comparing a relationship to a Steller's Jay. As dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -495,6 +296,8 @@ const MUSIC_ITEMS = [
         title: "what i thought it'd be",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "A slower, reflective song about what happens when reality doesn't line up with your dreams and expectations. Indie folk as dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -525,6 +328,8 @@ const MUSIC_ITEMS = [
         title: "screaming to the sky",
         subtitle: "dolphinswarm",
         year: "2024",
+        description:
+            "A spacey indie folk song about dating app frustrations, with a repeating open G guitar riff and lots of crunchy jazz chords. As dolphinswarm.",
         tags: ["Folk", "Indie"],
         links: [
             {
@@ -556,6 +361,8 @@ const MUSIC_ITEMS = [
         title: "FuTerra | I Was The Earth",
         subtitle: "Generative Music for BLINK 2024 Installation",
         year: "2024",
+        description:
+            "The generative soundscape I made in Ableton Live for the FuTerra installation at BLINK 2024, using randomization, algorithmic composition, and field recordings.",
         tags: ["Ableton Live", "Generative Music"],
         links: [
             {
@@ -575,12 +382,12 @@ const MUSIC_ITEMS = [
                 <em>FuTerra | I Was The Earth</em> is the generative music
                 soundscape I created for the BLINK 2024 video installation of
                 the same name (see the piece on the{" "}
-                <Link href="/visuals#futerra">Visuals</Link> page). The music is
-                meant to evoke a sense of awe, wonder, evolution, and the
-                passage of time, reflecting the themes of the installation. It
-                was created using Ableton Live with various generative
-                techniques, including randomization, algorithmic composition,
-                and live processing of field recordings.
+                <Link href="/installations/futerra">Installations</Link> page).
+                The music is meant to evoke a sense of awe, wonder, evolution,
+                and the passage of time, reflecting the themes of the
+                installation. It was created using Ableton Live with various
+                generative techniques, including randomization, algorithmic
+                composition, and live processing of field recordings.
             </p>
         ),
     },
@@ -589,6 +396,8 @@ const MUSIC_ITEMS = [
         title: "Improvisation 1",
         subtitle: "Ryo Noda",
         year: "2020",
+        description:
+            "My junior recital performance of Ryo Noda's Improvisation 1 for solo alto sax. Lots of extended techniques (and lots of symbols in the notation!).",
         tags: ["Saxophone Solo", "Alto Saxophone"],
         previewAudioSrc: "/branding/audio/improvisation-i.mp3",
         thumbnailSource: {
@@ -612,6 +421,8 @@ const MUSIC_ITEMS = [
         title: "Movement I - With Vigor",
         subtitle: "Paul Creston",
         year: "2020",
+        description:
+            "My junior recital performance of With Vigor from Paul Creston's Alto Saxophone Sonata: fast, syncopated, and full of energy.",
         tags: ["Saxophone Solo", "Alto Saxophone"],
         previewAudioSrc: "/branding/audio/creston-i.mp3",
         thumbnailSource: {
@@ -640,6 +451,8 @@ const MUSIC_ITEMS = [
         title: "Movement II - With Tranquility",
         subtitle: "Paul Creston",
         year: "2020",
+        description:
+            "My junior recital performance of With Tranquility from Paul Creston's Alto Saxophone Sonata: a lyrical slow movement that's all about the vibrato.",
         tags: ["Saxophone Solo", "Alto Saxophone"],
         previewAudioSrc: "/branding/audio/creston-ii.mp3",
         thumbnailSource: {
@@ -668,6 +481,8 @@ const MUSIC_ITEMS = [
         title: "Fantasia - Mvts. II & III",
         subtitle: "Heitor Villa-Lobos",
         year: "2020",
+        description:
+            "From my junior recital: movements II and III of Villa-Lobos's Fantasia for soprano sax. The third is fast, rhythmic, and very touchy on tone!",
         tags: ["Saxophone Solo", "Soprano Saxophone"],
         previewAudioSrc: "/branding/audio/fantasia-ii-iii.mp3",
         thumbnailSource: {
@@ -700,6 +515,8 @@ const MUSIC_ITEMS = [
         title: "Forge",
         subtitle: "Composition for Orchestra",
         year: "2020",
+        description:
+            "A cinematic orchestral piece about an evil, daunting factory: heavy brass, low strings, industrial percussion, and lots of dissonance.",
         tags: ["Orchestra", "Composition"],
         links: [
             {
@@ -733,6 +550,8 @@ const MUSIC_ITEMS = [
         title: "Landward Ho!",
         subtitle: "Composition for Orchestra",
         year: "2017",
+        description:
+            "A cinematic orchestral piece about the spirit of adventure and discovering new lands. Landward ho!",
         tags: ["Orchestra", "Composition"],
         links: [
             {
@@ -764,6 +583,8 @@ const MUSIC_ITEMS = [
         title: "Heist",
         subtitle: "Composition for String Quartet",
         year: "2021",
+        description:
+            "A string quartet inspired by spy and heist movies, all about the tension of pulling off a robbery. Bonus: it's mostly in 7/8!",
         tags: ["String Quartet", "Composition"],
         links: [
             {
@@ -797,6 +618,8 @@ const MUSIC_ITEMS = [
         title: "With/in: The Dance Between Being & Becoming",
         subtitle: "Composition for Denver Night Lights Video Installation",
         year: "2026",
+        description:
+            "The music I composed for With/in at Night Lights Denver: a whimsical, carnival-esque waltz (think a merry-go-round) that's nostalgic, joyful, and bittersweet.",
         tags: ["Soundtrack", "Classical"],
         previewAudioSrc: "/branding/audio/within.mp3",
         thumbnailSource: {
@@ -805,325 +628,14 @@ const MUSIC_ITEMS = [
         },
         body: (
             <p>
-                <em>With/in: The Dance Between Being & Becoming</em> is the I
-                composed as the accompanying music for the Denver Night Lights
-                video installation of the same name (see the piece on the{" "}
-                <Link href="/visuals#within">Visuals</Link> page). The piece is
-                a whimsical, carnival-esque waltz (think a merry-go-round) that
-                is meant to evoke feelings of nostalgia, joy, and
-                bittersweetness.
+                <em>With/in: The Dance Between Being & Becoming</em> is the
+                piece I composed as the accompanying music for the Denver Night
+                Lights video installation of the same name (see the piece on the{" "}
+                <Link href="/installations/within">Installations</Link> page).
+                The piece is a whimsical, carnival-esque waltz (think a
+                merry-go-round) that is meant to evoke feelings of nostalgia,
+                joy, and bittersweetness.
             </p>
         ),
     },
 ] satisfies MusicItem[];
-
-const Music = () => {
-    const {
-        setMediaOverride,
-        clearMediaOverride,
-        setScreenStyleOverride,
-        clearScreenStyleOverride,
-    } = useSceneVideo();
-    const { attachMediaElement, resume, detach } = useAudioSpectrum();
-    const audioRef = React.useRef<HTMLAudioElement | null>(null);
-    const timelineRef = React.useRef<HTMLInputElement>(null);
-    const rafRef = React.useRef<number | null>(null);
-    const isSeekingRef = React.useRef(false);
-    const lastLabelUpdateRef = React.useRef(0);
-    const [isPlaying, setIsPlaying] = React.useState(false);
-    const [volume, setVolume] = React.useState(0.9);
-    const [duration, setDuration] = React.useState(0);
-    const [currentTime, setCurrentTime] = React.useState(0);
-    const [activeSlug, setActiveSlug] = React.useState<string>(
-        MUSIC_ITEMS[0]?.slug ?? "",
-    );
-
-    const onScreenMediaChange = React.useCallback(
-        (media: ShowcaseScreenMedia | null) => {
-            setMediaOverride(media);
-        },
-        [setMediaOverride],
-    );
-
-    React.useEffect(() => {
-        return () => {
-            clearMediaOverride();
-            clearScreenStyleOverride();
-        };
-    }, [clearMediaOverride, clearScreenStyleOverride]);
-
-    const onSelectedItemChange = React.useCallback(
-        (item: ShowcaseItem | null) => {
-            if (!item) {
-                setScreenStyleOverride(null);
-                return;
-            }
-
-            const typed = item as MusicItem;
-            const fallback = getMusicScreenPaletteForItem(item);
-
-            const colorA =
-                typed.spectrumBars?.colorA ?? fallback?.spectrumBars.colorA;
-            const colorB =
-                typed.spectrumBars?.colorB ?? fallback?.spectrumBars.colorB;
-            const base = typed.screenBase ?? fallback?.screenBase;
-
-            setScreenStyleOverride({
-                music: {
-                    colorA,
-                    colorB,
-                    base,
-                },
-            });
-        },
-        [setScreenStyleOverride],
-    );
-
-    React.useEffect(() => {
-        const el = audioRef.current;
-        if (!el) return;
-
-        attachMediaElement(el);
-
-        const onPlay = () => {
-            setIsPlaying(true);
-            void resume();
-        };
-        const onStop = () => setIsPlaying(false);
-
-        const syncDuration = () => {
-            const d = Number.isFinite(el.duration) ? el.duration : 0;
-            setDuration(d > 0 ? d : 0);
-        };
-
-        const syncTime = () => {
-            if (isSeekingRef.current) return;
-            const t = Number.isFinite(el.currentTime) ? el.currentTime : 0;
-            setCurrentTime(t);
-            if (timelineRef.current) {
-                timelineRef.current.value = String(t);
-            }
-        };
-
-        el.addEventListener("play", onPlay);
-        el.addEventListener("pause", onStop);
-        el.addEventListener("ended", onStop);
-        el.addEventListener("loadedmetadata", syncDuration);
-        el.addEventListener("durationchange", syncDuration);
-        el.addEventListener("timeupdate", syncTime);
-
-        // Initial sync (in case metadata is already available).
-        syncDuration();
-        syncTime();
-
-        return () => {
-            el.removeEventListener("play", onPlay);
-            el.removeEventListener("pause", onStop);
-            el.removeEventListener("ended", onStop);
-            el.removeEventListener("loadedmetadata", syncDuration);
-            el.removeEventListener("durationchange", syncDuration);
-            el.removeEventListener("timeupdate", syncTime);
-            detach();
-        };
-    }, [attachMediaElement, detach, resume]);
-
-    React.useEffect(() => {
-        const el = audioRef.current;
-        if (!el) return;
-
-        const stop = () => {
-            if (rafRef.current == null) return;
-            window.cancelAnimationFrame(rafRef.current);
-            rafRef.current = null;
-        };
-
-        const tick = (now: number) => {
-            if (!el || el.paused) {
-                stop();
-                return;
-            }
-
-            if (!isSeekingRef.current) {
-                const t = Number.isFinite(el.currentTime) ? el.currentTime : 0;
-                if (timelineRef.current) timelineRef.current.value = String(t);
-
-                // Update the label at ~12fps so it feels smooth without spamming renders.
-                if (now - lastLabelUpdateRef.current > 80) {
-                    lastLabelUpdateRef.current = now;
-                    setCurrentTime(t);
-                }
-            }
-
-            rafRef.current = window.requestAnimationFrame(tick);
-        };
-
-        const onPlay = () => {
-            if (rafRef.current == null) {
-                rafRef.current = window.requestAnimationFrame(tick);
-            }
-        };
-
-        const onPause = () => {
-            stop();
-        };
-
-        if (!el.paused) onPlay();
-        el.addEventListener("play", onPlay);
-        el.addEventListener("pause", onPause);
-
-        return () => {
-            el.removeEventListener("play", onPlay);
-            el.removeEventListener("pause", onPause);
-            stop();
-        };
-    }, []);
-
-    React.useEffect(() => {
-        const el = audioRef.current;
-        if (!el) return;
-        el.volume = volume;
-    }, [volume]);
-
-    const togglePlayback = React.useCallback(async () => {
-        const el = audioRef.current;
-        if (!el) return;
-        if (el.paused) {
-            attachMediaElement(el);
-            await resume();
-            try {
-                await el.play();
-            } catch {
-                // Autoplay / gesture policy or other playback error.
-            }
-        } else {
-            el.pause();
-        }
-    }, [attachMediaElement, resume]);
-
-    const seekTo = React.useCallback((t: number) => {
-        const el = audioRef.current;
-        if (!el) return;
-        const next = Math.max(
-            0,
-            Math.min(Number.isFinite(el.duration) ? el.duration : t, t),
-        );
-        try {
-            el.currentTime = next;
-        } catch {
-            // no-op
-        }
-        setCurrentTime(next);
-    }, []);
-
-    const onSeekStart = React.useCallback(() => {
-        isSeekingRef.current = true;
-    }, []);
-
-    const onSeekEnd = React.useCallback(
-        (t: number) => {
-            isSeekingRef.current = false;
-            seekTo(t);
-        },
-        [seekTo],
-    );
-
-    const setAudioSrcForSlug = React.useCallback(
-        async (slug: string) => {
-            const el = audioRef.current;
-            if (!el) return;
-
-            const item = MUSIC_ITEMS.find((i) => i.slug === slug);
-            const nextSrc = item
-                ? getPreviewAudioSrcForItem(item)
-                : DEMO_AUDIO_SRC;
-
-            const currentSrc = (el.currentSrc || el.src || "").trim();
-            const isSameSrc =
-                currentSrc.length > 0 && currentSrc.endsWith(nextSrc);
-            if (isSameSrc) {
-                setActiveSlug(slug);
-                return;
-            }
-
-            const shouldKeepPlaying = !el.paused;
-            try {
-                el.pause();
-            } catch {
-                // no-op
-            }
-
-            el.src = nextSrc;
-            try {
-                el.load();
-            } catch {
-                // no-op
-            }
-
-            setActiveSlug(slug);
-
-            if (shouldKeepPlaying) {
-                attachMediaElement(el);
-                await resume();
-                try {
-                    await el.play();
-                } catch {
-                    // If this fails, user can hit play again.
-                }
-            }
-        },
-        [activeSlug, attachMediaElement, resume],
-    );
-
-    const ensurePreviewSourceForItem = React.useCallback(
-        (item: ShowcaseItem) => {
-            void setAudioSrcForSlug(item.slug);
-        },
-        [setAudioSrcForSlug],
-    );
-
-    return (
-        <>
-            <SEO
-                title="Music & Generative Sound"
-                description="Generative installation music, orchestral and chamber compositions, saxophone performance, and indie folk as dolphinswarm, by Brad Schmitz."
-                path="/music"
-            />
-            <h1 className="visually-hidden">Music and generative sound</h1>
-
-            <Showcase
-                pageTitle="Music"
-                items={MUSIC_ITEMS}
-                queryKey="project"
-                onScreenMediaChange={onScreenMediaChange}
-                onSelectedItemChange={onSelectedItemChange}
-                renderBodyPrefix={(item) => (
-                    <MusicPlayerBar
-                        item={item}
-                        isPlaying={isPlaying}
-                        initialVolume={volume}
-                        currentTime={currentTime}
-                        duration={duration}
-                        timelineRef={timelineRef}
-                        onTogglePlayback={() => void togglePlayback()}
-                        onSetVolume={(v) => setVolume(v)}
-                        onSeekStart={onSeekStart}
-                        onSeek={(t) => seekTo(t)}
-                        onSeekEnd={onSeekEnd}
-                        onEnsurePreviewSource={ensurePreviewSourceForItem}
-                    />
-                )}
-            />
-
-            {/* Keep the audio element mounted once to avoid playback interruption when the UI rerenders. */}
-            <audio
-                ref={audioRef}
-                src={DEMO_AUDIO_SRC}
-                preload="auto"
-                loop
-                style={{ display: "none" }}
-            />
-        </>
-    );
-};
-
-export default Music;

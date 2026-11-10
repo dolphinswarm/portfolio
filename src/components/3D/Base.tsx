@@ -15,7 +15,6 @@ import { SITE_NAME, SITE_ROLE } from "@/utils/site";
 import * as THREE from "three";
 import type { ProceduralScreenVariant } from "./ProceduralScreenMaterial";
 
-
 const RouteTransition = ({
     isIndexRoute,
     transitionRef,
@@ -236,7 +235,6 @@ export const Base3DScene = ({
         ProceduralScreenVariant | undefined
     >(() => {
         if (backgroundVariant === "about") return "about";
-        if (backgroundVariant === "connect") return "connect";
         return undefined;
     }, [backgroundVariant]);
 
@@ -244,7 +242,6 @@ export const Base3DScene = ({
         ProceduralScreenVariant | undefined
     >(() => {
         if (backgroundVariant === "about") return "about";
-        if (backgroundVariant === "connect") return "connect";
         if (backgroundVariant === "music") return "music";
         return undefined;
     }, [backgroundVariant]);
@@ -300,8 +297,10 @@ export const Base3DScene = ({
                         />
                         {/* Bottom-left of the screen (a 4 x 2.25 plane centered at
                             [0, 1.1, -0.5]), just in front of it and behind Brad
-                            (z = 1.5). Always mounted so its shader stays compiled;
-                            it only shows on the homepage. */}
+                            (z = 1.5), like a broadcast lower third. Skipped on
+                            screens too narrow to show that corner. Always
+                            mounted so its shader stays compiled; it only shows
+                            on the homepage. */}
                         <LowerThird
                             visible={isIndexRoute}
                             holdRef={staticActiveRef}
@@ -336,7 +335,7 @@ export const Base3DScene = ({
                         }
                     />
                 </Suspense>
-                <Environment preset="city" />
+                <Environment files="/threejs/potsdamer_platz_1k.hdr" />
             </Canvas>
         </div>
     ) : null;

@@ -7,7 +7,10 @@
     margin: 0 auto;
     padding: 32px 20px 24px;
     color: rgba(255, 255, 255, 0.92);
+}
 
+/* Only when arriving from a page without a Showcase; section changes skip it. */
+.wrapFadeIn {
     /* Arrive under the screen's channel-change static, not a frame ahead of it. */
     animation: showcaseIn 260ms ease-out 80ms both;
 }
@@ -22,7 +25,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .wrap {
+    .wrapFadeIn {
         animation: none;
     }
 }
@@ -31,7 +34,7 @@
     position: fixed;
     right: 22px;
     bottom: calc(
-        env(safe-area-inset-bottom) + 18px + var(--mobile-nav-height, 0px)
+        var(--safe-area-bottom) + 18px + var(--mobile-nav-height, 0px)
     );
     z-index: 200;
 
@@ -535,7 +538,7 @@
         right: 0;
         transform: none;
         width: auto;
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+        bottom: calc(var(--mobile-nav-height) + var(--safe-area-bottom));
         gap: 10px;
     }
 
@@ -571,6 +574,33 @@
 
     .thumbSub {
         -webkit-line-clamp: 2;
+    }
+}
+
+/* Very short screens (phones held sideways): the dock grew up under the
+   header. Use text-only thumbs and cap the detail panel to the space left. */
+@media (max-height: 500px) {
+    .dock {
+        gap: 8px;
+    }
+
+    .detail {
+        max-height: calc(
+            100dvh - var(--header-height) - var(--mobile-nav-height) - 150px
+        );
+    }
+
+    .thumbMedia {
+        display: none;
+    }
+
+    .thumbLabel {
+        height: auto;
+        padding: 8px 10px;
+    }
+
+    .thumbSub {
+        -webkit-line-clamp: 1;
     }
 }
 

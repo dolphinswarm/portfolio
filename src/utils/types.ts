@@ -10,7 +10,7 @@ export type SceneMedia = {
     };
 };
 
-export type SceneBackgroundVariant = "default" | "about" | "connect" | "music";
+export type SceneBackgroundVariant = "default" | "about" | "music";
 
 /** The props for the 3D scene. */
 export type SceneProps = {

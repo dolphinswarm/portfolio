@@ -1,20 +1,68 @@
-import * as React from "react";
-import { SEO } from "@/components/SEO";
-import {
-    Showcase,
-    type ShowcaseItem,
-    type ShowcaseScreenMedia,
-} from "@/components/Showcase/Showcase";
-import { useSceneVideo } from "@/context/SceneVideoContext";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import type { ShowcaseItem } from "@/components/Showcase/Showcase";
 
-const CODE_ITEMS: ShowcaseItem[] = [
+export const XR_GAMES_ITEMS: ShowcaseItem[] = [
+    {
+        slug: "vr-basketball",
+        title: "VR Basketball Shootout",
+        subtitle: "Godot VR arcade game for ATLS 5660",
+        year: "2026",
+        description:
+            "An arcade VR basketball game I built in Godot and C#: hit the big red button and sink as many threes as you can in 60 seconds.",
+        tags: ["Godot", "C#", "VR", "OpenXR"],
+        links: [
+            {
+                label: "GitHub",
+                href: "https://github.com/dolphinswarm/alts-5660-creative-code/tree/main/week-8-3d",
+                icon: faGithub,
+            },
+        ],
+        screenSource: {
+            kind: "video",
+            src: "/branding/videos/code/vr-basketball.mp4",
+            audio: { toggleable: true, defaultEnabled: false, volume: 1 },
+        },
+        thumbnailSource: {
+            kind: "image",
+            src: "/branding/img/thumbs/vr-basketball.webp",
+        },
+        body: (
+            <>
+                <p>
+                    <em>VR Basketball Shootout</em> is an arcade-style virtual
+                    reality basketball game built in Godot with C# and Godot XR
+                    Tools, made for ATLS 5660 (Creative Code) at CU Boulder.
+                    Press the big red button, then sink as many shots as you can
+                    in 60 seconds. Every basket is worth three, shots still in
+                    the air at the buzzer count, and your high score is saved
+                    between sessions.
+                </p>
+                <p>
+                    Scoring watches each ball's center cross the plane of the
+                    rim instead of using a trigger area, since trigger areas
+                    reported too late on fast shots. A ball that goes up through
+                    the net doesn't count on its way back down, and the rim is
+                    1.5× regulation size so scoring in VR is actually doable.
+                    The net has no collision, so made shots are slowed down to
+                    look like the net caught them.
+                </p>
+                <p>
+                    Sound and touch carry a lot of the feel: dribbles, backboard
+                    hits and rim clanks are picked by what the ball hit and
+                    scaled by how hard it hit, a clock ticks through the last 10
+                    seconds before the buzzer, and the controllers pulse when
+                    you pick up a ball or press the start button.
+                </p>
+            </>
+        ),
+    },
     {
         slug: "parkinsons-vr",
         title: "Parkinson's VR Training",
         subtitle: "Virtual reality training sim",
         year: "2021",
+        description:
+            "A VR training sim for nurses caring for a Parkinson's patient, built in Unity for a nursing study at Malone University. I was the lead developer.",
         tags: ["Unity", "C#", "VR"],
         links: [
             {
@@ -70,6 +118,8 @@ const CODE_ITEMS: ShowcaseItem[] = [
         title: "VRchery",
         subtitle: "Virtual reality archery game",
         year: "2019",
+        description:
+            "A VR archery game in Unity: pull back the bow with your controllers and shoot at a target in a medieval town, with haptics and bullseye scoring.",
         tags: ["Unity", "C#", "VR"],
         links: [
             {
@@ -86,11 +136,11 @@ const CODE_ITEMS: ShowcaseItem[] = [
         body: (
             <>
                 <p>
-                    <em>VRchery</em> is a simple virtual reality archery game
-                    built in Unity using the Oculus VR stack. It was created as
-                    a first VR project / learning demo: you spawn in a
-                    medieval-style town with a target ~25m away, and you shoot a
-                    limited number of arrows to score points.
+                    <em>VRchery</em> is a virtual reality archery game built in
+                    Unity using the Oculus VR stack, made as an Honors course
+                    extension. You spawn in a medieval-style town with a target
+                    ~25m away, and you shoot a limited number of arrows to score
+                    points.
                 </p>
                 <p>
                     Features include a VR UI, bow-and-arrow pullback + release
@@ -105,6 +155,8 @@ const CODE_ITEMS: ShowcaseItem[] = [
         title: "AR Looper",
         subtitle: "Augmented Reality music looper",
         year: "2019",
+        description:
+            "An AR drum looper in Unity: point your phone at a printed marker and a looper pops up on top of it, ready for you to build drum loops.",
         tags: ["Unity", "C#", "AR"],
         links: [
             {
@@ -125,13 +177,12 @@ const CODE_ITEMS: ShowcaseItem[] = [
             <>
                 <p>
                     <em>AR Looper</em> is an augmented reality music looper
-                    built in Unity using the Vuforia AR stack. It was created as
-                    a first AR project / learning demo: you point your phone at
-                    a printed piece of paper (shown) with a specific marker on
-                    it, and a virtual music looper interface appears on top of
-                    the marker. You can then interact with the interface to
-                    create loops of different drum sounds, adjusting the tempo
-                    and pattern as you like.
+                    built in Unity using the Vuforia AR stack. You point your
+                    phone at a printed piece of paper (shown) with a specific
+                    marker on it, and a virtual music looper interface appears
+                    on top of the marker. You can then interact with the
+                    interface to create loops of different drum sounds,
+                    adjusting the tempo and pattern as you like.
                 </p>
             </>
         ),
@@ -141,6 +192,8 @@ const CODE_ITEMS: ShowcaseItem[] = [
         title: "Ninjas vs. Knights",
         subtitle: "Unity capture-the-flag game for CSE 389",
         year: "2021",
+        description:
+            "A third-person capture-the-flag shooter in Unity: you and your AI ninjas race to steal the knights' flag before they steal yours.",
         tags: ["Unity", "C#", "Game Development"],
         links: [
             {
@@ -190,129 +243,4 @@ const CODE_ITEMS: ShowcaseItem[] = [
             </>
         ),
     },
-    {
-        slug: "the-ultimate-drum-machine",
-        title: "The Ultimate Drum Machine",
-        subtitle: "Browser-based 16-step drum sequencer",
-        year: "2022",
-        tags: ["React", "TypeScript", "Tone.js", "Audio"],
-        links: [
-            {
-                label: "GitHub",
-                href: "https://github.com/dolphinswarm/the-ultimate-drum-machine",
-                icon: faGithub,
-            },
-            {
-                label: "Live Demo",
-                href: "https://dolphinswarm.github.io/the-ultimate-drum-machine/",
-                icon: faArrowUpRightFromSquare,
-            },
-        ],
-        screenSource: {
-            kind: "video",
-            src: "/branding/videos/code/the-ultimate-drum-machine.mp4",
-            audio: { toggleable: true, defaultEnabled: false, volume: 1 },
-        },
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/the-ultimate-drum-machine.webp",
-        },
-        body: (
-            <>
-                <p>
-                    The <em>Ultimate Drum Machine</em> is a browser-based,
-                    16-step drum sequencer built with React + TypeScript and
-                    powered by Tone.js. It's designed for quick beat sketching:
-                    add tracks by instrument category (kick, snare, hi-hat,
-                    clap, FX, crash, ride, tom, accessory), program a pattern,
-                    and hit play. This was also made as part of my exploration
-                    into React, web audio and music programming.
-                </p>
-                <p>
-                    Each track has per-track volume, a dropdown to swap
-                    instruments without rebuilding the pattern, and
-                    drag-and-drop reordering to keep your mixer layout tidy.
-                    Tempo is adjustable from 30-240 BPM, and playback starts
-                    reliably after a user gesture (the Play button resumes the
-                    browser audio context when needed).
-                </p>
-                <p>
-                    Patterns can be exported/imported as a small JSON text file,
-                    so you can share grooves or pick up where you left off
-                    later. The project is deployed to GitHub Pages and uses
-                    react-beautiful-dnd for track ordering and Tone.js for
-                    sample playback + scheduling.
-                </p>
-            </>
-        ),
-    },
-    {
-        slug: "r3f-portfolio",
-        title: "3D Portfolio",
-        subtitle: "Next.js + R3F",
-        year: "2026",
-        tags: ["Next.js", "TypeScript", "Three.js"],
-        links: [
-            {
-                label: "GitHub",
-                href: "https://github.com/dolphinswarm/portfolio",
-                icon: faGithub,
-            },
-        ],
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/this-website.webp",
-        },
-        screenSource: {
-            kind: "video",
-            src: "/branding/videos/demo-reel.mp4",
-        },
-        body: (
-            <>
-                <p>This portfolio website!</p>
-                <p>
-                    Built with Next.js and React Three Fiber (R3F), this site
-                    showcases my projects and skills in a 3D, engaging, and
-                    interactive "TV screen" format. The site is also built for
-                    responsiveness with mobile phones.
-                </p>
-            </>
-        ),
-    },
 ];
-
-const Code = () => {
-    const { setMediaOverride, clearMediaOverride } = useSceneVideo();
-
-    const onScreenMediaChange = React.useCallback(
-        (media: ShowcaseScreenMedia | null) => {
-            setMediaOverride(media);
-        },
-        [setMediaOverride],
-    );
-
-    React.useEffect(() => {
-        return () => {
-            clearMediaOverride();
-        };
-    }, [clearMediaOverride]);
-
-    return (
-        <>
-            <SEO
-                title="Code & XR Projects"
-                description="VR, AR, game, and web audio projects by Brad Schmitz, built with Unity, C#, React, TypeScript, Three.js, and Tone.js."
-                path="/code"
-            />
-            <h1 className="visually-hidden">Code and XR projects</h1>
-            <Showcase
-                pageTitle="Code"
-                items={CODE_ITEMS}
-                queryKey="project"
-                onScreenMediaChange={onScreenMediaChange}
-            />
-        </>
-    );
-};
-
-export default Code;

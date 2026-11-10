@@ -124,9 +124,9 @@
         right: 0;
         bottom: 0;
         height: calc(
-            var(--mobile-nav-height, 72px) + env(safe-area-inset-bottom)
+            var(--mobile-nav-height, 72px) + var(--safe-area-bottom)
         );
-        padding-bottom: env(safe-area-inset-bottom);
+        padding-bottom: var(--safe-area-bottom);
         z-index: 200;
 
         backdrop-filter: blur(14px);
@@ -178,6 +178,8 @@
     .bottomLabel {
         font-size: 11px;
         line-height: 1;
+        /* "XR & Games" wrapped onto two lines; unwrapped, all six labels fit at 320px. */
+        white-space: nowrap;
         opacity: 0.85;
         letter-spacing: 0.02em;
     }

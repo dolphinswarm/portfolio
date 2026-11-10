@@ -21,14 +21,21 @@ const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
         shouldRender: true,
         shouldShowBrad: true,
     },
-    code: {
+    installations: {
         media: undefined,
         backgroundVariant: "default",
         shouldUseFreeCamera: false,
         shouldRender: true,
         shouldShowBrad: false,
     },
-    visuals: {
+    "xr-games": {
+        media: undefined,
+        backgroundVariant: "default",
+        shouldUseFreeCamera: false,
+        shouldRender: true,
+        shouldShowBrad: false,
+    },
+    apps: {
         media: undefined,
         backgroundVariant: "default",
         shouldUseFreeCamera: false,
@@ -59,10 +66,8 @@ const routerPageProps: Record<Page, Omit<SceneProps, "isIndexRoute">> = {
 export const useGetRouterSceneProps = () => {
     const { pathname } = useRouter();
     const isIndexRoute = pathname === "/";
-    const pageName = (pathname === "/" ? "/home" : pathname).replace(
-        "/",
-        "",
-    ) as Page;
+    // First path segment, so "/installations/[[...slug]]" is "installations".
+    const pageName = (pathname.split("/")[1] || "home") as Page;
 
     const base = routerPageProps[pageName] ?? {
         media: undefined,

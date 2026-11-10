@@ -1,0 +1,73 @@
+.bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.playButton {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: white;
+    cursor: pointer;
+}
+
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 240px;
+    flex: 1;
+    padding-right: 12px;
+}
+
+.timelineInput {
+    width: 100%;
+}
+
+.time {
+    display: flex;
+    justify-content: space-between;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.volume {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+    max-width: 260px;
+    margin-left: auto;
+    padding-left: 12px;
+}
+
+.volumeLabel {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.volumeInput {
+    flex: 1;
+}
+
+.hint {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    line-height: 1.1;
+}

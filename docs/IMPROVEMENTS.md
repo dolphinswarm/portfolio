@@ -41,8 +41,8 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 ## Phase 2: Performance and assets
 
-- [ ] **M** Re-encode the homepage reel. `demo-reel.mp4` is 85 MB and loads with `preload="auto"` on first visit. Target 720p, about 8–15 MB, with `-movflags +faststart`. Use [scripts/encode-videos.sh](../scripts/encode-videos.sh).
-- [ ] **M** Re-encode the showcase clips (currently 40–80 MB each) to about 5–10 MB with the same script. Audio is kept because the scene has an audio toggle. Clips stay full length for now; trimming them to shorter loops is a separate content decision.
+- [x] **M** Re-encode the homepage reel. `demo-reel.mp4` is 85 MB and loads with `preload="auto"` on first visit. Target 720p, about 8–15 MB, with `-movflags +faststart`. Use [scripts/encode-videos.sh](../scripts/encode-videos.sh). (Done 2026-10-20: 85 MB → 4.6 MB.)
+- [x] **M** Re-encode the showcase clips (currently 40–80 MB each) to about 5–10 MB with the same script. Audio is kept because the scene has an audio toggle. Clips stay full length for now; trimming them to shorter loops is a separate content decision. (Done 2026-10-20 at CRF 26; most clips are now 1–10 MB. On 2026-11-03 `fort-knox` and `denver-night-lights` were re-encoded from the originals at CRF 28: 22.6 → 18.0 MB and 16.3 → 12.8 MB. They're long (3:15 and 2:07), so getting under 10 MB means trimming them.)
 - [x] **S** Generate ~600 px WebP/AVIF thumbnails. `vrchery.png` is 4 MB and only used as a thumbnail. (Done for Code and Visuals at 480 px: 24.9 MB → 270 KB. Music thumbnails left full-size because they double as the screen image.)
 - [x] **S** Switch the static effect to the 409 KB `public/videos/tv-static.mp4` instead of the 14 MB `branding/videos/tv-static.mp4`, if it looks the same. (Not possible: that file was a different clip. Re-encoded the real one instead: 14 MB → 3.6 MB, 720p30, 1.2 s loop, no audio. Later replaced entirely by the channel-static shader; the video was deleted.)
 - [x] **S** Delete unused assets (~140 MB): (Done. Also removed duplicate `public/videos/tv-static.mp4` and `public/img/thumbs/placeholder.svg`. Full-size originals of converted thumbnails were kept as source material.)
@@ -56,7 +56,7 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
     - `public/branding/videos/code.mp4` (9 MB)
     - `public/threejs/portfolio_backdrop_screen.glb`
     - `public/threejs/Poliigon_StoneQuartzite_8060.mtlx` and `_Displacement.tiff`
-- [ ] **S** Self-host the HDR used by `<Environment preset="city">` ([Base.tsx:320](../src/components/3D/Base.tsx#L320)). It currently downloads from a third-party CDN at runtime.
+- [x] **S** Self-host the HDR used by `<Environment preset="city">` ([Base.tsx:339](../src/components/3D/Base.tsx#L339)). It currently downloads from a third-party CDN at runtime. (Done: `public/threejs/potsdamer_platz_1k.hdr`, 1.5 MB, same file the preset loads.)
 - [x] ~~**L** Move video out of git.~~ Decided against a CDN (2026-10-20). After re-encoding, the ~670 MB of video should drop to roughly 100 MB with every file well under GitHub's 100 MB limit, which the static host can serve fine. Full-length videos go on YouTube/Vimeo instead (see Video hosting in Phase 3), so the site only hosts short clips.
 - [ ] **S** (Optional, later) Shrink `.git` (~980 MB) by purging the old video blobs with `git filter-repo`. This only affects clone size, and it requires a force-push, so only do it if it becomes a problem.
 
@@ -66,62 +66,104 @@ Effort: **S** = under an hour, **M** = a few hours, **L** = a day or more.
 
 ### Information architecture
 
-- [ ] **M** Reorganize nav from medium (Code / Visuals / Music) to something like:
-    - **Work**: featured cross-disciplinary installations (FuTerra, With/in, Poet's Shack) as full case studies.
-    - **Lab** or **Archive**: student projects and experiments.
-    - **Music**: lead with the FuTerra generative system and the With/in score, then the dolphinswarm songs.
-- [ ] **L** Give each project its own URL (`/work/[slug]` with static generation) instead of `?project=slug`. Today the server always renders the first project, so every link preview and crawl sees the same title and text. Keep the same TV-screen UI by passing the initial slug from the route.
-- [ ] **M** Move project data out of page files into `src/data/*.ts` (needed for the step above).
+- [x] ~~**M** Reorganize nav into Work / Lab / Music.~~ Decided against (2026-11-03): most of the work is student work, so a professional/student split doesn't fit. Splitting by project type instead (below).
+- [x] **M** Reorganize nav by project type: **Home / Installations / XR & Games / Apps / Music / About**. Decided 2026-11-03, done the same day on the `site-restructure` branch.
+    - **Installations**: FuTerra, With/in, Shack Video, Poem Visualizer, Upham Arch, Letters from the Ocean, Trojan Horse, Fort Knox.
+    - **XR & Games**: VR Basketball Shootout (ATLS 5660, added 2026-11-03), Parkinson's VR, VRchery, AR Looper, Ninjas vs. Knights.
+    - **Apps**: Poet's Shack web app, The Ultimate Drum Machine, 3D Portfolio. Named "Apps" rather than "Web" so mobile apps and desktop tools fit later.
+    - **Music**: dolphinswarm songs, plus score entries that link to their installation (e.g. FuTerra).
+    - Cut Steampunk Mobile Fortress and Tri-Delta Sundial (no section fits, and they're the weakest pieces).
+    - Redirect `/code` and `/visuals` to the new sections. (Done in `next.config.mjs`, including old `?project=` links. `/code` with no project goes to `/xr-games`.)
+
+#### Where new projects go
+
+- **One home per project**: the section for what someone actually experiences (a space, a headset, a screen, a song). Everything else is a tag. A music + projection piece lives in Installations, tagged Music. UI/UX work goes inside the case study of the project it was for, not on its own.
+- **A new section needs at least 3 pieces worth showing.** Until then, a project fits an existing section or stays off the site. Example: once there are 3 strong 3D render / product design / graphic design pieces, add one **Design** section covering all of them, not one section per kind.
+- **No "Misc" section.**
+- **Keep the nav to about 6 items** (Home, About, and four sections). If a fifth section qualifies, merge two others instead of adding another.
+- Moving a project to another section changes its URL, so add a redirect in `next.config.mjs` when that happens.
+
+#### Grad school candidates (reviewed 2026-11-03)
+
+- [ ] **S** Squirrel Census (ATLS 5660 week 6) runs on a Google Maps 3D Tiles trial that will expire. Screen-record it while it still works; the TV screen only needs the video. Could go in Apps as a video-only entry.
+- [ ] Marble Clock (ATLS 5660 week 3) and Simple Reverb VST3 (week 7): Apps candidates. The clock needs a screen recording.
+- [ ] Hot Dog Bar (ATLS 5430 week 9): if it's built at the Whaaat!? Festival, photograph it running. That would go in Installations.
+- [ ] ATLS 5430 final project: possible first piece for a future Design section.
+- [x] **L** Give each project its own URL (`/installations/<slug>`, `/xr-games/<slug>`, `/apps/<slug>`, `/music/<slug>`) instead of `?project=slug`. Each section is one optional catch-all page built statically for every project, so link previews and crawlers get that project's title, description, and canonical URL. Picking a project does a shallow URL replace; the Showcase doesn't remount. The sitemap is now generated from the project data.
+    - [x] **M** Write a real `description` for each project (the field exists on `ShowcaseItem`). Until then it's built from subtitle, year, and tags, which reads flat for some items (e.g. music: "dolphinswarm (2025). Folk, Indie."). (Done 2026-11-03, in the site's first-person voice.)
+    - [x] **M** Per-project Open Graph images (1200×630). Every project page still shares the site-wide `og-image.jpg`. (Done 2026-11-03: `scripts/make-og-images.mjs` writes `public/og/<section>/<slug>.jpg` from each project's video frame or image. Rerun it after adding a project.)
+- [x] **M** Move project data out of page files into `src/data/*.ts` (needed for the step above). (Done: `src/data/code.tsx`, `visuals.tsx`, `music.tsx`; `.tsx` because the bodies are JSX. Music palettes and lookup helpers moved too; `MusicPlayerBar` stays in the page.)
 
 ### Case studies (top 2–3 projects)
 
-- [ ] **L** Expand FuTerra into a full case study:
+- [ ] **L** Expand FuTerra into a full case study **(Brad: gather material)**:
     - your role and team size
     - constraints: venue, scale, run length, audience numbers
     - a diagram of the generative music system and media server setup
     - process shots: Unreal scenes, projection mapping, on-site setup
     - photos of people experiencing it
-- [ ] **M** Same treatment for With/in (Night Lights Denver).
-- [ ] **M** Merge the three Poet's Shack items into one case study, or at least stop repeating the same intro paragraph three times ([visuals.tsx:187](../src/pages/visuals.tsx#L187), [232](../src/pages/visuals.tsx#L232), [280](../src/pages/visuals.tsx#L280)).
+- [ ] **M** Same treatment for With/in (Night Lights Denver). **(Brad: gather material)**
+- [ ] **M** Merge the three Poet's Shack items into one case study, or at least stop repeating the same intro paragraph three times (`POETS_SHACK_INTRO` in [installations.tsx](../src/data/installations.tsx)). **On hold (2026-11-03):** combining would make one Installations case study (overview + Shack Video, Poem Visualizer and web app as one pipeline, Upham Arch) with a media switcher and redirects from the old URLs, and Apps would need Marble Clock or Reverb to stay at 3. The lighter option is to keep the entries and cross-link them.
 
 ### Code page
 
-- [ ] **M** Cut, archive, or reframe the 2019–2021 coursework. Remove the "first project / learning demo" wording ([code.tsx:91](../src/pages/code.tsx#L91), [code.tsx:129](../src/pages/code.tsx#L129)).
+- [x] **M** Cut, archive, or reframe the 2019–2021 coursework. Remove the "first project / learning demo" wording (VRchery and AR Looper in [xr-games.tsx](../src/data/xr-games.tsx)). Steampunk Fort and Tri-Delta Sundial were cut on 2026-11-03.. (Done 2026-11-03: removed the "first project / learning demo" wording; VRchery is now described as an Honors course extension.)
 
 ### About page
 
-- [ ] **M** Add a project or description for the XR Studios Creative Technologist role, your most relevant job. If it's under NDA, describe the kind of work rather than specific shows.
-- [ ] **S** Give each role one or two lines on impact.
-- [ ] **S** Trim the awards block to one line.
-- [ ] **S** Replace `<br />` spacing with CSS.
+- [ ] **S** Replace `public/resume.pdf` with a PDF of the regular resume once it has the CU Boulder line. The current PDF has no grad school. **(Brad)**
+- [x] **M** Add a project or description for the XR Studios Creative Technologist role, your most relevant job. If it's under NDA, describe the kind of work rather than specific shows. (Done 2026-11-03 from the Extended Resume. Also added the missing ETBD Research Assistant / VR Developer role and CU Boulder ATLAS grad school.)
+- [x] **S** Give each role one or two lines on impact.
+- [x] **S** Trim the awards block to one line. (Summa cum laude, University Honors w/ Distinction, Outstanding Senior in Emerging Technology.)
+- [x] **S** Replace `<br />` spacing with CSS.
 
 ### Contact (merged into About)
 
 - [x] **M** Merge Connect into About. Email, copy, resume, and social links now sit under the intro ([ContactLinks.tsx](../src/components/ContactLinks/ContactLinks.tsx)); `/connect` redirects to `/about`.
-- [ ] **S** Add an availability line under the contact links: types of projects you're open to, freelance vs. full-time, timezone/travel.
-- [ ] **S** The "connect" procedural screen look is no longer used by any route. Reuse it somewhere or remove it from the 3D code.
+- [x] ~~**S** Add an availability line under the contact links: types of projects you're open to, freelance vs. full-time, timezone/travel.~~ Decided against (2026-11-03): working full-time, and the "Want to work with me?" line already invites contract installation work.
+- [x] **S** The "connect" procedural screen look is no longer used by any route. Reuse it somewhere or remove it from the 3D code. (Removed 2026-11-03, including its shader branch.)
 
 ### Music page
 
 - [x] **S** Show the "I write music under the name dolphinswarm" intro once, not on all 7 songs. (Kept on each song, since only one shows at a time, but defined once as a shared constant. Same for the Poet's Shack intro.)
 - [ ] **S** Give songs distinct thumbnails (all 7 share `brad-guitar.jpg`).
-- [ ] **M** Move the 10 inline `style={{}}` blocks in `MusicPlayerBar` into an SCSS module like the rest of the site.
+- [x] **M** Move the 10 inline `style={{}}` blocks in `MusicPlayerBar` into an SCSS module like the rest of the site. (Done 2026-11-03: `src/styles/MusicPlayer.module.scss`.)
 
 ### Video hosting
 
-- [ ] **M** Move "View Full Video" links from Google Drive to Vimeo or YouTube. Drive previews are clunky and sometimes blocked by permissions; video platforms also help discovery.
+- [ ] **M** Move "View Full Video" links from Google Drive to Vimeo or YouTube. Drive previews are clunky and sometimes blocked by permissions; video platforms also help discovery. **(Brad: upload the videos; then swap the links)**
 
 ---
 
+### Responsive layout and accessibility (swept 2026-11-03)
+
+Checked every sitemap page plus `/bork` (39 pages) in headless Edge at phone (390×844), phone held sideways (844×390), tablet (820×1180), and desktop (1440×900): screenshots, horizontal overflow, page errors, an axe-core audit (phone and desktop), and a keyboard tab-through. After the fixes: 0 axe violations, no overflow, no errors.
+
+- [x] **S** About on phones/tablets: one column below 1024px over a dim backdrop; clears the header and bottom nav on phones.
+- [x] **S** About: Interests list showed a bullet *and* an icon.
+- [x] **S** About text box now lines up with the TV in the 3D scene at every size (it was a fixed 16:9 box that spilled past the TV) and scrolls inside it. Its size is worked out from the locked camera, so it needs updating if the camera or TV changes (see ScreenOverlay.module.scss).
+- [x] **S** Phone bottom nav: "XR & Games" wrapped to two lines.
+- [x] **S** Homepage name banner was cut off on narrow screens. Moving it in front of Brad covered his legs and clipped on tablets, so it now only shows when the TV corner it sits on is in view; the header already shows the name and role on portrait screens.
+- [x] **S** Firefox for Android: empty band under the bottom nav (it reports a bottom inset but already keeps the page clear of it). Bottom safe-area spacing now goes through `--safe-area-bottom`, zeroed for Firefox only so iPhones keep it.
+- [x] **M** Sideways phones / screens under 500px tall: the project panel grew up under the header. Text-only thumbs and a capped panel there; About clears the header on short screens too.
+- [x] **S** Deep links (e.g. `/music/heist`) now scroll the carousel to the selected project.
+- [x] **S** Logo link announced "Go to home" instead of its visible "Brad Schmitz" (axe: serious).
+- [x] **S** Project thumbs read title and subtitle run together, and said the title twice (image alt).
+- [x] **S** Added a "Skip to content" link.
+- [x] **S** With reduced motion on, the camera no longer follows the pointer and cuts between views instead of gliding.
+- [ ] **M** Check on real phones (iOS Safari, Android Chrome): safe areas, the URL bar resizing `dvh`, touch scrolling in the panel. **(Brad)**
+- [ ] **M** Screen reader pass with NVDA (free on Windows) on Home, About, and a project page.
+- [ ] **S** Contrast of text over the 3D scene can't be measured automatically; check by eye, especially project panels over bright videos.
+
 ## Phase 4: Ongoing SEO and outreach
 
-- [ ] **M** Add `VideoObject` JSON-LD to project pages (needs `thumbnailUrl`, `uploadDate`, `contentUrl`).
+- [x] ~~**M** Add `VideoObject` JSON-LD to project pages (needs `thumbnailUrl`, `uploadDate`, `contentUrl`). Project pages now exist, so `ShowcasePage` can pass it to `<SEO jsonLd>`.~~ Decided against (2026-11-03): Google needs an exact upload date per video and the projects only have years; once the full videos are on YouTube, YouTube covers video search.
 - [ ] **S** Work target phrases into visible text: "creative technologist Denver", "projection mapping", "immersive installation".
-- [ ] **S** Ask &FRIENDS Studio, the Denver Theatre District artist page, and BLINK to link to your site.
-- [ ] **S** Put the site URL in your GitHub, LinkedIn, YouTube, SoundCloud and Instagram bios.
+- [x] ~~**S** Ask &FRIENDS Studio, the Denver Theatre District artist page, and BLINK to link to your site.~~ Decided against (2026-11-03).
+- [ ] **S** Put the site URL in your GitHub, LinkedIn, YouTube, SoundCloud and Instagram bios. Checked 2026-11-03: GitHub has it; the Instagram bio links only to SoundCloud; YouTube, SoundCloud, and LinkedIn need a manual look. **(Brad)**
 
 ### Code refactors (when touching these files)
-- [ ] **M** Refactor the effects flagged by `react-hooks/set-state-in-effect` (Base, BackgroundScreen, Screen, Showcase) and `preserve-manual-memoization` (ProceduralScreenMaterial), then set both rules back to errors in `eslint.config.mjs`. Downgraded to warnings when `eslint-config-next` 16.4 made them errors.
+- [ ] **M** Refactor the effects flagged by `react-hooks/set-state-in-effect` (Base, BackgroundScreen, Screen, Showcase) and `preserve-manual-memoization` (ProceduralScreenMaterial), then set both rules back to errors in `eslint.config.mjs`. Downgraded to warnings when `eslint-config-next` 16.4 made them errors. The music page warning is fixed (dead `activeSlug` state). The rest are texture/video loaders in the 3D scene and the Showcase; refactor them while watching the screen, since a mistake shows up as a blank or flickering TV.
 
 - [x] **S** Replace the hand-rolled `<a>` + `router.push` navigation in [Header.tsx](../src/components/Header.tsx#L55-L86) with `next/link` to get prefetching back.
-- [ ] **S** Pull the duplicated screen-sync setup in `code.tsx` and `visuals.tsx` into a shared hook or into Showcase itself.
+- [x] **S** Pull the duplicated screen-sync setup in `code.tsx` and `visuals.tsx` into a shared hook or into Showcase itself. (Done: [ShowcasePage.tsx](../src/components/Showcase/ShowcasePage.tsx) handles it for every section, Music included.)

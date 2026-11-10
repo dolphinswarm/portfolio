@@ -1,18 +1,10 @@
-import * as React from "react";
-import { SEO } from "@/components/SEO";
-import {
-    Showcase,
-    type ShowcaseItem,
-    type ShowcaseScreenMedia,
-} from "@/components/Showcase/Showcase";
-import { useSceneVideo } from "@/context/SceneVideoContext";
 import Link from "next/link";
 import {
-    faArrowUpRightFromSquare,
     faBook,
     faClapperboard,
     faFilm,
 } from "@fortawesome/free-solid-svg-icons";
+import type { ShowcaseItem } from "@/components/Showcase/Showcase";
 
 // Shared context for the three pieces from the Poet's Shack installation.
 const POETS_SHACK_INTRO = (
@@ -25,12 +17,14 @@ const POETS_SHACK_INTRO = (
     </p>
 );
 
-const VISUAL_ITEMS: ShowcaseItem[] = [
+export const INSTALLATION_ITEMS: ShowcaseItem[] = [
     {
         slug: "futerra",
         title: "FuTerra | I Was The Earth",
         subtitle: "Installation at BLINK 2024 by &FRIENDS Studio",
         year: "2024",
+        description:
+            "An immersive projection installation at BLINK 2024 in Cincinnati with &FRIENDS Studio, where I was music director and technical artist.",
         tags: [
             "Unreal Engine",
             "Installation",
@@ -82,8 +76,7 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
                     . My role in this project was music director and technical
                     artist, where I created a generative music system to
                     "infinitely" play with the installation (more details can be
-                    found on the{" "}
-                    <Link href="music?project=futerra">music page</Link>
+                    found on the <Link href="/music/futerra">music page</Link>
                     ). I also helped with projection mapping, media server
                     programming, Unreal Engine scene development, and overall
                     technical direction.
@@ -96,6 +89,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         title: "With/in: The Dance Between Being & Becoming",
         subtitle: "Art for Denver clock tower by &FRIENDS Studio",
         year: "2026",
+        description:
+            "A projection piece on Denver's Daniels & Fisher clock tower for Night Lights Denver, made with &FRIENDS Studio. I produced it and composed the music.",
         tags: ["Installation", "Projection Mapping"],
         links: [
             {
@@ -159,6 +154,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         subtitle:
             "Gathering at the Poet's Shack Installation @ Miami University",
         year: "2020",
+        description:
+            "The centerpiece of the 2020 Gathering at the Poet's Shack: narrated poems projected onto a 10-foot-tall rustic shack, with a soundtrack I composed.",
         tags: ["TouchDesigner", "Projection Mapping"],
         links: [
             {
@@ -211,6 +208,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         subtitle:
             "Gathering at the Poet's Shack Installation @ Miami University",
         year: "2020",
+        description:
+            "A TouchDesigner projection that turned poems visitors typed in at the Poet's Shack into live visuals, using AI to read the mood of each one.",
         tags: ["TouchDesigner", "Projection Mapping", "ExpressJS", "AWS"],
         links: [
             {
@@ -252,6 +251,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         subtitle:
             "Gathering at the Poet's Shack Installation @ Miami University",
         year: "2020",
+        description:
+            "I turned Miami University's historic Upham Arch into a starfield that followed people's shapes as they walked by, using a Kinect Azure.",
         tags: ["TouchDesigner", "Projection Mapping", "Kinect Azure"],
         links: [
             {
@@ -292,6 +293,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         title: "Trojan Horse - Projection Music Video",
         subtitle: "Final Project for IMS 431 @ Miami University",
         year: "2020",
+        description:
+            "A projection-mapped music video for Sebastian Paul's TROJAN HORSE, projected onto the back of Kumler Chapel at Miami University. Made in TouchDesigner.",
         tags: ["TouchDesigner", "Projection Mapping"],
         links: [
             {
@@ -329,6 +332,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         title: "Fort Knox - TouchDesigner Music Video",
         subtitle: "Project for IMS 431 @ Miami University",
         year: "2020",
+        description:
+            "A lyric video for GoldFish's electro-swing song Fort Knox, built entirely in TouchDesigner by flying a camera around a 3D scene full of neon text.",
         tags: ["TouchDesigner"],
         links: [
             {
@@ -368,6 +373,8 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
         title: "Letters from the Ocean",
         subtitle: "Projection for a Production @ Miami University",
         year: "2020",
+        description:
+            "Water projections for a scene in Miami University Theatre's Mother Earth's Gallery of Broken Things, moving alongside dancers, music, and spoken word.",
         tags: ["TouchDesigner", "Projection Mapping"],
         links: [
             {
@@ -402,108 +409,4 @@ const VISUAL_ITEMS: ShowcaseItem[] = [
             </>
         ),
     },
-    {
-        slug: "steampunk-mobile-fortress",
-        title: "Steampunk Mobile Fortress",
-        subtitle:
-            "3D Model and Animation Final Project for IMS 319 @ Miami University",
-        year: "2020",
-        tags: ["3D Modeling", "Animation", "AutoDesk Maya"],
-        screenSource: {
-            primary: {
-                kind: "video",
-                src: "/branding/videos/visuals/steampunk-fort.mp4",
-            },
-        },
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/steampunk-fort.webp",
-        },
-        body: (
-            <>
-                <p>
-                    <em>Steampunk Mobile Fortress</em> was a 3D model and
-                    animation final project created for IMS 319 at Miami
-                    University. The project involved designing and animating a
-                    steampunk-inspired mobile fortress, showcasing skills in 3D
-                    modeling, texturing, and animation within AutoDesk Maya.
-                </p>
-            </>
-        ),
-    },
-    {
-        slug: "tri-delta-sundial",
-        title: "Tri-Delta Sundial",
-        subtitle: "Project for IMS 319 @ Miami University",
-        year: "2020",
-        tags: ["3D Modeling", "AutoDesk Maya"],
-        links: [
-            {
-                label: "Image of IRL Sundial",
-                href: "/branding/img/visuals/tridelt-sundial-irl.jpg",
-                icon: faArrowUpRightFromSquare,
-                openInNewWindow: true,
-            },
-        ],
-        screenSource: {
-            primary: {
-                kind: "image",
-                src: "/branding/img/visuals/miami-sundial.png",
-            },
-        },
-        thumbnailSource: {
-            kind: "image",
-            src: "/branding/img/thumbs/miami-sundial.webp",
-        },
-        body: (
-            <>
-                <p>
-                    <em>Tri-Delta Sundial</em> is a 3D model of the Tri-Delta
-                    sundial located on Miami University's campus. This model was
-                    created as part of IMS 319 at Miami University, which
-                    required creating a detailed and accurate representation of
-                    a building or structure on campus using AutoDesk Maya.
-                </p>
-            </>
-        ),
-    },
 ];
-
-const Visuals = () => {
-    const { setMediaOverride, clearMediaOverride } = useSceneVideo();
-
-    const onScreenMediaChange = React.useCallback(
-        (media: ShowcaseScreenMedia | null) => {
-            setMediaOverride(media);
-        },
-        [setMediaOverride],
-    );
-
-    React.useEffect(() => {
-        return () => {
-            clearMediaOverride();
-        };
-    }, [clearMediaOverride]);
-
-    return (
-        <>
-            <SEO
-                title="Projection Mapping & Immersive Installations"
-                description="Projection mapping, immersive installations, and TouchDesigner and Unreal Engine visuals by Brad Schmitz, including FuTerra at BLINK 2024 and Night Lights Denver."
-                path="/visuals"
-            />
-            <h1 className="visually-hidden">
-                Projection mapping and immersive installations
-            </h1>
-
-            <Showcase
-                pageTitle="Visuals"
-                items={VISUAL_ITEMS}
-                queryKey="project"
-                onScreenMediaChange={onScreenMediaChange}
-            />
-        </>
-    );
-};
-
-export default Visuals;
