@@ -1,6 +1,7 @@
 import React from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /** Shortest burst on a switch, so it reads as a channel flip (seconds). */
 const MIN_HOLD_S = 0.4;
@@ -80,10 +81,7 @@ export const ChannelStatic = ({
     const minHoldRef = React.useRef(0);
     const previousKeyRef = React.useRef(channelKey);
 
-    const prefersReducedMotion = React.useMemo(
-        () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
-        [],
-    );
+    const prefersReducedMotion = usePrefersReducedMotion();
 
     const material = React.useMemo(
         () =>

@@ -1,6 +1,7 @@
 import React from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /** How quickly the camera eases toward its target; higher is snappier. */
 const DAMPING = 6;
@@ -22,10 +23,7 @@ export const PointAtCamera = ({
 }) => {
     const [posVec] = React.useState(() => new THREE.Vector3());
     const [lookVec] = React.useState(() => new THREE.Vector3());
-    const prefersReducedMotion = React.useMemo(
-        () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
-        [],
-    );
+    const prefersReducedMotion = usePrefersReducedMotion();
     const damping = prefersReducedMotion ? DAMPING_REDUCED_MOTION : DAMPING;
 
     return useFrame((state, delta) => {

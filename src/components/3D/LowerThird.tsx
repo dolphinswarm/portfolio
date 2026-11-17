@@ -1,6 +1,7 @@
 import React from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /**
  * Layout is authored in "design px" at 200px per scene unit (the 4-unit-wide
@@ -210,10 +211,7 @@ export const LowerThird = ({
     const meshRef = React.useRef<THREE.Mesh>(null);
     const elapsedRef = React.useRef(0);
     const anchorRef = React.useRef(new THREE.Vector3());
-    const prefersReducedMotion = React.useMemo(
-        () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
-        [],
-    );
+    const prefersReducedMotion = usePrefersReducedMotion();
 
     // Wipe in: grow the plane from its left edge while revealing the same
     // fraction of the texture, so nothing stretches.

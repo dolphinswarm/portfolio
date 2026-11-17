@@ -1,6 +1,7 @@
 import React from "react";
 import * as THREE from "three";
 import { useFrame, type ThreeElements } from "@react-three/fiber";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 export type ProceduralScreenVariant = "about" | "music";
 
@@ -342,7 +343,11 @@ export const ProceduralScreenMaterial = ({
         fallbackSpectrumTex,
     ]);
 
+    const prefersReducedMotion = usePrefersReducedMotion();
     useFrame((state) => {
+        // Reduced motion: a still image. (The music bars still follow the
+        // audio the visitor started, like the volume meter on a player.)
+        if (prefersReducedMotion) return;
         uniforms.uTime.value = state.clock.getElapsedTime();
     });
 

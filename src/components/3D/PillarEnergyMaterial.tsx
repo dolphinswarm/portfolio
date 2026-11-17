@@ -1,6 +1,7 @@
 import React from "react";
 import * as THREE from "three";
 import { useFrame, type ThreeElements } from "@react-three/fiber";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 export type PillarEnergyUniforms = {
     uTime: { value: number };
@@ -201,7 +202,10 @@ export const PillarEnergyMaterial = ({
         pillar.uniforms.uSeed.value = seed;
     }, [colorA, colorB, intensity, speed, seed, pillar.uniforms]);
 
+    const prefersReducedMotion = usePrefersReducedMotion();
     useFrame((state) => {
+        // Reduced motion: hold the bands still (colors still follow the video).
+        if (prefersReducedMotion) return;
         pillar.uniforms.uTime.value = state.clock.getElapsedTime();
     });
 

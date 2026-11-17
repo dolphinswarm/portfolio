@@ -219,7 +219,6 @@
 
 .audioToggle {
     margin-top: 10px;
-    margin-left: 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -240,6 +239,11 @@
         transform 120ms ease,
         background 120ms ease,
         opacity 120ms ease;
+}
+
+// Only space it from a button before it, so it isn't indented when it's first.
+button + .audioToggle {
+    margin-left: 10px;
 }
 
 .audioToggleIcon {

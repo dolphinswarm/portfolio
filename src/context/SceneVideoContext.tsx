@@ -1,5 +1,6 @@
 import React from "react";
 import type { SceneMedia } from "@/utils/types";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 export type MusicScreenStyle = {
     /** Primary bar color (hex or any CSS color supported by THREE.Color). */
@@ -21,6 +22,15 @@ type SceneVideoContextValue = {
     screenStyleOverride: ScreenStyleOverride | null;
     setScreenStyleOverride: (style: ScreenStyleOverride | null) => void;
     clearScreenStyleOverride: () => void;
+    /**
+     * Whether scene videos should be paused on a still frame. Unless the
+     * visitor has pressed play or pause, that's when they prefer reduced
+     * motion, except for a video with its sound on (sound is something they
+     * chose to hear, and a still frame can't carry it).
+     */
+    isVideoPaused: (audioEnabled: boolean) => boolean;
+    /** Records the visitor's own play/pause choice for the rest of the visit. */
+    setVideoPaused: (paused: boolean) => void;
 };
 
 const SceneVideoContext = React.createContext<SceneVideoContextValue | null>(
@@ -37,6 +47,10 @@ export const SceneVideoProvider = ({
     );
     const [screenStyleOverride, setScreenStyleOverride] =
         React.useState<ScreenStyleOverride | null>(null);
+    const [videoPausedChoice, setVideoPausedChoice] = React.useState<
+        boolean | null
+    >(null);
+    const prefersReducedMotion = usePrefersReducedMotion();
 
     const clearMediaOverride = React.useCallback(() => {
         setMediaOverride(null);
@@ -46,6 +60,12 @@ export const SceneVideoProvider = ({
         setScreenStyleOverride(null);
     }, []);
 
+    const isVideoPaused = React.useCallback(
+        (audioEnabled: boolean) =>
+            videoPausedChoice ?? (prefersReducedMotion && !audioEnabled),
+        [videoPausedChoice, prefersReducedMotion],
+    );
+
     const value = React.useMemo<SceneVideoContextValue>(
         () => ({
             mediaOverride,
@@ -54,6 +74,8 @@ export const SceneVideoProvider = ({
             screenStyleOverride,
             setScreenStyleOverride,
             clearScreenStyleOverride,
+            isVideoPaused,
+            setVideoPaused: setVideoPausedChoice,
         }),
         [
             mediaOverride,
@@ -61,6 +83,7 @@ export const SceneVideoProvider = ({
             screenStyleOverride,
             setScreenStyleOverride,
             clearScreenStyleOverride,
+            isVideoPaused,
         ],
     );
 

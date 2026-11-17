@@ -14,6 +14,7 @@ import { ChannelStatic } from "./ChannelStatic";
 import { SITE_NAME, SITE_ROLE } from "@/utils/site";
 import * as THREE from "three";
 import type { ProceduralScreenVariant } from "./ProceduralScreenMaterial";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const RouteTransition = ({
     isIndexRoute,
@@ -24,8 +25,15 @@ const RouteTransition = ({
     transitionRef: React.MutableRefObject<number>;
     speed?: number;
 }) => {
+    const prefersReducedMotion = usePrefersReducedMotion();
     useFrame((_, delta) => {
         const target = isIndexRoute ? 1 : 0;
+        // Reduced motion: cut straight to the new layout instead of sinking
+        // the pillars and pushing the backdrop back.
+        if (prefersReducedMotion) {
+            transitionRef.current = target;
+            return;
+        }
         transitionRef.current = THREE.MathUtils.damp(
             transitionRef.current,
             target,

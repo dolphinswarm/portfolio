@@ -7,6 +7,8 @@ import {
 } from "./ProceduralScreenMaterial";
 import { useAudioSpectrum } from "@/context/AudioSpectrumContext";
 import { useSceneVideo } from "@/context/SceneVideoContext";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
 
 const applyAspectCover = (
     texture: THREE.Texture,
@@ -101,10 +103,16 @@ export const Screen = ({
     readyRef?: React.MutableRefObject<boolean>;
 }) => {
     const { texture: spectrumTexture, size: spectrumSize } = useAudioSpectrum();
-    const { screenStyleOverride } = useSceneVideo();
+    const { screenStyleOverride, isVideoPaused } = useSceneVideo();
+    const prefersReducedMotion = usePrefersReducedMotion();
     const [internalVideo, setInternalVideo] =
         React.useState<HTMLVideoElement | null>(null);
     const activeVideo = video ?? internalVideo;
+    // A shared `video` is played by its owner (the backdrop screen).
+    useVideoPlayback(
+        internalVideo,
+        isVideoPaused(media.audio?.enabled === true),
+    );
 
     const cleanupVideo = React.useCallback((vid: HTMLVideoElement | null) => {
         if (!vid) return;
@@ -218,10 +226,13 @@ export const Screen = ({
         const base = imageBaseUvRef.current;
         if (!base) return;
 
-        // Subtle Ken Burns: slow zoom + gentle drift.
+        // Subtle Ken Burns: slow zoom + gentle drift. Reduced motion holds
+        // the same crop still (centered, mid-zoom).
         // Texture repeat < 1 means we're "zoomed" (cropped). Smaller repeat => more zoom.
         const t = state.clock.getElapsedTime();
-        const zoom = 0.04 + 0.02 * Math.sin(t * 0.12); // 4%..6%
+        const zoom = prefersReducedMotion
+            ? 0.05
+            : 0.04 + 0.02 * Math.sin(t * 0.12); // 4%..6%
 
         const repeatX = clamp(base.repeatX * (1 - zoom), 0.01, 1);
         const repeatY = clamp(base.repeatY * (1 - zoom), 0.01, 1);
@@ -234,8 +245,8 @@ export const Screen = ({
         const minCenterY = repeatY / 2;
         const maxCenterY = 1 - repeatY / 2;
 
-        const driftX = 0.05 * Math.sin(t * 0.07);
-        const driftY = 0.04 * Math.cos(t * 0.06);
+        const driftX = prefersReducedMotion ? 0 : 0.05 * Math.sin(t * 0.07);
+        const driftY = prefersReducedMotion ? 0 : 0.04 * Math.cos(t * 0.06);
 
         const centerX = clamp(baseCenterX + driftX, minCenterX, maxCenterX);
         const centerY = clamp(baseCenterY + driftY, minCenterY, maxCenterY);
@@ -284,17 +295,7 @@ export const Screen = ({
         // Keep this internal fallback muted to avoid duplicate audio.
         vid.muted = true;
         vid.playsInline = true;
-
-        const playPromise = vid.play();
-        if (
-            playPromise &&
-            typeof (playPromise as Promise<void>).catch === "function"
-        ) {
-            (playPromise as Promise<void>).catch((err: unknown) => {
-                const name = (err as { name?: string } | null)?.name;
-                if (name === "AbortError" || name === "NotAllowedError") return;
-            });
-        }
+        // Playback starts in useVideoPlayback once this is the internal video.
 
         setInternalVideo(vid);
         onVideoReady?.(vid);

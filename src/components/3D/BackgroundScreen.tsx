@@ -4,6 +4,8 @@ import { useGLTF, useTexture } from "@react-three/drei";
 import type { ThreeElements } from "@react-three/fiber";
 import { PillarEnergyMaterial } from "./PillarEnergyMaterial";
 import { useVideoPalette } from "@/hooks/useVideoPalette";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
+import { useSceneVideo } from "@/context/SceneVideoContext";
 import {
     ProceduralScreenMaterial,
     getProceduralVariantColors,
@@ -195,6 +197,12 @@ export const BackgroundScreen = ({
     const [internalVideo, setInternalVideo] = React.useState<HTMLVideoElement | null>(
         null,
     );
+
+    // This element is also the one the front screen shows (via onVideoReady),
+    // so pausing it here pauses both.
+    const { isVideoPaused } = useSceneVideo();
+    const isPaused = isVideoPaused(media.audio?.enabled === true);
+    useVideoPlayback(internalVideo, isPaused);
 
     const [imageTexture, setImageTexture] = React.useState<THREE.Texture | null>(null);
 
@@ -404,15 +412,7 @@ export const BackgroundScreen = ({
         vid.muted = !audioEnabled;
         if (audioEnabled) vid.volume = Math.min(1, Math.max(0, audioVolume));
         vid.playsInline = true;
-
-        const playPromise = vid.play();
-        if (playPromise && typeof (playPromise as Promise<void>).catch === "function") {
-            (playPromise as Promise<void>).catch((err: unknown) => {
-                const name = (err as { name?: string } | null)?.name;
-                // Common during StrictMode double-invocation and route transitions.
-                if (name === "AbortError" || name === "NotAllowedError") return;
-            });
-        }
+        // Playback starts in useVideoPlayback once this is the internal video.
 
         setInternalVideo(vid);
         onVideoReady?.(vid);
@@ -436,7 +436,7 @@ export const BackgroundScreen = ({
         const audioVolume = typeof media.audio?.volume === "number" ? media.audio.volume : 1;
 
         internalVideo.muted = !audioEnabled;
-        if (audioEnabled) {
+        if (audioEnabled && !isPaused) {
             internalVideo.volume = Math.min(1, Math.max(0, audioVolume));
 
             const playPromise = internalVideo.play();
@@ -448,7 +448,7 @@ export const BackgroundScreen = ({
                 });
             }
         }
-    }, [internalVideo, media.sourceType, media.audio?.enabled, media.audio?.volume]);
+    }, [internalVideo, media.sourceType, media.audio?.enabled, media.audio?.volume, isPaused]);
 
     const palette = useVideoPalette(internalVideo, {
         sampleSize: 16,

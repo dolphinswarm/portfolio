@@ -5,10 +5,14 @@ import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
     faEye,
     faEyeSlash,
+    faPause,
+    faPlay,
     faVolumeHigh,
     faVolumeXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDrag } from "@use-gesture/react";
+import { useSceneVideo } from "@/context/SceneVideoContext";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import styles from "./Showcase.module.scss";
 
 const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
@@ -388,6 +392,12 @@ export const Showcase = ({
         activeScreenAsset?.kind === "video" &&
         activeScreenAsset.audio?.toggleable === true;
 
+    // Videos start paused for visitors who prefer reduced motion, so give
+    // everyone a way to play or pause them.
+    const { isVideoPaused, setVideoPaused } = useSceneVideo();
+    const isActiveVideoPaused =
+        activeScreenAsset?.kind === "video" && isVideoPaused(isAudioEnabled);
+
     // Reset audio state when switching items or the active asset.
     React.useEffect(() => {
         if (activeScreenAsset?.kind !== "video") {
@@ -464,6 +474,7 @@ export const Showcase = ({
         : secondaryScreenAsset?.icon;
 
     const carouselRef = React.useRef<HTMLDivElement>(null);
+    const prefersReducedMotion = usePrefersReducedMotion();
 
     const onSelect = React.useCallback(
         (slug: string) => {
@@ -481,16 +492,13 @@ export const Showcase = ({
                     // no-op (selection still works; URL just won't update)
                 });
 
-            const prefersReduced = window.matchMedia?.(
-                "(prefers-reduced-motion: reduce)",
-            ).matches;
             centerThumb(
                 carouselRef.current,
                 slug,
-                prefersReduced ? "auto" : "smooth",
+                prefersReducedMotion ? "auto" : "smooth",
             );
         },
-        [router, basePath],
+        [router, basePath, prefersReducedMotion],
     );
 
     // A deep link can select an item that starts scrolled out of the carousel
@@ -643,9 +651,13 @@ export const Showcase = ({
                                     <button
                                         type="button"
                                         className={styles.audioToggle}
-                                        onClick={() =>
-                                            setIsAudioEnabled((v) => !v)
-                                        }
+                                        onClick={() => {
+                                            // Sound needs the video playing.
+                                            if (!isAudioEnabled) {
+                                                setVideoPaused(false);
+                                            }
+                                            setIsAudioEnabled((v) => !v);
+                                        }}
                                         aria-pressed={isAudioEnabled}
                                     >
                                         <span
@@ -662,6 +674,33 @@ export const Showcase = ({
                                             />
                                         </span>
                                         Audio: {isAudioEnabled ? "On" : "Off"}
+                                    </button>
+                                ) : null}
+
+                                {activeScreenAsset?.kind === "video" ? (
+                                    <button
+                                        type="button"
+                                        className={styles.audioToggle}
+                                        onClick={() =>
+                                            setVideoPaused(!isActiveVideoPaused)
+                                        }
+                                    >
+                                        <span
+                                            className={styles.audioToggleIcon}
+                                            aria-hidden="true"
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={
+                                                    isActiveVideoPaused
+                                                        ? faPlay
+                                                        : faPause
+                                                }
+                                                fixedWidth
+                                            />
+                                        </span>
+                                        {isActiveVideoPaused
+                                            ? "Play video"
+                                            : "Pause video"}
                                     </button>
                                 ) : null}
                             </div>
