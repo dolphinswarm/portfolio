@@ -16,6 +16,7 @@ import Link from "next/link";
 import styles from "@/styles/About.module.scss";
 import { SEO } from "@/components/SEO";
 import { ContactLinks } from "@/components/ContactLinks/ContactLinks";
+import { PROFILE_PAGE_JSON_LD } from "@/utils/structuredData";
 
 const About = () => {
     return (
@@ -25,6 +26,7 @@ const About = () => {
                 fullTitle
                 description="Background, experience, toolkit, and contact info for Brad Schmitz: creative technologist, software engineer, and musician in Denver, CO, and M.S. Creative Technology & Design student at CU Boulder's ATLAS Institute."
                 path="/about"
+                jsonLd={PROFILE_PAGE_JSON_LD}
             />
             <ScreenOverlay
                 top={

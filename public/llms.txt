@@ -1,0 +1,40 @@
+# Brad Schmitz
+
+> Brad Schmitz (Bradley Schmitz) is a Denver, CO-based creative technologist, software engineer, and musician. He builds projection-mapped installations, VR/AR experiences, audio-reactive visuals, and generative music, working mainly in TouchDesigner, Unreal Engine, Unity, Three.js, and Ableton Live. He releases indie folk music as "dolphinswarm".
+
+Brad is a software engineer at ClickTime and was previously a creative technologist at XR Studios. He holds a B.S. in Computer Science and a B.A. in Interactive Media Studies from Miami University (Ohio), with minors in Music Composition and Music Performance (Saxophone). His work sits where technology, art, and music meet: interactive systems that make light, sound, motion, and space feel responsive.
+
+- Location: Denver, Colorado, USA
+- Roles: Creative Technologist, Software Engineer, Musician
+- Creative tools: TouchDesigner, Unreal Engine, Unity, Three.js / React Three Fiber, OpenGL/GLSL, Vulkan, Adobe Suite
+- Music tools: Ableton Live, Max/MSP, MIDI
+- Programming: TypeScript/JavaScript, C#, C/C++, Python, Java, React, Next.js, Node.js, SQL
+- Instruments: saxophone (alto, tenor, soprano, baritone), guitar, banjo, bass, piano
+
+## Pages
+
+- [About](https://bradschmitz.com/about): Background, work experience, education, toolkit, and contact links
+- [Visuals](https://bradschmitz.com/visuals): Projection mapping, immersive installations, and TouchDesigner / Unreal Engine visuals
+- [Code](https://bradschmitz.com/code): VR, AR, game, and web audio projects
+- [Music](https://bradschmitz.com/music): Generative installation music, orchestral and chamber compositions, saxophone performance, and dolphinswarm releases
+- [Resume (PDF)](https://bradschmitz.com/resume.pdf): Full resume
+
+## Selected work
+
+- FuTerra | I Was The Earth (2024): Installation at the BLINK 2024 festival with &FRIENDS Studio; Brad also composed its generative music
+- With/in: The Dance Between Being & Becoming: Art for a Denver clock tower with &FRIENDS Studio, shown at Night Lights Denver; Brad also composed its music
+- Gathering at the Poet's Shack (2020): Projection-mapped installation at Miami University, including a TouchDesigner poem visualizer and a Kinect-driven interactive projection on Upham Arch
+- Parkinson's VR Training (2021): Virtual reality training simulation built in Unity and C#
+- VRchery: Virtual reality archery game
+- AR Looper: Augmented reality music looper
+- The Ultimate Drum Machine: Browser-based 16-step drum sequencer
+- This website: A 3D portfolio built with Next.js and React Three Fiber
+
+## Contact
+
+- Email: brad.j.schmitz@gmail.com
+- [LinkedIn](https://www.linkedin.com/in/bradley-schmitz/)
+- [GitHub](https://github.com/dolphinswarm)
+- [YouTube](https://www.youtube.com/@brad.j.schmitz)
+- [SoundCloud](https://soundcloud.com/dolphinswarm)
+- [Instagram](https://www.instagram.com/dolphinswarm.music/)
