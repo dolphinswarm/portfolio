@@ -1,6 +1,8 @@
 :root {
-    --background: #ffffff;
-    --foreground: #171717;
+    /* The site is dark-only, whatever the OS appearance setting. */
+    color-scheme: dark;
+    --background: #0a0a0a;
+    --foreground: #ededed;
     --mobile-nav-height: 0px;
     /* Height of the sticky top header; matches the breakpoints in Nav.module.scss. */
     --header-height: 73px;
@@ -31,13 +33,6 @@
     :root {
         --mobile-nav-height: 72px;
         --header-height: 84px;
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
     }
 }
 
@@ -137,10 +132,4 @@ main:focus {
 
 p a {
     color: var(--accent);
-}
-
-@media (prefers-color-scheme: dark) {
-    html {
-        color-scheme: dark;
-    }
 }
