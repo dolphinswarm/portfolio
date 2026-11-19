@@ -29,10 +29,11 @@
     }
 }
 
+/* One-line header (no tagline) and a slimmer bottom nav. */
 @media (max-width: 768px) {
     :root {
-        --mobile-nav-height: 72px;
-        --header-height: 84px;
+        --mobile-nav-height: 60px;
+        --header-height: 47px;
     }
 }
 

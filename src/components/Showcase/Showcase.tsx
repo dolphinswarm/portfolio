@@ -3,10 +3,13 @@ import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
+    faChevronDown,
+    faChevronUp,
     faEye,
     faEyeSlash,
     faPause,
     faPlay,
+    faRightLeft,
     faVolumeHigh,
     faVolumeXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +21,13 @@ import styles from "./Showcase.module.scss";
 const FALLBACK_THUMB_SRC = "/branding/img/thumbs/placeholder.svg";
 
 const CHROME_STORAGE_KEY = "showcase:chromeVisible";
+
+// Matches the phone breakpoint in Showcase.module.scss, where the detail
+// panel becomes a bottom sheet.
+const SHEET_MEDIA_QUERY = "(max-width: 768px)";
+
+// How far a swipe on the sheet's top has to travel to open or close it.
+const SHEET_SWIPE_THRESHOLD = 32;
 
 // Each section is its own page, so changing sections mounts a new Showcase.
 // Next swaps pages in one commit: while the new one renders, the old one is
@@ -573,7 +583,55 @@ export const Showcase = ({
         [onSelect],
     );
 
+    // Phones: the detail panel is a bottom sheet. Collapsed it shows the
+    // title and subtitle so the 3D screen stays visible; expanded it fills
+    // the space above the carousel so the write-up reads as one scroll.
+    const [isSheetExpanded, setIsSheetExpanded] = React.useState(false);
+    const detailRef = React.useRef<HTMLElement>(null);
+    const sheetScrollRef = React.useRef<HTMLDivElement>(null);
+    const sheetBodyId = React.useId();
+    const sheetTextId = React.useId();
+
+    // A new project starts at the top of its write-up. The panel scrolls on
+    // desktop; on phones the area under the title does.
+    React.useEffect(() => {
+        detailRef.current?.scrollTo({ top: 0 });
+        sheetScrollRef.current?.scrollTo({ top: 0 });
+    }, [selectedSlug, isSheetExpanded]);
+
+    const didSwipeSheetRef = React.useRef(false);
+
+    const bindSheetDrag = useDrag(
+        ({ last, movement: [, my] }) => {
+            if (!window.matchMedia(SHEET_MEDIA_QUERY).matches) return;
+            if (Math.abs(my) > 8) didSwipeSheetRef.current = true;
+            if (!last) return;
+
+            if (my < -SHEET_SWIPE_THRESHOLD) setIsSheetExpanded(true);
+            else if (my > SHEET_SWIPE_THRESHOLD) setIsSheetExpanded(false);
+
+            // Reset after the click that follows pointerup has been ignored.
+            requestAnimationFrame(() => {
+                didSwipeSheetRef.current = false;
+            });
+        },
+        { axis: "y", filterTaps: true },
+    );
+
+    // A swipe that ends on a button (the handle, Pause, ...) shouldn't also
+    // press it.
+    const onSheetGripClickCapture = React.useCallback((e: React.MouseEvent) => {
+        if (!didSwipeSheetRef.current) return;
+        e.preventDefault();
+        e.stopPropagation();
+    }, []);
+
     if (!items.length) return null;
+
+    const hasControls =
+        hasVideoToggle ||
+        isAudioToggleAvailable ||
+        activeScreenAsset?.kind === "video";
 
     return (
         <div
@@ -596,186 +654,326 @@ export const Showcase = ({
                         fixedWidth
                     />
                 </span>
-                <span>{isChromeVisible ? "Hide UI" : "Show UI"}</span>
+                {/* Phones show only the icon; this stays as its accessible name. */}
+                <span className={styles.chromeToggleLabel}>
+                    {isChromeVisible ? "Hide UI" : "Show UI"}
+                </span>
             </button>
 
             <div
                 id={dockId}
-                className={
-                    isChromeVisible
-                        ? styles.dock
-                        : `${styles.dock} ${styles.dockHidden}`
-                }
+                className={[
+                    styles.dock,
+                    isChromeVisible ? "" : styles.dockHidden,
+                    isSheetExpanded ? styles.dockExpanded : "",
+                ]
+                    .filter(Boolean)
+                    .join(" ")}
                 aria-label={`${pageTitle} detail and items`}
                 aria-hidden={!isChromeVisible}
             >
                 {selectedItem ? (
                     <section
-                        className={styles.detail}
+                        ref={detailRef}
+                        className={
+                            isSheetExpanded
+                                ? styles.detail
+                                : `${styles.detail} ${styles.detailCollapsed}`
+                        }
                         aria-label="Selected item"
                     >
-                        <div className={styles.detailTop}>
-                            <div>
+                        <div
+                            className={styles.sheetGrip}
+                            onClickCapture={onSheetGripClickCapture}
+                            {...bindSheetDrag()}
+                        >
+                            <button
+                                type="button"
+                                className={styles.sheetHandle}
+                                onClick={() => setIsSheetExpanded((v) => !v)}
+                                aria-expanded={isSheetExpanded}
+                                aria-controls={
+                                    selectedItem.body
+                                        ? `${sheetBodyId} ${sheetTextId}`
+                                        : sheetBodyId
+                                }
+                            >
+                                <span
+                                    className={styles.sheetHandleBar}
+                                    aria-hidden="true"
+                                />
+                                <span className={styles.sheetHandleLabel}>
+                                    <FontAwesomeIcon
+                                        icon={
+                                            isSheetExpanded
+                                                ? faChevronDown
+                                                : faChevronUp
+                                        }
+                                        aria-hidden="true"
+                                    />
+                                    {isSheetExpanded ? "Less" : "More"}
+                                    <span className="visually-hidden">
+                                        {" "}
+                                        about this project
+                                    </span>
+                                </span>
+                            </button>
+
+                            <div className={styles.detailTop}>
                                 <h2 className={styles.itemTitle}>
                                     {selectedItem.title}
                                 </h2>
-                                {hasVideoToggle ? (
-                                    <button
-                                        type="button"
-                                        className={styles.videoToggle}
-                                        onClick={() =>
-                                            setIsAltScreenSourceActive(
-                                                (v) => !v,
-                                            )
-                                        }
-                                        aria-pressed={isAltScreenSourceActive}
-                                    >
-                                        {nextIcon ? (
-                                            <span
-                                                className={
-                                                    styles.videoToggleIcon
+
+                                {hasControls ? (
+                                    <div className={styles.controls}>
+                                        {hasVideoToggle ? (
+                                            <button
+                                                type="button"
+                                                className={styles.control}
+                                                onClick={() =>
+                                                    setIsAltScreenSourceActive(
+                                                        (v) => !v,
+                                                    )
                                                 }
-                                                aria-hidden="true"
+                                                aria-pressed={
+                                                    isAltScreenSourceActive
+                                                }
+                                                title={`Switch to ${nextLabel}`}
                                             >
-                                                <FontAwesomeIcon
-                                                    icon={nextIcon}
-                                                    fixedWidth
-                                                />
-                                            </span>
+                                                <span
+                                                    className={
+                                                        styles.controlIcon
+                                                    }
+                                                    aria-hidden="true"
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={
+                                                            nextIcon ??
+                                                            faRightLeft
+                                                        }
+                                                        fixedWidth
+                                                    />
+                                                </span>
+                                                <span
+                                                    className={
+                                                        styles.controlLabel
+                                                    }
+                                                >
+                                                    Switch to {nextLabel}
+                                                </span>
+                                            </button>
                                         ) : null}
-                                        Switch to {nextLabel}
-                                    </button>
-                                ) : null}
 
-                                {isAudioToggleAvailable ? (
-                                    <button
-                                        type="button"
-                                        className={styles.audioToggle}
-                                        onClick={() => {
-                                            // Sound needs the video playing.
-                                            if (!isAudioEnabled) {
-                                                setVideoPaused(false);
-                                            }
-                                            setIsAudioEnabled((v) => !v);
-                                        }}
-                                        aria-pressed={isAudioEnabled}
-                                    >
-                                        <span
-                                            className={styles.audioToggleIcon}
-                                            aria-hidden="true"
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={
+                                        {isAudioToggleAvailable ? (
+                                            <button
+                                                type="button"
+                                                className={styles.control}
+                                                onClick={() => {
+                                                    // Sound needs the video playing.
+                                                    if (!isAudioEnabled) {
+                                                        setVideoPaused(false);
+                                                    }
+                                                    setIsAudioEnabled(
+                                                        (v) => !v,
+                                                    );
+                                                }}
+                                                aria-pressed={isAudioEnabled}
+                                                title={
                                                     isAudioEnabled
-                                                        ? faVolumeHigh
-                                                        : faVolumeXmark
+                                                        ? "Audio on"
+                                                        : "Audio off"
                                                 }
-                                                fixedWidth
-                                            />
-                                        </span>
-                                        Audio: {isAudioEnabled ? "On" : "Off"}
-                                    </button>
+                                            >
+                                                <span
+                                                    className={
+                                                        styles.controlIcon
+                                                    }
+                                                    aria-hidden="true"
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={
+                                                            isAudioEnabled
+                                                                ? faVolumeHigh
+                                                                : faVolumeXmark
+                                                        }
+                                                        fixedWidth
+                                                    />
+                                                </span>
+                                                <span
+                                                    className={
+                                                        styles.controlLabel
+                                                    }
+                                                >
+                                                    Audio:{" "}
+                                                    {isAudioEnabled
+                                                        ? "On"
+                                                        : "Off"}
+                                                </span>
+                                            </button>
+                                        ) : null}
+
+                                        {activeScreenAsset?.kind === "video" ? (
+                                            <button
+                                                type="button"
+                                                className={styles.control}
+                                                onClick={() =>
+                                                    setVideoPaused(
+                                                        !isActiveVideoPaused,
+                                                    )
+                                                }
+                                                title={
+                                                    isActiveVideoPaused
+                                                        ? "Play video"
+                                                        : "Pause video"
+                                                }
+                                            >
+                                                <span
+                                                    className={
+                                                        styles.controlIcon
+                                                    }
+                                                    aria-hidden="true"
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={
+                                                            isActiveVideoPaused
+                                                                ? faPlay
+                                                                : faPause
+                                                        }
+                                                        fixedWidth
+                                                    />
+                                                </span>
+                                                <span
+                                                    className={
+                                                        styles.controlLabel
+                                                    }
+                                                >
+                                                    {isActiveVideoPaused
+                                                        ? "Play video"
+                                                        : "Pause video"}
+                                                </span>
+                                            </button>
+                                        ) : null}
+                                    </div>
                                 ) : null}
 
-                                {activeScreenAsset?.kind === "video" ? (
-                                    <button
-                                        type="button"
-                                        className={styles.audioToggle}
-                                        onClick={() =>
-                                            setVideoPaused(!isActiveVideoPaused)
-                                        }
+                                {selectedItem.year ? (
+                                    <div
+                                        className={styles.year}
+                                        aria-label="Year"
                                     >
-                                        <span
-                                            className={styles.audioToggleIcon}
-                                            aria-hidden="true"
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={
-                                                    isActiveVideoPaused
-                                                        ? faPlay
-                                                        : faPause
-                                                }
-                                                fixedWidth
-                                            />
-                                        </span>
-                                        {isActiveVideoPaused
-                                            ? "Play video"
-                                            : "Pause video"}
-                                    </button>
+                                        {selectedItem.year}
+                                    </div>
                                 ) : null}
                             </div>
-                            {selectedItem.year ? (
-                                <div className={styles.year} aria-label="Year">
-                                    {selectedItem.year}
-                                </div>
+
+                            {/* Phones only: the carousel cards drop their subtitles there. */}
+                            {selectedItem.subtitle ? (
+                                <p className={styles.detailSub}>
+                                    {selectedItem.subtitle}
+                                </p>
                             ) : null}
                         </div>
 
-                        {selectedItem.tags?.length ? (
-                            <div className={styles.tags} aria-label="Tags">
-                                {selectedItem.tags.map((t) => (
-                                    <span key={t} className={styles.tag}>
-                                        {t}
-                                    </span>
-                                ))}
-                            </div>
-                        ) : null}
+                        {/* Phones scroll this, under a fixed handle and title. */}
+                        <div
+                            ref={sheetScrollRef}
+                            className={styles.sheetScroll}
+                        >
+                            <div id={sheetBodyId} className={styles.sheetBody}>
+                                {/* Phones: year and tags as one line of text instead of pills. */}
+                                {selectedItem.year ||
+                                selectedItem.tags?.length ? (
+                                    <p className={styles.metaLine}>
+                                        {[
+                                            selectedItem.year,
+                                            ...(selectedItem.tags ?? []),
+                                        ]
+                                            .filter(Boolean)
+                                            .join(" · ")}
+                                    </p>
+                                ) : null}
 
-                        {selectedItem.links?.length ? (
-                            <div className={styles.links} aria-label="Links">
-                                {selectedItem.links.map((l) =>
-                                    (() => {
-                                        const isInternal =
-                                            l.href.startsWith("/");
-                                        const shouldOpenInNewWindow =
-                                            typeof l.openInNewWindow ===
-                                            "boolean"
-                                                ? l.openInNewWindow
-                                                : !isInternal;
-                                        const target = shouldOpenInNewWindow
-                                            ? "_blank"
-                                            : undefined;
-                                        const rel = shouldOpenInNewWindow
-                                            ? "noopener noreferrer"
-                                            : undefined;
-
-                                        return (
-                                            <a
-                                                key={`${selectedItem.slug}-${l.href}`}
-                                                href={l.href}
-                                                target={target}
-                                                rel={rel}
-                                                className={styles.link}
+                                {selectedItem.tags?.length ? (
+                                    <div
+                                        className={styles.tags}
+                                        aria-label="Tags"
+                                    >
+                                        {selectedItem.tags.map((t) => (
+                                            <span
+                                                key={t}
+                                                className={styles.tag}
                                             >
-                                                {l.icon ? (
-                                                    <span
-                                                        className={
-                                                            styles.linkIcon
-                                                        }
-                                                        aria-hidden="true"
-                                                    >
-                                                        <FontAwesomeIcon
-                                                            icon={l.icon}
-                                                            fixedWidth
-                                                        />
-                                                    </span>
-                                                ) : null}
-                                                {l.label}
-                                            </a>
-                                        );
-                                    })(),
-                                )}
-                            </div>
-                        ) : null}
+                                                {t}
+                                            </span>
+                                        ))}
+                                    </div>
+                                ) : null}
 
-                        {renderBodyPrefix || selectedItem.body ? (
-                            <div className={styles.body}>
-                                {selectedItem
-                                    ? renderBodyPrefix?.(selectedItem)
-                                    : null}
-                                {selectedItem.body}
+                                {selectedItem.links?.length ? (
+                                    <div
+                                        className={styles.links}
+                                        aria-label="Links"
+                                    >
+                                        {selectedItem.links.map((l) => {
+                                            const isInternal =
+                                                l.href.startsWith("/");
+                                            const shouldOpenInNewWindow =
+                                                typeof l.openInNewWindow ===
+                                                "boolean"
+                                                    ? l.openInNewWindow
+                                                    : !isInternal;
+                                            const target = shouldOpenInNewWindow
+                                                ? "_blank"
+                                                : undefined;
+                                            const rel = shouldOpenInNewWindow
+                                                ? "noopener noreferrer"
+                                                : undefined;
+
+                                            return (
+                                                <a
+                                                    key={`${selectedItem.slug}-${l.href}`}
+                                                    href={l.href}
+                                                    target={target}
+                                                    rel={rel}
+                                                    className={styles.link}
+                                                >
+                                                    {l.icon ? (
+                                                        <span
+                                                            className={
+                                                                styles.linkIcon
+                                                            }
+                                                            aria-hidden="true"
+                                                        >
+                                                            <FontAwesomeIcon
+                                                                icon={l.icon}
+                                                                fixedWidth
+                                                            />
+                                                        </span>
+                                                    ) : null}
+                                                    {l.label}
+                                                </a>
+                                            );
+                                        })}
+                                    </div>
+                                ) : null}
                             </div>
-                        ) : null}
+
+                            {/* The music player stays visible while the sheet is collapsed. */}
+                            {renderBodyPrefix ? (
+                                <div className={styles.bodyPrefix}>
+                                    {renderBodyPrefix(selectedItem)}
+                                </div>
+                            ) : null}
+
+                            {selectedItem.body ? (
+                                <div
+                                    id={sheetTextId}
+                                    className={`${styles.body} ${styles.sheetBody}`}
+                                >
+                                    {selectedItem.body}
+                                </div>
+                            ) : null}
+                        </div>
                     </section>
                 ) : null}
 

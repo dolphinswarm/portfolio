@@ -1,3 +1,16 @@
+/* Same as the global .visually-hidden class: hidden, but still read out. */
+@mixin visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .wrap {
     --carousel-height: 136px;
     /* Reserved for future tuning (kept for compatibility). */
@@ -160,11 +173,49 @@
         visibility 0s linear 220ms;
 }
 
+/* Title with its controls under it, year on the right. */
 .detailTop {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "title year"
+        "controls .";
+    align-items: start;
+    column-gap: 16px;
+}
+
+.detailTop .itemTitle {
+    grid-area: title;
+}
+
+.detailTop .year {
+    grid-area: year;
+}
+
+.controls {
+    grid-area: controls;
+    margin-top: 10px;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Phone-only parts of the bottom sheet. */
+.sheetHandle,
+.detailSub,
+.metaLine {
+    display: none;
+}
+
+.bodyPrefix {
+    margin-top: 12px;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* The player bar has its own bottom margin. */
+.bodyPrefix + .body {
+    margin-top: 0;
 }
 
 @media (min-width: 769px) {
@@ -187,8 +238,8 @@
     font-weight: 400;
 }
 
-.videoToggle {
-    margin-top: 10px;
+/* Switch video, audio, and play/pause. */
+.control {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -211,71 +262,22 @@
         opacity 120ms ease;
 }
 
-.videoToggleIcon {
+.controlIcon {
     display: inline-flex;
     align-items: center;
     opacity: 0.92;
 }
 
-.audioToggle {
-    margin-top: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    appearance: none;
-    height: 32px;
-    padding: 0 12px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: inherit;
-    font-size: 12px;
-    letter-spacing: 0.01em;
-    cursor: pointer;
-    opacity: 0.92;
-    transition:
-        transform 120ms ease,
-        background 120ms ease,
-        opacity 120ms ease;
-}
-
-// Only space it from a button before it, so it isn't indented when it's first.
-button + .audioToggle {
-    margin-left: 10px;
-}
-
-.audioToggleIcon {
-    display: inline-flex;
-    align-items: center;
-    opacity: 0.92;
-}
-
-.audioToggle:hover {
+.control:hover {
     background: rgba(255, 255, 255, 0.12);
     opacity: 1;
 }
 
-.audioToggle:active {
+.control:active {
     transform: translateY(0.5px);
 }
 
-.audioToggle:focus-visible {
-    outline: 2px solid rgba(79, 209, 255, 0.75);
-    outline-offset: 2px;
-}
-
-.videoToggle:hover {
-    background: rgba(255, 255, 255, 0.12);
-    opacity: 1;
-}
-
-.videoToggle:active {
-    transform: translateY(0.5px);
-}
-
-.videoToggle:focus-visible {
+.control:focus-visible {
     outline: 2px solid rgba(79, 209, 255, 0.75);
     outline-offset: 2px;
 }
@@ -510,6 +512,10 @@ button + .audioToggle {
     text-overflow: ellipsis;
 }
 
+/* Phones: the detail panel is a bottom sheet. Collapsed, it shows the title
+   and subtitle (and the music player) so the 3D screen stays visible.
+   Expanded, it reaches up to the Hide UI button and the write-up scrolls
+   under a fixed handle and title. */
 @media (max-width: 768px) {
     .wrap {
         padding: 14px 14px 10px;
@@ -524,17 +530,18 @@ button + .audioToggle {
         font-size: 13px;
     }
 
-    /* Sit under the header instead of on top of the carousel. */
+    /* Icon only, just under the header's right edge. */
     .chromeToggle {
-        top: calc(env(safe-area-inset-top) + 70px);
+        top: calc(env(safe-area-inset-top) + var(--header-height) + 10px);
         bottom: auto;
-        right: 14px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        padding: 0;
     }
 
-    .detail {
-        border-radius: 16px;
-        max-height: 30svh;
-        margin: 0 14px;
+    .chromeToggleLabel {
+        @include visually-hidden;
     }
 
     .dock {
@@ -543,13 +550,187 @@ button + .audioToggle {
         transform: none;
         width: auto;
         bottom: calc(var(--mobile-nav-height) + var(--safe-area-bottom));
-        gap: 10px;
+        gap: 8px;
+    }
+
+    /* Stop under the Hide UI button: 10px gap + 36px button + 10px. */
+    .dockExpanded {
+        top: calc(env(safe-area-inset-top) + var(--header-height) + 56px);
+    }
+
+    .detail {
+        display: flex;
+        flex-direction: column;
+        margin: 0 12px;
+        padding: 0 14px 12px;
+        border-radius: 16px;
+        max-height: 40svh;
+        overflow: hidden;
+    }
+
+    .dockExpanded .detail {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        padding-bottom: 0;
+    }
+
+    .sheetGrip {
+        flex: none;
+    }
+
+    /* Collapsed, a swipe anywhere on the top opens it. Expanded, only the
+       handle takes swipes so the title area can still scroll the text. */
+    .detailCollapsed .sheetGrip,
+    .sheetHandle {
+        touch-action: none;
+    }
+
+    .sheetHandle {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        width: calc(100% + 28px);
+        margin: 0 -14px;
+        padding: 7px 0 6px;
+
+        appearance: none;
+        background: none;
+        border: 0;
+        border-radius: 16px 16px 0 0;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .sheetHandle:focus-visible {
+        outline: 2px solid rgba(79, 209, 255, 0.75);
+        outline-offset: -2px;
+    }
+
+    .sheetHandleBar {
+        width: 36px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.32);
+    }
+
+    .sheetHandleLabel {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10px;
+        line-height: 1;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.6;
+    }
+
+    .detailTop {
+        grid-template-areas: "title controls";
+        align-items: center;
+        column-gap: 10px;
+    }
+
+    .itemTitle {
+        font-size: 20px;
+        line-height: 1.15;
+    }
+
+    /* The year moves into the meta line. */
+    .year {
+        display: none;
+    }
+
+    .controls {
+        margin-top: 0;
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
+
+    .control {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border-radius: 999px;
+    }
+
+    .controlLabel {
+        @include visually-hidden;
+    }
+
+    .detailSub {
+        display: block;
+        margin-top: 4px;
+        font-size: 13px;
+        line-height: 1.35;
+        opacity: 0.72;
+    }
+
+    .detailCollapsed .detailSub {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .sheetScroll {
+        min-height: 0;
+        overflow: auto;
+        overscroll-behavior: contain;
+    }
+
+    .dockExpanded .sheetScroll {
+        flex: 1 1 auto;
+        padding-bottom: 16px;
+        animation: sheetContentIn 200ms ease-out both;
+    }
+
+    .detailCollapsed .sheetBody {
+        display: none;
+    }
+
+    .metaLine {
+        display: block;
+        margin-top: 10px;
+        font-size: 12px;
+        letter-spacing: 0.02em;
+        opacity: 0.62;
+    }
+
+    .tags {
+        display: none;
+    }
+
+    .links {
+        margin-top: 10px;
+        gap: 8px;
+    }
+
+    .link {
+        height: 32px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
+
+    .body {
+        font-size: 15px;
+        line-height: 1.55;
+    }
+
+    .bodyPrefix {
+        margin-top: 10px;
+    }
+
+    /* Nothing follows the player while collapsed. */
+    .detailCollapsed .bodyPrefix > :last-child {
+        margin-bottom: 0;
     }
 
     .carousel {
         margin-top: 0;
         /* The dock already sits above the nav + safe area. */
-        padding: 6px 10px;
+        padding: 4px 8px;
 
         background: rgba(0, 0, 0, 0.68);
         border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -558,26 +739,63 @@ button + .audioToggle {
     }
 
     .carouselInner {
-        padding: 6px 4px;
-        scroll-padding-inline: 10px;
+        gap: 8px;
+        padding: 4px;
+        scroll-padding-inline: 8px;
     }
 
+    /* Image cards with the title over the bottom; the sheet has the subtitle. */
     .thumb {
-        width: 136px;
+        position: relative;
+        width: 116px;
+        border-radius: 14px;
+        overflow: hidden;
     }
 
     .thumbMedia {
-        height: 64px;
+        height: 72px;
+        border-radius: 0;
     }
 
     .thumbLabel {
-        padding: 8px 10px 10px;
-        /* Title + up to two subtitle lines. */
-        height: 68px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: auto;
+        padding: 18px 8px 6px;
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.85)
+        );
     }
 
+    .thumbTitle {
+        font-size: 12px;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Still read out as part of the card's name. */
     .thumbSub {
-        -webkit-line-clamp: 2;
+        @include visually-hidden;
+    }
+}
+
+@keyframes sheetContentIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dockExpanded .sheetScroll {
+        animation: none;
     }
 }
 
@@ -598,13 +816,24 @@ button + .audioToggle {
         display: none;
     }
 
+    /* No image to sit on, so phones' overlay label goes back in the flow. */
     .thumbLabel {
+        position: static;
         height: auto;
         padding: 8px 10px;
+        background: none;
     }
 
     .thumbSub {
         -webkit-line-clamp: 1;
+    }
+}
+
+/* Phones held sideways: the open sheet takes the carousel's space too, so
+   there's room to read. Closing it brings the carousel back. */
+@media (max-width: 768px) and (max-height: 500px) {
+    .dockExpanded .carousel {
+        display: none;
     }
 }
 

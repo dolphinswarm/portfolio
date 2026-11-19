@@ -105,12 +105,30 @@
 
 @media (max-width: 768px) {
     .topInner {
-        padding: 12px 14px;
+        padding: 10px 14px;
         justify-content: center;
     }
 
     .brandBlock {
         align-items: center;
+    }
+
+    .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    .brand img {
+        width: 26px;
+        height: 26px;
+    }
+
+    /* Phones are short on height; the home page's lower third shows the role. */
+    .tagline {
+        display: none;
     }
 
     .topNav {
@@ -124,7 +142,7 @@
         right: 0;
         bottom: 0;
         height: calc(
-            var(--mobile-nav-height, 72px) + var(--safe-area-bottom)
+            var(--mobile-nav-height, 60px) + var(--safe-area-bottom)
         );
         padding-bottom: var(--safe-area-bottom);
         z-index: 200;
@@ -142,7 +160,7 @@
         align-items: center;
         justify-content: center;
         gap: 4px;
-        padding: 10px 6px;
+        padding: 6px 6px;
 
         opacity: 0.78;
         transition:
